@@ -131,7 +131,7 @@ size_urban <- optimal_cp_urban %>% pull(nsplit)
 tree_urban_prune <- prune(tree_urban, cp=cp_urban)
 plotcp(tree_urban_prune); printcp(tree_urban_prune)
 
-PredictCART_train_urban <- predict(tree_urban, data=urban_input, type="class")
+PredictCART_train_urban <- predict(tree_urban_prune, data=urban_input, type="class")
 
 confusion.matrix <- confusionMatrix(data=PredictCART_train_urban,
                                     as.factor(urban_input$n_class))
@@ -241,7 +241,7 @@ size_rural <- optimal_cp_rural %>% pull(nsplit)
 tree_rural_prune <- prune(tree_rural, cp=cp_rural)
 plotcp(tree_rural_prune); printcp(tree_rural_prune)
 
-PredictCART_train_rural <- predict(tree_rural, data=rural_input, type="class")
+PredictCART_train_rural <- predict(tree_rural_prune, data=rural_input, type="class")
 confusion.matrix <- confusionMatrix(data = PredictCART_train_rural,
                                     as.factor(rural_input$n_class))
 print(confusion.matrix)

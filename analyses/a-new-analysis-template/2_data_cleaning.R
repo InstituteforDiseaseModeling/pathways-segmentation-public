@@ -28,23 +28,11 @@ if (file.exists(vulnerability_excel_file)){ vulnerability_sheet <- readRDS(vulne
 ###################################
 # READ IN SURVEY | DHS
 
-# IR <- data.table(gen_dhs_data(source = "Local File", file_path = paste0(data_path, "ETIR71FL.DTA"))) %>% dplyr::mutate(survey = "ET71FL")
-# BR <- data.table(gen_dhs_data(source = "Local File", file_path = paste0(data_path, "ETBR71FL.DTA"))) %>% dplyr::mutate(survey = "ET71FL")
-# KR <- data.table(gen_dhs_data(source = "Local File", file_path = paste0(data_path, "ETKR71FL.DTA"))) %>% dplyr::mutate(survey = "ET71FL")
-# HH <- data.table(gen_dhs_data(source = "Local File", file_path = paste0(data_path, "ETHR71FL.DTA"))) %>% dplyr::mutate(survey = "ET71FL")
-# MR <- data.table(gen_dhs_data(source = "Local File", file_path = paste0(data_path, "ETMR71FL.DTA"))) %>% dplyr::mutate(survey = "ET71FL")
-
-# IR <- data.table(gen_dhs_data(source = "Local File", file_path = paste0(data_path, "ETIR71FL.DTA"))) %>% dplyr::mutate(survey = "ET71FL")
-# BR <- data.table(gen_dhs_data(source = "Local File", file_path = paste0(data_path, "ETBR71FL.DTA"))) %>% dplyr::mutate(survey = "ET71FL")
-# KR <- data.table(gen_dhs_data(source = "Local File", file_path = paste0(data_path, "ETKR71FL.DTA"))) %>% dplyr::mutate(survey = "ET71FL")
-# HH <- data.table(gen_dhs_data(source = "Local File", file_path = paste0(data_path, "ETHR71FL.DTA"))) %>% dplyr::mutate(survey = "ET71FL")
-# MR <- data.table(gen_dhs_data(source = "Local File", file_path = paste0(data_path, "ETMR71FL.DTA"))) %>% dplyr::mutate(survey = "ET71FL")
-
-IR <- data.table(read.dta13(file = paste0(data_path, "ETIR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-BR <- data.table(read.dta13(file = paste0(data_path, "ETBR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-KR <- data.table(read.dta13(file = paste0(data_path, "ETKR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-HH <- data.table(read.dta13(file = paste0(data_path, "ETHR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-MR <- data.table(read.dta13(file = paste0(data_path, "ETMR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
+IR_raw <- data.table(read.dta13(file = paste0(data_path, "ETIR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
+BR_raw <- data.table(read.dta13(file = paste0(data_path, "ETBR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
+KR_raw <- data.table(read.dta13(file = paste0(data_path, "ETKR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
+HH_raw <- data.table(read.dta13(file = paste0(data_path, "ETHR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
+MR_raw <- data.table(read.dta13(file = paste0(data_path, "ETMR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
 
 
 ###################################
@@ -70,8 +58,8 @@ MR <- data.table(read.dta13(file = paste0(data_path, "ETMR71FL.DTA"), fromEncodi
 
 
 # GENERATE VULNERABILITY FACTORS
-vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=MR, dhs=7)
-vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH), names(MR))))
+vulnerability <- gen_vulnerability_factors_dhs(IR=IR_raw, BR=BR_raw, HH=HH_raw, MR=MR_raw, dhs=7)
+vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR_raw), names(IR_raw), names(IR_raw), names(IR_raw))))
 vulnerability <- subset(vulnerability, select=unique(c("caseid", "survey", all_of(svy_id_var), all_of(svy_strata_var), all_of(data_state_var), vulnerability_vars)))
 
 
@@ -104,8 +92,8 @@ vulnerability <- readRDS(file = paste0(vulnerability_file, ".rds"))
 
 
 # GENERATE HEALTH OUTCOMES
-outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=7)
-outcomes_vars <- setdiff(names(outcomes), c(names(IR), names(BR), names(KR)))
+outcomes <- gen_outcome_variables_dhs(IR=IR_raw, KR=KR_raw, BR=BR_raw, DHS=7)
+outcomes_vars <- setdiff(names(outcomes), c(names(IR_raw), names(BR_raw), names(KR_raw)))
 outcomes <- subset(outcomes, select=unique(c("caseid", "v001", "v002", "survey", outcomes_vars)))
 
 
@@ -178,13 +166,14 @@ if (create_new_pathways_workbook==TRUE){
     profile_include = NA,
     typing_tool_strata = NA,
     typing_tool_include = NA,
-    notes = NA,
-    `Woman and her past experiences` = NA,
-    `Healthcare and mental models` = NA,
-    `Natural and human systems` = NA,
-    `Household relationships` = NA,
-    `Household economics` = NA,
-    `Community Support` = NA) %>%
+    notes = NA
+    # `Woman and her past experiences` = NA,
+    # `Healthcare and mental models` = NA,
+    # `Natural and human systems` = NA,
+    # `Household relationships` = NA,
+    # `Household economics` = NA,
+    # `Community Support` = NA
+    ) %>%
     base::merge(dd_vulnerabilities, by=c("vulnerability_variable"), all.x=TRUE) %>%
     dplyr::select(vulnerability_variable, short_name, description, univariate_include, eda_include, pca_strata, pca_include, lca_strata, lca_include, profile_strata, profile_include, typing_tool_strata, typing_tool_include, notes,
                   Woman.and.her.past.experiences, Healthcare.and.mental.models, Natural.and.human.systems, Household.relationships, Household.economics, Community.Support) %>%
