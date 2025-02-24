@@ -260,6 +260,18 @@
       ],
       "Hash": "e78499cbcbbca98200254bd171379165"
     },
+    "XML": {
+      "Package": "XML",
+      "Version": "3.99-0.18",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods",
+        "utils"
+      ],
+      "Hash": "4a5eca1070ecfe97e68727ed4b9a89fa"
+    },
     "abind": {
       "Package": "abind",
       "Version": "1.4-8",
@@ -342,6 +354,13 @@
         "utils"
       ],
       "Hash": "4f572fbc586294afff277db583b9060f"
+    },
+    "bitops": {
+      "Package": "bitops",
+      "Version": "1.0-9",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "d972ef991d58c19e6efa71b21f5e144b"
     },
     "boot": {
       "Package": "boot",
@@ -934,22 +953,6 @@
       ],
       "Hash": "e9651417729bbe7472e32b5027370e79"
     },
-    "expss": {
-      "Package": "expss",
-      "Version": "0.11.6",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "data.table",
-        "htmlTable",
-        "maditr",
-        "matrixStats",
-        "stats",
-        "utils"
-      ],
-      "Hash": "759a69e13f788c97d6bdec8253dcc642"
-    },
     "factoextra": {
       "Package": "factoextra",
       "Version": "1.0.7",
@@ -1061,6 +1064,19 @@
       ],
       "Hash": "618609b42c9406731ead03adf5379850"
     },
+    "foreign": {
+      "Package": "foreign",
+      "Version": "0.8-87",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "81fc09bdeab0077a73927ed1243404b6"
+    },
     "fs": {
       "Package": "fs",
       "Version": "1.6.5",
@@ -1127,6 +1143,19 @@
         "methods"
       ],
       "Hash": "15e9634c0fcd294799e9b2e929ed1b86"
+    },
+    "ggcorrplot": {
+      "Package": "ggcorrplot",
+      "Version": "0.1.4.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "ggplot2",
+        "reshape2",
+        "stats"
+      ],
+      "Hash": "aad38d027d0dd18621e213919c20a65f"
     },
     "ggdist": {
       "Package": "ggdist",
@@ -1445,24 +1474,6 @@
         "vctrs"
       ],
       "Hash": "b59377caa7ed00fa41808342002138f9"
-    },
-    "htmlTable": {
-      "Package": "htmlTable",
-      "Version": "2.4.3",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "checkmate",
-        "htmltools",
-        "htmlwidgets",
-        "knitr",
-        "magrittr",
-        "methods",
-        "rstudioapi",
-        "stringr"
-      ],
-      "Hash": "ca027d8771f2c039aed82f00a81e725b"
     },
     "htmltools": {
       "Package": "htmltools",
@@ -1805,18 +1816,6 @@
       ],
       "Hash": "be38bc740fc51783a78edb5a157e4104"
     },
-    "maditr": {
-      "Package": "maditr",
-      "Version": "0.8.5",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "data.table",
-        "magrittr"
-      ],
-      "Hash": "f5945f1b183ecc0f262cae497001b051"
-    },
     "magick": {
       "Package": "magick",
       "Version": "2.8.5",
@@ -1838,16 +1837,6 @@
         "R"
       ],
       "Hash": "7ce2733a9826b3aeb1775d56fd305472"
-    },
-    "matrixStats": {
-      "Package": "matrixStats",
-      "Version": "1.5.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R"
-      ],
-      "Hash": "9fd316b52ac8c24fef4c67fdd646e965"
     },
     "memoise": {
       "Package": "memoise",
@@ -2390,17 +2379,6 @@
       ],
       "Hash": "c48844cd7961de506a1b4d22b2e082c7"
     },
-    "randomForest": {
-      "Package": "randomForest",
-      "Version": "4.7-1.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "stats"
-      ],
-      "Hash": "72e840ba2949bbeb517f7a1ae04cf56c"
-    },
     "rappdirs": {
       "Package": "rappdirs",
       "Version": "0.3.3",
@@ -2410,6 +2388,31 @@
         "R"
       ],
       "Hash": "5e3c5dc0b071b21fa128676560dbe94d"
+    },
+    "rattle": {
+      "Package": "rattle",
+      "Version": "5.5.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "XML",
+        "bitops",
+        "dplyr",
+        "ggplot2",
+        "grDevices",
+        "graphics",
+        "magrittr",
+        "methods",
+        "rpart.plot",
+        "stats",
+        "stringi",
+        "stringr",
+        "tibble",
+        "tidyr",
+        "utils"
+      ],
+      "Hash": "62172e5cd868873db060237045777f22"
     },
     "rbibutils": {
       "Package": "rbibutils",
@@ -2640,13 +2643,6 @@
         "utils"
       ],
       "Hash": "5045fbb71b143878d8c51975d1d7d56d"
-    },
-    "rstudioapi": {
-      "Package": "rstudioapi",
-      "Version": "0.17.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "5f90cd73946d706cfe26024294236113"
     },
     "s2": {
       "Package": "s2",

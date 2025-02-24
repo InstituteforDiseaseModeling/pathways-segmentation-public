@@ -59,7 +59,7 @@ MR_raw <- data.table(read.dta13(file = paste0(data_path, "ETMR71FL.DTA"), fromEn
 
 # GENERATE VULNERABILITY FACTORS
 vulnerability <- gen_vulnerability_factors_dhs(IR=IR_raw, BR=BR_raw, HH=HH_raw, MR=MR_raw, dhs=7)
-vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR_raw), names(IR_raw), names(IR_raw), names(IR_raw))))
+vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR_raw), names(BR_raw), names(HH_raw), names(MR_raw))))
 vulnerability <- subset(vulnerability, select=unique(c("caseid", "survey", all_of(svy_id_var), all_of(svy_strata_var), all_of(data_state_var), vulnerability_vars)))
 
 
