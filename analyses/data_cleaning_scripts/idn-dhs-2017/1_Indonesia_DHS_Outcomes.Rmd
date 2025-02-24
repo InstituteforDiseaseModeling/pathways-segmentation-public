@@ -1,0 +1,623 @@
+---
+title: "1_Indonesia_DHS_Outcomes"
+author: "Lang Gao"
+date: "09/08/2023"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '6'
+  word_document:
+    toc: yes
+    toc_depth: '6'
+  pdf_document:
+    toc: yes
+    toc_depth: '6'
+---
+
+<style type="text/css">
+
+h1.title {
+  font-size: 21px;
+  color: Blue;
+  text-align: center;
+}
+h4.author { /* Header 4 - and the author and data headers use this too  */
+    font-size: 18px;
+  font-family: "Source Sans Pro Semibold", Times, serif;
+  color: Blue;
+  text-align: center;
+}
+h4.date { /* Header 4 - and the author and data headers use this too  */
+  font-size: 18px;
+  font-family: "Source Sans Pro Semibold", Times, serif;
+  color: Blue;
+  text-align: center;
+}
+</style>
+
+</br>
+
+
+***
+---
+
+#######################################
+1. Setting up the script
+#######################################
+
+Set up filepath, notation and packages
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+options(scipen = 100, digits = 4)
+
+#Set filepath
+basedir <-"/Users/langgao/Downloads/Freelancer projects/Sonder/Indonesia/Segmentation"
+knitr::opts_knit$set(root.dir = basedir)
+```
+
+Load packages
+```{r,echo=TRUE}
+rm(list=ls())
+pacman::p_load("foreign", "stringr", "magrittr", "reshape2", "data.table", "psych", "vtable", "corrplot", "haven", "survey", "ggplot2", "dplyr", "tidyr")
+```
+
+Read data
+```{r}
+#BR- Birth Record
+#HH- Household Record
+#IR- Individual Record
+#KR- Child Record
+BR <-  data.table(read_dta("IDBR71FL.DTA"))
+HH <-  data.table(read_dta("IDHR71FL.DTA"))
+IR <-  data.table(read_dta("IDIR71FL.DTA"))
+KR <-  data.table(read_dta("IDKR71FL.DTA"))
+#dim(BR) #86265  1678
+#dim(HH) #47963  1283
+#dim(IR) #49627  5491
+#dim(KR) #17848  1678
+BR$caseid <- str_trim(BR$caseid)
+HH$hhid <- str_trim(HH$hhid)
+IR$caseid <- str_trim(IR$caseid)
+KR$caseid <- str_trim(KR$caseid)
+```
+
+#######################################
+2. Recode for Outcomes
+#######################################
+
+## From IR File
+```{r, eval=FALSE}
+# For merging HH data to Individual data - "v001", "v002" is cluster, HHID need both to merge by HH
+# HHID: Case identification uniquely identifies each household
+# hv001: Cluster number is the number identifying the sample point as used during the fieldwork.
+#table(HH$hv001) #1000 clusters, 25 household in each cluster
+# hv002: Household number is the number identifying the household within the cluster or sample point.
+
+#colnames(IR)
+```
+
+### Recode for still birth
+```{r}
+getStillbirths <- function(individ, recode = 7) {
+  require(data.table)
+  setDT(individ)
+  
+ tmp=data.table::melt(individ,measure.vars=patterns('^bord[_]','^b0[_]','^b3[_]','^b4[_]','^b5[_]','^b6[_]','^b7[_]','^b8[_]','^b11[_]','^m14[_]','^m15[_]','^m17[_]'),
+                       value.name=c('bord','b0','dob',"sex",'alive',"deathAge",'deathAgeMo','CurrAge',"b11","m14","m15","m17"),variable.name='ReverseOrder',
+                       id.vars=some)
+}
+```
+
+```{r}
+#check if IR is a data table
+if (!is.data.table(IR)) {
+  IR <- data.table(IR)
+}
+
+#create or modify the column
+IR[,str:=substr(vcal_1,v018,v018+59)]
+IR[,STL:=ifelse(grepl('TPPPPPP',str),1,NA)]
+IR[,LB:=ifelse(grepl('BPPPPPPP',str),1,NA)]
+#dim(IR) #49627  5494
+some <- names(IR)[c(1:38,5489:5494)]
+
+stl <- getStillbirths(IR)
+stl[,id:=1:dim(stl)[1]]
+stl[,start:=str_locate_all(str,"TPPPPPP")[[1]][1],by=c("id")]
+stl[,MomAgeSTL:=ceiling((v012 - (start/12))),] #v012 is the current age in complete years
+stl[,MomAge:=ceiling((dob-v011)/12),] #v011 CMC date of birth #dob from b3 date of birth of the child(ren)
+
+stl$period = 60
+stl$tu <- stl$v008 #v008 CMC data of interview, calculated from V007 and V008
+stl$tl <- stl$v008 - stl$period 
+stl <- stl[tl <= dob & dob < tu,]
+
+stl[,index:= paste(caseid,v000,v007)] #index can be used as a identifier?
+stl[,diff:=MomAgeSTL-MomAge]
+stl[,stl:=0]
+
+sub <- stl[STL==1,]
+setkey(sub,index) #set index as the primary key for sub; maybe for sorting or indexing later
+
+#assign 1 to the first row of rep and checks whether the values of "index" change between consecutive rows => if yes, rep gets "1"; to identify and label different groups or repetitions in the data
+sub$rep<- NA
+sub$rep[1] <- 1
+for (i in 2:dim(sub)[1]){
+  sub$rep[i] <- ifelse(sub$index[i]==sub$index[i-1],0,1)
+}
+setkey(sub,index)
+
+sub <- sub[rep==1,] #filter for rep == 1, different
+sub[,MomAge:=MomAgeSTL]
+sub[,deathAge:=NA]
+sub[,CurrAge:=NA]
+sub[,deathAgeMo:=NA]
+sub[,sex:=NA]
+sub[,dob:=NA]
+sub[,alive:="STL"]
+sub[,stl:=1]
+
+#dim(sub) #62 68
+#dim(stl) #18039    67
+#names(sub) #the last column is "rep" which will be excluded when rbind
+#names(stl)
+
+stl <- rbind(stl,sub[,-68])
+#dim(stl) #18101    67
+setkey(stl,index)
+
+#names(stl)
+#table(stl$alive) #(0,1),
+#sum(552,17487)#18039, need to assign values to the 62 entries from sub
+#sum(!is.na(stl$alive)) #18039
+#class(stl$alive)
+
+#stl[alive=="STL",stl:=1] #these 2 lines are from the ETH coodbook 1, but somehow it ran into errors here, so I modified the codes above to create the "stl" for both stl and sub before rbind
+#stl[is.na(stl),stl:=0]
+
+stl.out <- stl %>% 
+  dplyr::group_by(caseid) %>% 
+  dplyr::summarize(stl.cnt=sum(stl, na.rm=T))
+#view(stl.out)
+```
+
+### Recode FP
+```{r}
+#IR$v313 # 0 == "no method", 1=="folkloric method", 2 =="traditional method", 3 =="modern method"
+
+#IR$v312
+#table(IR$v313) #(0,2,3)
+#sum(28575,2391,18661) #49627
+#print(IR$v313)
+
+#v313: type of contraceptive method (currently used, from v312, and pregnant women are coded 0 "Not currently using.") categorizes the current contraceptive method as either a modern method, a traditional method, or a folkloric method.
+#v359: last method discontinued in the last five years.
+
+#in the ET script, it used:v313 == "modern method". But here there is a mismatch of type for v313 (haven_labelled), so I revised as the following:
+IR <- IR %>% 
+  mutate(v313 = ifelse(v313 == 3, "modern method",
+                       ifelse(v313 == 2, "traditional method",
+                              ifelse(v313 == 1,"folkloric method", "no method")))) %>% 
+  mutate(v313 = as.factor(v313))
+
+IR$fp.mod.now <- ifelse(IR$v313 == "modern method",1,0)
+
+#similarly, recode v359 (last method discontinued in the last five years), trying a new way of mutate fp.dis.5yr
+#IR$v359 # 1=="pill", 2=="iud",...18=="standard days method (sdm)",19=="specific method 1",20=="	specific method 2". So, to mutate fp.dis.5yr, it gets values "1" when IR$v359==1|IR$v359==2|IR$v359==3|IR$v359==5|IR$v359==11|IR$v359==14|IR$v359==16|IR$v359==17 #methods diaphragm (4) and foam or jelly were not asked in the contraceptive table but were asked in the current method used
+
+#table(IR$v359) # 1    2    3    5    6    7    8    9   10   11   13 
+#sum(3476,504,8378,354,3,2,407,801,59,835,59) #14878
+#sum(3476,504,8378,354,835) #13547
+
+IR$fp.dis.5yr<-ifelse((IR$v359==1|IR$v359==2|IR$v359==3|IR$v359==5|IR$v359==11|IR$v359==14|IR$v359==16|IR$v359==17),1,0)
+#table(IR$fp.dis.5yr)#0 (1331), 1(13547)
+IR$fp.dis.5yr[is.na(IR$fp.dis.5yr)] <- 0
+#table(IR$fp.dis.5yr)#0(36080), 1(13547) #total 49627, so that no missing data
+
+IR$fp.mod.ever<-ifelse((IR$fp.mod.now==1 | IR$fp.dis.5yr==1),1,0)
+#table(IR$fp.mod.ever) #0(24671), 1(24956)
+```
+
+### Recode home births
+```{r}
+#m15: Place of delivery of the child. Coding categories are standard and are constructed with a major category for the first digit and a minor category for the second digit. In ID, this question was asked for 6 occurrences (but m15_5 and m15_6 are empty)
+#IR$m15_1 #10=="home",11=="respondent's home",12=="other home",96=="other"
+#table(IR$m15_1) #there is no one chose 10 (home)
+#sum(3468,299,28) #3975
+#table(IR$m15_6)
+IR[,hb.1:= ifelse(m15_1== 10 | m15_1== 11 | m15_1== 12 | m15_1== 96,1,0)]
+IR[,hb.2:= ifelse(m15_2== 10 | m15_2== 11 | m15_2== 12 | m15_2== 96,1,0)]
+IR[,hb.3:= ifelse(m15_3== 10 | m15_3== 11 | m15_3== 12 | m15_3== 96,1,0)]
+IR[,hb.4:= ifelse(m15_4== 10 | m15_4== 11 | m15_4== 12 | m15_4== 96,1,0)]
+
+IR$hb.ever[(IR$hb.1==1 | IR$hb.2==1 | IR$hb.3==1 | IR$hb.4==1)]<- 1 
+IR$hb.ever[(IR$hb.1==0 & IR$hb.2==0 & IR$hb.3==0 & IR$hb.4==0)]<-0
+IR$hb.ever <- ifelse((is.na(IR$hb.1))&(is.na(IR$hb.2))&(is.na(IR$hb.3))&(is.na(IR$hb.4)),NA,IR$hb.ever)
+
+#table(IR$hb.ever) #1(3987)
+#sum(is.na(IR$hb.ever)) #45636 is NA
+#sum(45636,4,3987) #49627
+#dim(IR) #49627,5504
+```
+
+Recode women's weight
+```{r, eval=TRUE}
+#IR$v445: this is body mass index (BMI) for the respondent, defined as her weight in kilograms divided by the square of her height in meters (W/H2). There are two implied decimal place in the BMI (decimal points are not included in the data file). To produce the BMI divide by 100. The BMI has not been adjusted for pregnant women.
+
+#But when trying the codes from ETH script, error is induced by IR$v445 being all NAs. Survey did not ask questions on weight and height for women. 
+IR$bmi<-IR$v445/100
+#summary(IR$bmi)
+IR$bmi<-ifelse(IR$bmi>90,NA,IR$bmi)
+IR<- IR %>% mutate(bmi.cat1 = case_when(
+  (bmi < 16) ~ "Severely thin",
+  (bmi >= 16 & bmi < 17) ~ "Moderately thin",
+  (bmi >= 17 & bmi < 18.5) ~ "Mildly thin",
+  (bmi >= 18.5 & bmi < 25) ~ "Normal",
+  (bmi >= 25 & bmi < 30) ~ "Overweight",
+  (bmi >= 30) ~ "Obese"))
+IR$bmi.cat1<-factor(IR$bmi.cat1, c("Severely thin", "Moderately thin", "Mildly thin","Normal", "Overweight","Obese"))
+IR<- IR %>% mutate(bmi.cat2 = case_when(
+  (bmi < 18.5) ~ "Underweight",
+  (bmi >= 18.5 & bmi < 25) ~ "Normal",
+  (bmi >= 25 & bmi < 30) ~ "Overweight",
+  (bmi >= 30) ~ "Obese"))
+IR$bmi.cat2<-factor(IR$bmi.cat2, c("Underweight","Normal", "Overweight","Obese"))
+#table(IR$bmi.cat2)
+```
+
+### Recode number of ANC visit
+```{r}
+#m13: Timing of first antenatal visit for the pregnancy is given in months from the start of the pregnancy.BASE: Women who had seen someone for antenatal care for their last born child (MIDX = 1 & M2N <> 1). The question asked in the survey (Q411): How many months pregnant were you when you first received antenatal care for this pregnancy?
+#m14: Number of antenatal visits during the pregnancy. Women who did not see anyone for antenatal care during the pregnancy are coded 0. BASE: Last births in the three/five years before the survey (MIDX = 1). The question asked in the survey (Q412): How many times did you receive antenatal care during this pregnancy?
+
+#summary(IR$m13_1) #34784 NAs
+#summary(IR$m14_1) #34276 NAs
+IR$anc.1stvisit <- ifelse(IR$m13_1 == 98,5,IR$m13_1) # Impute "don't know" to the mean of 5
+IR$anc.1stvisit[IR$m14_1 == 0] <-10 # if had no visits to 10 (birth), i.e. made the 1st ANC visit in the 10th month
+
+IR$anc.num <- ifelse(IR$m14_1 == 98,3,IR$m14_1) # Impute DNK to the mean of 3
+IR$anc.4plus <-ifelse(IR$anc.num>=4,1,0)
+
+IR$anc.month<-ifelse(IR$anc.1stvisit<4,"Month 1-3",
+                       ifelse(IR$anc.1stvisit>3 & IR$anc.1stvisit<7,"Month 4-6",
+                              ifelse(IR$anc.1stvisit>6 & IR$anc.1stvisit<10, "Month 7-9", "No ANC")))
+IR$anc.month <- factor(IR$anc.month, c("No ANC","Month 1-3","Month 4-6", "Month 7-9"))
+
+IR$anyanc<-ifelse(IR$m14_1 == 0,0,1)
+#table(IR$anyanc) #0 (504), 1(14847)
+#sum(504,14847) #15351
+
+IR$anc.1sttri<-ifelse(IR$anc.month=="Month 1-3", 1,0)
+#table(IR$anc.1sttri) 
+#sum(3304,12043) #15347
+```
+
+### Recode for women had birth terminated
+```{r}
+#v228: from question 230: Have you ever had a pregnancy that ended with miscarriage, abortion, or still birth?
+IR$preg.termin <- IR$v228
+#table(IR$preg.termin)
+```
+
+### Recode for women had birth complication (last born)
+```{r}
+#question 428A asked women if they had birth complication for last birth and next-to-last birth. 0=="no", 1=="1",8=="don't know"
+IR[,bc.1:= ifelse(s428aa_1== 1 | s428ab_1== 1 | s428ac_1== 1 | s428ad_1== 1 | s428ae_1== 1 | s428af_1== 1 | s428ag_1 == 1 | s428ah_1== 1,1,0)]
+IR[,bc.2:= ifelse(s428aa_2== 1 | s428ab_2== 1 | s428ac_2== 1 | s428ad_2== 1 | s428ae_2== 1 | s428af_2== 1 | s428ag_2 == 1 | s428ah_2== 1,1,0)]
+
+IR$bc.ever[(IR$bc.1==1 | IR$bc.2==1)]<- 1 
+IR$bc.ever[(IR$bc.1==0 & IR$hb.2==0)]<-0
+IR$bc.ever <- ifelse((is.na(IR$bc.1))&(is.na(IR$bc.2)),NA,IR$bc.ever)
+```
+
+### Recode for women had health check after birth
+```{r}
+#m62: anyone checked respondent health before discharge (postnatal check for women at the facility), from Q435.
+#IR$m62_1 #0 == "no", 1 == "yes", 8 == "don't know"
+#table(IR$m62_1) #0 (509), 1(10994)
+
+#m66: after discharge/delivery at home anyone checked respondent health, from the Q441: Now I want to talk to you about what happened after you left the facility. Did anyone check on your health after you left the facility? 
+
+#IR$m66_1
+#sum(4477,10735) #15212
+temp1<-ifelse(IR$m66_1==1 & !is.na(IR$m66_1),1,0)
+temp2<-ifelse(IR$m62_1==1 & !is.na(IR$m62_1),1,0)
+
+#has postnatal health check when either checked at the facility or after leaving the facility
+IR$wom.hlthck<-ifelse((temp1==1|temp2==1),1,0)
+IR$wom.hlthck<-ifelse((is.na(IR$m62_1) & is.na(IR$m66_1)),NA,IR$wom.hlthck)
+#table(IR$wom.hlthck) #0(1294), 1(13925), 34408 NAs
+```
+
+### Recode for baby had health check after birth
+```{r}
+#m74: First postnatal check on child in facility, from question Q438
+#m70: Postnatal checkup on child within 2 months of discharge, from question Q445
+temp3<-ifelse(IR$m70_1==1 & !is.na(IR$m70_1),1,0)
+temp4<-ifelse(IR$m74_1==1 & !is.na(IR$m74_1),1,0)
+
+IR$baby.hlthck<-ifelse((temp3==1|temp4==1),1,0)
+IR$baby.hlthck<-ifelse((is.na(IR$m70_1) & is.na(IR$m74_1)),NA,IR$baby.hlthck)
+#table(IR$baby.hlthck) #0(1737), 1(13486),34404 NAs
+#sum(1737,13486,34404) #49627
+```
+
+### Recode for low weight of the last born
+```{r}
+#hw5: Height for Age standard deviations from the reference median
+#hw8: Weight for Age standard deviations from the reference median (for underweight)
+#hw11: Weight for Height standard deviations from the reference median (for wasting)
+#from DHS: Wasting, based on a child's weight and height, is a measure of acute nutritional deficiency. Underweight, based on weight and age, is a composite measure of both acute and chronic statuses.
+IR$haz.last<-IR$hw5_1/100; IR$haz.last<-ifelse(IR$haz.last>90,NA,IR$haz.last) #height/age standard deviation
+IR$waz.last<-IR$hw8_1/100; IR$waz.last<-ifelse(IR$waz.last>90,NA,IR$waz.last) #weight/age standard deviation
+IR$whz.last<-IR$hw11_1/100; IR$whz.last<-ifelse(IR$whz.last>90,NA,IR$whz.last) #weight/height standard deviation
+
+#for stunting, from hw5, haz.last
+IR<- IR %>% mutate(stunt.cat1.last =  case_when(
+  haz.last < -3 ~ "Severely stunted",
+  (haz.last >= -3 & haz.last < -2) ~ "Moderately stunted",
+  haz.last >= -2 ~ "Not stunted"))
+IR$stunt.cat1.last<-factor(IR$stunt.cat1, c("Severely stunted","Moderately stunted", "Not stunted"))
+IR$stunt.cat2.last<-ifelse(IR$haz.last < -2,1,0)
+
+#for underweight, from hw8, waz.last
+IR<- IR %>% mutate(unwgt.cat1.last =  case_when(
+  waz.last < -3 ~ "Severely underweight",
+  (waz.last >= -3 & waz.last < -2) ~ "Moderately underweight",
+  waz.last >= -2 ~ "Not underweight"))
+IR$unwgt.cat1.last<-factor(IR$unwgt.cat1, c("Severely underweight","Moderately underweight", "Not underweight"))
+IR$undwgt.last<- ifelse(IR$waz.last < -2,1,0)
+IR$ovrwgt.last<-ifelse(IR$waz.last >2,1,0) #overweight is also a type of malnutrition
+
+#for wasting, from hw11, whz.last
+IR<- IR %>% mutate(waste.cat1.last =  case_when(
+  whz.last < -3 ~ "Severely wasted",
+  (whz.last >= -3 & whz.last < -2) ~ "Moderately wasted",
+  whz.last >= -2 ~ "Not wasted"))
+IR$waste.cat1.last<-factor(IR$waste.cat1, c("Severely wasted","Moderately wasted", "Not wasted"))
+IR$waste.cat2.last<- ifelse(IR$whz.last < -2,1,0)
+
+#hw5, hw8, hw11 are all NAs, flagged cases. The alternative solution: code m19_1 for underweighted if m19_1 < 2500. 9996 =="not weighed at birth", 9998 =="don't know".
+IR <- IR %>%  mutate(low.wgt.last = case_when(m19_1 < 2500 ~ 1,
+                                              m19_1 >=2500 & m19_1 < 9995 ~ 0, TRUE ~ NA))
+#table(IR$low.birthwgt) #14285  1033 
+#summary(IR$m19_1) #34309 NAs
+```
+
+### Recode for breastfeeding last child
+```{r}
+#m4: The duration of breastfeeding of the child in months.
+#b19: Current age of child in months (months since birth for dead children), calculated as the integer of (V008A-B18) / 30.4375
+#b9: The person the child usually lives with. The Respondent is coded 0, father coded 1, other relatives coded 2, other people coded 3, and children aged 15 and over who were not asked who they live with are coded 4. Base: Living children (B5 = 1)
+
+#IR$m4_1 # 34319 NAs
+#IR$m4_1 #93 =="ever breastfed, not currently breastfeeding", 95 =="still breastfeeding"
+#94 =="never breastfed", 96 == "breastfed until died", 97 == "inconsistent", 98 =="don't know"
+
+#summary(IR$b19_01) # 15428 NAs
+
+IR$breastfed<-ifelse(IR$m4_1 == 93 | IR$m4_1== 95,1,0)
+IR$breastfed2<-ifelse((IR$b19_01 < 24 & IR$b9_01 == 0),IR$breastfed, NA) #child is <24 months, child lives with respondent
+
+#v409:Plain water; v409a:Sugar water; ... the variables are a set of food/liquids; v412 is not included, which is fresh milk. comp.feed is for baby fed by other types of food/liquids
+#IR$v409 #0== "no", 1=="yes", 8=="don't know"
+#summary(IR$v411a)
+
+IR <- IR %>%
+  mutate(comp.feed = case_when(IR$v409 == 1 | IR$v410 == 1 | IR$v411 == 1 | IR$v411a == 1 | IR$v412a == 1 |IR$v412c == 1 | IR$v413 == 1 | IR$v414e == 1  | IR$v414f == 1 |IR$v414g == 1 | IR$v414h == 1 | IR$v414i == 1 | IR$v414j == 1 |IR$v414k == 1 | IR$v414l == 1 | IR$v414m == 1 | IR$v414n == 1 |IR$v414o == 1 | IR$v414p == 1 | IR$v414s == 1 | IR$v414v == 1 ~1, TRUE ~ 0))
+
+IR$comp.feed<-ifelse((IR$b19_01 < 24 & IR$b9_01 == 0),IR$comp.feed, NA) ##these are questions on other feed types, like water or solids
+
+IR$breastfed2.excl<-ifelse((IR$breastfed2==1 & IR$comp.feed==0),1,0) #this is for baby fed by only fresh milk
+
+#currently not including the following b/z data NA: "bmi", "bmi.cat1", "bmi.cat2", "haz.last", "waz.last", "whz.last", "stunt.cat1.last", "stunt.cat2.last", "waste.cat1.last", "waste.cat2.last", "unwgt.cat1.last", "undwgt.last", "ovrwgt.last"
+
+ir.out<-IR %>% 
+  dplyr::select(c("v001","v002","caseid","baby.hlthck","wom.hlthck","hb.1","fp.mod.now","fp.mod.ever","anc.1stvisit","anc.num","anc.4plus","anc.month","anyanc","anc.1sttri","low.wgt.last","breastfed","breastfed2","breastfed2.excl", "preg.termin","bc.ever"))
+#dim(ir.out) #49627    20
+```
+
+## From KR File
+
+### Recode for low weight
+```{r}
+KR$hhid<-paste(KR$v001,KR$v002)
+KR$haz<-KR$hw5/100; KR$haz<-ifelse(KR$haz>90,NA,KR$haz)
+KR$waz<-KR$hw8/100; KR$waz<-ifelse(KR$waz>90,NA,KR$waz)
+KR$whz<-KR$hw11/100; KR$whz<-ifelse(KR$whz>90,NA,KR$whz)
+
+#stunting, from hw5, haz 
+KR<- KR %>% mutate(stunt.cat1 =  case_when(
+  haz < -3 ~ "Severely stunted",
+  (haz >= -3 & haz < -2) ~ "Moderately stunted",
+  haz >= -2 ~ "Not stunted"))
+KR$stunt.cat1<-factor(KR$stunt.cat1, c("Severely stunted","Moderately stunted", "Not stunted"))
+KR$stunt.cat2<-ifelse(KR$haz < -2,1,0)
+
+#for underweight, from hw8, waz
+KR<- KR %>% mutate(unwgt.cat1 =  case_when(
+  waz < -3 ~ "Severely underweight",
+  (waz >= -3 & waz < -2) ~ "Moderately underweight",
+  waz >= -2 ~ "Not underweight"))
+KR$unwgt.cat1<-factor(KR$unwgt.cat1, c("Severely underweight","Moderately underweight", "Not underweight"))
+KR$undwgt<- ifelse(KR$waz < -2,1,0)
+KR$ovrwgt<-ifelse(KR$waz >2,1,0)
+
+#for wasting, from hw11, whz
+KR<- KR %>% mutate(waste.cat1 =  case_when(
+  whz < -3 ~ "Severely wasted",
+  (whz >= -3 & whz < -2) ~ "Moderately wasted",
+  whz >= -2 ~ "Not wasted"))
+KR$waste.cat1<-factor(KR$waste.cat1, c("Severely wasted","Moderately wasted", "Not wasted"))
+KR$waste.cat2<- ifelse(KR$whz < -2,1,0)
+
+#hw5, hw8, hw11 are all NAs, flagged cases. The alternative solution: code m19_1 for underweighted if m19 < 2500. 9996 == "not weighed at birth", 9998 == "don't know"
+KR <- KR %>%  mutate(low.wgt = case_when(m19 < 2500 ~ 1, 
+                                         m19 >=2500 & m19 < 9995 ~ 0, TRUE ~ NA))
+#table(KR$low.wgt) #15098 (0) 1246 (1)
+```
+
+### Record for child falling sick in the last 2 weeks
+```{r}
+#h11: from question 608:if the child had diarrhea in the last 2 weeks? 0=="no", 1=="yes, last 24 hours", 2=="yes, last two weeks", 8=="don't know".
+#h22: from question 618: if the child had fever in the last 2 weeks? 0=="no", 1=="yes", 8=="don't know".
+#h31: from question 620: if the child had cough in the last 2 weeks? 0=="no", 1=="yes, last 24 hours", 2=="yes, last two weeks", 8=="don't know".
+KR <- KR %>% mutate(kid.diar = case_when((h11== 1|h11==2) ~ 1,TRUE ~ 0))
+KR <- KR %>% mutate(kid.fever = case_when((h22== 1) ~ 1,TRUE ~ 0))
+KR <- KR %>% mutate(kid.cough = case_when((h31== 1|h31==2) ~ 1,TRUE ~ 0))
+
+KR$kid.sick[(KR$kid.diar==1 | KR$kid.fever==1 | KR$kid.cough==1)]<- 1 
+KR$kid.sick[(KR$kid.diar==0 & KR$kid.fever==0 & KR$kid.cough==0)]<-0
+KR$kid.sick <- ifelse((is.na(KR$kid.diar))&(is.na(KR$kid.fever))&(is.na(KR$kid.cough)),NA,KR$kid.sick)
+#table(KR$kid.sick)
+```
+
+### Recode for breastfeeding
+```{r}
+#KR$m4 #93=="ever breastfed, not currently breastfeeding", 95=="still breastfeeding"
+#summary(KR$b19) #Min. = 0, Max.=59
+#sum(!is.na(KR$b19)) #17848
+KR$breastfeed<-ifelse(KR$m4 == 93 | KR$m4==95,1,0)
+KR$breastfeed<-ifelse((KR$b19 < 24 & KR$b9 == 0),KR$breastfeed, NA) 
+
+KR <- KR %>%
+  mutate(comp.feed = case_when(KR$v409 == 1 | KR$v410 == 1 | KR$v411 == 1 | KR$v411a == 1 | KR$v412a == 1 |KR$v412c == 1 | KR$v413 == 1 | KR$v414e == 1  | KR$v414f == 1 |KR$v414g == 1 | KR$v414h == 1 | KR$v414i == 1 | KR$v414j == 1 |KR$v414k == 1 | KR$v414l == 1 | KR$v414m == 1 | KR$v414n == 1 |KR$v414o == 1 | KR$v414p == 1 | KR$v414s == 1 | KR$v414v == 1 ~1, TRUE ~ 0))
+
+KR$comp.feed<-ifelse((KR$b19 < 24 & KR$b9 == 0),KR$comp.feed, NA)
+
+KR$breastfeed.excl<-ifelse((KR$breastfeed==1 & KR$comp.feed==0),1,0)
+
+KR$breastfeed.n<-ifelse((KR$b19 < 24 & KR$b9 == 0),1,0)
+
+kr.mom<- KR %>% 
+  dplyr::group_by(caseid) %>% 
+  dplyr::summarize(k.rost=length(caseid), k.breast=sum(breastfeed.n, na.rm=T), breast.cnt=sum(breastfeed, na.rm=T), breastex.cnt=sum(breastfeed.excl, na.rm=T), low.wgt.cnt = sum(low.wgt, na.rm = T), kid.sick.cnt = sum(kid.sick, na.rm = T))
+#dim(kr.mom) #15357, 7
+
+#currently not include due to NAs: "haz", "waz", "whz", "stunt.cat1", "stunt.cat2", "waste.cat1", "waste.cat2", "unwgt.cat1", "undwgt", "ovrwgt"
+kr.out<- KR %>% 
+  dplyr::select(c("caseid", "low.wgt", "kid.sick", "breastfeed","breastfeed.excl"))
+#dim(kr.out) #17848, 5
+```
+
+## From BR File
+
+### Recode for immunization - zero-dose
+```{r}
+#in ETH case (similar to Cata-Preta et al, 2021), prevalence of zero-dose children was defined as those who had not received any doses of the four basic vaccines (BCG, polio (Polio 0, h0 - doses given at birth were not considered in the analyses), DPT, and MCV.
+#But MCV is not asked in ID survey. According to CISDI, MCV is not listed in the recommendation and has not been recorded as a basic vaccine in Indonesia. And Measles (MR) is given earliest for 9-month-old infants. Given the circumstance, here we consider BCG, polio and DPT.
+#The immunization cascade was generated as a score ranging from 0 to 4. Each type of vaccine accounts for one point in the cascade regardless of the number of doses. 
+#For example, a child was coded as "1" if either one, two or three doses of DPT/polio vaccine had been received. 
+
+BR <- as.data.table(BR)
+BR[,ChildAge:=(v008-b3)] # in months
+
+#h2: Whether a date of vaccination was recorded on the health card for BCG. Code 1 means the child has a date recorded for the vaccination. Code 2 is used to indicate that the respondent reported that the child had received the vaccination although the health card was not seen or did not exist, or the vaccination was not recorded on the health card, but was reported by the mother. Code 3 is used to indicate situations where the health card is clearly marked to indicate that the vaccination was given, but no date was recorded on the health card for the vaccination. BASE: The base for H2, H3, H4, H5, H6, H7, H8; H0 is living children born in the last 3 years (B19 < 36 and B5 = 1). The base for H2D, H2M, H2Y is children with a vaccination date on their card (H2 = 1).
+
+summary(BR[is.na(h2),]$ChildAge) #mix. = 1, max. = 471, median = 160 months
+summary(BR[is.na(h4),]$b8) #for Polio 1 is NA, current age of the child in single years: min.=1, max.=39
+summary(BR[is.na(h4) & b5==1,]$ChildAge) #for Polio 1 is missing and still alive, min.=14, max.=471, median=157 months
+
+#BR$h2 #0=="no", 8=="don't know", 1=="vaccination date on card", 2=="reported by mother", 3=="vaccination marked on card"
+#h3:DPT 1 vaccination; h4:Polio 1 vaccination; h5: DPT 2 vaccination; h6: Polio 2 vaccination; h7:DPT 3 vaccination; h8: Polio 3 vaccination; h9: Measles 1 vaccination; h9a:Measles 2 vaccination
+#nopolio <- BR %>% filter(h4==0) %>% dplyr::select(h4,h6,h8)
+#table(nopolio$h6) #19 has polio 2 reported even though polio1 is "no"
+
+BR[,ZeroDose:= ifelse(h2== 0 & h3== 0 & h4== 0 & h5== 0 & h6== 0 & h7== 0 & h8== 0,1,0)]
+
+BR$ZeroDose <- ifelse((is.na(BR$h2))|(is.na(BR$h3))|(is.na(BR$h4))|(is.na(BR$h5))|(is.na(BR$h6))|(is.na(BR$h7))|(is.na(BR$h8)), NA, BR$ZeroDose)
+
+BR$ZeroDose <- ifelse(BR$h2==8 |BR$h3==8|BR$h4==8 |BR$h5==8 |BR$h6==8 |BR$h7==8 |BR$h8==8,NA,BR$ZeroDose)
+#novaccine <- BR %>% filter(ZeroDose == 1)
+#dim(novaccine) there is no baby zero-dose
+
+BR[!(is.na(h2))& h2!=8,bcg:=ifelse(h2 %in% c(1,2,3),1,0)]
+BR[!(is.na(h3))& h3!=8,dpt1:=ifelse(h3 %in% c(1,2,3),1,0)]
+BR[!(is.na(h4))& h4!=8,opv1:=ifelse(h4 %in% c(1,2,3),1,0)]
+BR[!(is.na(h5))& h5!=8,dpt2:=ifelse(h5 %in% c(1,2,3),1,0)]
+BR[!(is.na(h6))& h6!=8,opv2:=ifelse(h6 %in% c(1,2,3),1,0)]
+BR[!(is.na(h7))& h7!=8,dpt3:=ifelse(h7 %in% c(1,2,3),1,0)]
+BR[!(is.na(h8))& h8!=8,opv3:=ifelse(h8 %in% c(1,2,3),1,0)]
+
+BR[,dpt:= ifelse(dpt1==1 |dpt2==1 | dpt3==1, 1, 0)]
+BR[,opv:= ifelse(opv1==1 |opv2==1 | opv3==1, 1, 0)]
+
+BR[,score:= (bcg + opv + dpt)]
+BR[,score2:= (bcg + opv1 + opv2 + opv3 + dpt1 + dpt2 + dpt3)]
+```
+
+### Recode for Child death U5, U1
+```{r}
+#b3 - Date of birth of child (CMC)
+#b5 - Child is alive (1 = Yes, 0 = No)
+#b7 - Age at death in completed months, base b5==0 (imputed)
+#v206: number of boys who died; v207: number of girls who died
+BR$hhid<-paste(BR$v001,BR$v002)
+BR$u1mort<-ifelse(BR$b7<13 & BR$b5==0,1,0)
+BR$u5mort<-ifelse(BR$b5==0,1,0)
+
+br.mom <- BR %>% 
+  dplyr::group_by(caseid) %>% 
+  dplyr::summarize(b.rost=length(caseid), zerodosecnt = sum(ZeroDose, na.rm=T), dpt1cnt = sum(dpt1, na.rm=T), avgscore=mean(score, na.rm=T), u1mortcnt = sum(u1mort, na.rm=T), u5mortcnt = sum(u5mort, na.rm=T))
+#dim(br.mom) #34199, 7
+
+br.out<- BR %>% 
+  dplyr::select(c("caseid", "v001","v002","ZeroDose","dpt1","score", "u1mort","u5mort"))
+#dim(br.out) #86265, 8
+#dim(ir.out) #49627, 20
+#dim(kr.mom) #15357, 7
+```
+
+## Outcomes
+```{r}
+outcomes <- merge(ir.out, kr.mom, by="caseid", all.x = TRUE)
+outcomes <- merge(outcomes, br.mom, by="caseid", all.x=T)
+outcomes <- merge(outcomes, stl.out, by="caseid", all.x=T)
+#dim(outcomes) #49627, 33
+```
+
+## Define and group outcomes for use in age exploration file
+### Make binary versions of some outcomes
+Underweight (not applicable now we do not have bmi for Indonesia)
+```{r}
+#outcomes$underweight <- ifelse(outcomes$bmi.cat2 == "Underweight", 1, ifelse(!is.na(outcomes$bmi.cat2), 0, NA))
+```
+
+#### Zero-dose
+```{r}
+outcomes$zerodose.yn <- ifelse(outcomes$zerodosecnt > 0 & !is.na(outcomes$zerodosecnt), 1, 
+                             ifelse(outcomes$zerodosecnt == 0, 0, NA))
+#table(outcomes$zerodose.yn)
+```
+
+#### DPT1
+```{r}
+outcomes$dpt1.yn <- ifelse(outcomes$dpt1cnt > 0 & !is.na(outcomes$dpt1cnt), 1, 
+                          ifelse(outcomes$dpt1cnt == 0, 0, NA))
+#table(outcomes$dpt1.yn)
+```
+
+#### Any deaths of kids under 1
+```{r}
+outcomes$u1mort.yn <- ifelse(outcomes$u1mortcnt > 0 & !is.na(outcomes$u1mortcnt), 1, 
+                            ifelse(outcomes$u1mortcnt == 0, 0, NA))
+#table(outcomes$u1mort.yn)
+```
+
+#### Any deaths of kids under 5
+```{r}
+outcomes$u5mort.yn <- ifelse(outcomes$u5mortcnt > 0 & !is.na(outcomes$u5mortcnt), 1, 
+                             ifelse(outcomes$u5mortcnt == 0, 0, NA))
+#table(outcomes$u5mort.yn)
+#names(outcomes)
+```
+
+## Save the update on filepath
+```{r }
+save(outcomes, file = "1_Indonesia_DHS_outcomes.RData")
+```
+
+
+
+

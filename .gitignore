@@ -1,0 +1,12 @@
+############
+
+# Ignore RStudio project files
+.Rproj.user/
+.Rhistory
+.Rprofile
+.RData
+
+# Ignore renv library and cache
+renv/library/
+renv/cache/
+renv/staging/
