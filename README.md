@@ -1,6 +1,6 @@
 # Pathways Segmentation overview
 
-The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population segmentation framework for understanding social, cultural, economic, and environmental vulnerability to improve women's health and wellbeing.
+The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population segmentation framework used for understanding social, cultural, economic, and environmental vulnerability to improve women's health and wellbeing.
 
 # Table of contents
 
@@ -60,8 +60,6 @@ The pathways-segmentation repo contains the workflow for conducting a Pathways S
 #### Hardware requirements
 
 * There are no specific hardware requirements (although compute needs for running the LCA algorithm increase in the number of repititions specified).
-
-### Get code
 
 ### Environment setup
 
@@ -152,7 +150,8 @@ The workflow is modularized according to the different phases of a segmentation 
 
 ## Quickstart
 
-1. Navigate to the [GitHub repository](https://github.com/InstituteforDiseaseModeling/pathways-segmentation) and Git Clone the repository using GitHub Desktop or any other Git method
+1. Navigate to the [GitHub repository](https://github.com/InstituteforDiseaseModeling/pathways-segmentation-public) and Git Clone the repository using GitHub Desktop or any other Git method
+2. Open the pathways-segmentation.rproj in the analyses/a-new-analysis-template folder which will automatically call renv::restore()
 2. Edit the parameters in the config.yml file
 3. Run the 1_setup.R script to set up the environment
 
@@ -195,7 +194,7 @@ The following guidance applies to coding variables:
 * functions/fun_gen_outcomes.R
 
  * Inputs:
-    * A survey dataset with one record per individual
+    * A survey dataset(s)
  * Outputs:
     * Dataframes for Health Outcomes (outcomes), Vulnerability variables (vulnerability), and combination (outcomes_vulnerability) saved as rds and csv files.
     * Pathways Workbook (xlsx) with all Outcomes, Vulnerabilities, and available metadata populated.
@@ -366,5 +365,12 @@ The following is a step-by-step walkthrough of the 8 phases of a Pathways Segmen
 3. open the 7_segment_profiles.R script and run the entire script to generate the quantitative segment profile PDF outputs
 
 ### Segment typing tool
+
+1. open the Pathways Workbook and edit the 'vulnerabilities' tab
+    * define the strata for which the variable should be included in the typing_tool_strata column
+    * set the typing_tool_include column to 1 to include in the typing tool PDF
+2. edit the final_model column in the 'params' tab to identify the final models for each strata (e.g., LCA5_class for a 5 class solution)
+2. save and close the Workbook
+3. open the 8_typing_tool.R script and run the entire script to generate the typing tool PDF outputs
 
 
