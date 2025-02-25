@@ -3,7 +3,7 @@
 # Ignore RStudio project files
 .Rproj.user/
 .Rhistory
-.Rprofile
+#.Rprofile
 .RData
 
 # Ignore renv library and cache
