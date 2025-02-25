@@ -35,23 +35,6 @@ HH_raw <- data.table(read.dta13(file = paste0(data_path, "ETHR71FL.DTA"), fromEn
 MR_raw <- data.table(read.dta13(file = paste0(data_path, "ETMR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
 
 
-###################################
-# READ IN SURVEY | PATHWAYS
-# survey <-
-
-
-###################################
-# READ IN SURVEY | MISC
-
-# # DTA
-# data <- read.dta13(file = file_path, fromEncoding="utf-8")
-
-# SAV
-
-
-# CSV
-
-
 ######################################################################
 # 1 | GENERATE VULNERABILITY FACTORS
 ######################################################################
@@ -131,11 +114,11 @@ if (create_new_pathways_workbook==TRUE){
 
   # CREATE PARAMS SHEET
   df_params <- data.frame(domains = c("Woman and her past experiences",
-                                      "Healthcare and mental models",
+                                      "Health and mental models",
                                       "Natural and human systems",
                                       "Household relationships",
-                                      "Household economics",
-                                      "Community Support"),
+                                      "Household economics and living conditions",
+                                      "Social support"),
                           strata = c("urban",
                                      "rural",
                                      NA, NA, NA, NA),
@@ -144,7 +127,7 @@ if (create_new_pathways_workbook==TRUE){
   # CREATE OUTCOMES SHEET
   df_outcomes <- data.frame(
     outcome_variable = unique(c(outcomes_vars_excel)),
-    univariate_include = NA,
+    univariate_include = 1,
     eda_include = NA,
     profile_include = NA,
     notes = NA
@@ -156,7 +139,7 @@ if (create_new_pathways_workbook==TRUE){
   # CREATE VULNERABILITY SHEET
   df_vulnerability <- data.frame(
     vulnerability_variable = unique(c(vulnerability_vars_excel)),
-    univariate_include = NA,
+    univariate_include = 1,
     eda_include = NA,
     pca_strata = NA,
     pca_include = NA,
@@ -167,16 +150,10 @@ if (create_new_pathways_workbook==TRUE){
     typing_tool_strata = NA,
     typing_tool_include = NA,
     notes = NA
-    # `Woman and her past experiences` = NA,
-    # `Healthcare and mental models` = NA,
-    # `Natural and human systems` = NA,
-    # `Household relationships` = NA,
-    # `Household economics` = NA,
-    # `Community Support` = NA
     ) %>%
     base::merge(dd_vulnerabilities, by=c("vulnerability_variable"), all.x=TRUE) %>%
     dplyr::select(vulnerability_variable, short_name, description, univariate_include, eda_include, pca_strata, pca_include, lca_strata, lca_include, profile_strata, profile_include, typing_tool_strata, typing_tool_include, notes,
-                  Woman.and.her.past.experiences, Healthcare.and.mental.models, Natural.and.human.systems, Household.relationships, Household.economics, Community.Support) %>%
+                  Woman.and.her.past.experiences, Health.and.mental.models, Natural.and.human.systems, Household.relationships, Household.economics.living.conditions, Social.support) %>%
     arrange(vulnerability_variable)
 
 

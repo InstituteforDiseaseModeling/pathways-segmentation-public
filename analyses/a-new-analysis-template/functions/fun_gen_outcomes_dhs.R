@@ -16,9 +16,6 @@
 
 ###################################
 # RUN SETUP
-# IR <- IR1
-# KR <- KR1
-# BR <- BR1
 
 
 ###################################
@@ -41,6 +38,12 @@
 # DEFINE FUNCTION
 
 gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, DHS=7){
+
+
+  # CONVERT INPUTS TO DATA.TABLE
+  IR <- data.table(IR)
+  KR <- data.table(KR)
+  BR <- data.table(BR)
 
 
   ######################################################################
@@ -83,6 +86,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, DHS=7){
                   anc.total = ifelse((m14_1 == 98 | m14_1 == "don't know"), anc.mean, anc.total),
                   anc.less4.last = ifelse(anc.total >= 4, 0, 1)) %>%
     ungroup()
+
 
   # Timing of 1st antenatal check (months)
   IR <- IR %>%
@@ -641,6 +645,11 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, DHS=7){
     base::merge(kr.out, by=c("survey", "caseid"), all.x=TRUE) %>%
     base::merge(br.out, by=c("survey", "caseid"), all.x=TRUE) %>%
     base::merge(stl.out, by=c("caseid"), all.x=TRUE)
+
+
+  # DROP SOME INTERMEDIARY VARIABLES
+  drop_vars <- c("anc.1st.mean", "anc.mean")
+  outcomes <- outcomes %>% dplyr::select(-all_of(drop_vars))
 
 
   return(outcomes)

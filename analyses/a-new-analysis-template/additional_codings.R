@@ -238,7 +238,8 @@ IR$freq.tv <- factor(IR$freq.tv)
 
 IR$tv.yn<-ifelse((IR$v159=="not at all" | is.na(IR$v159)),0,1)
 
-IR$any.media.yn <- ifelse((IR$newsp.yn == 1 | IR$rad.yn == 1 | IR$tv.yn == 1), 1, 0)
+# IR$any.media.yn <- ifelse((IR$newsp.yn == 1 | IR$rad.yn == 1 | IR$tv.yn == 1), 1, 0)
+IR$any.media.yn <- ifelse((IR$newsp.yn == 1 | IR$rad.yn == 1 | IR$tv.yn == 1), "Yes", "No")
 
 
 ######################################################################

@@ -29,9 +29,9 @@ gen_univariate_plots <- function(df=NULL, metadata=NULL, plot_path=NULL){
 
   # OUTCOMES OR VULNERABILITY
   if (grepl("vulnerability", plot_path) == TRUE){
-    input_type = "Vulnerability Factors"
+    input_type = "Vulnerability variables"
   } else if (grepl("outcomes", plot_path) == TRUE){
-    input_type = "Outcomes"
+    input_type = "Health outcomes"
   } else {
     input_type = "Unknown"
   }

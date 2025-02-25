@@ -9,9 +9,9 @@
 # RUN SETUP
 # df <- vulnerability_input
 # pca_varlist <- pca_strata_input
-#
+# #
 # stratum = "urban"
-# dom = "Woman.and.her.past.experiences"
+# dom = "Health.and.mental.models"
 
 
 ###################################
@@ -31,7 +31,7 @@ gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_name=NU
 
 
   plot(0:10, type = "n", xaxt="n", yaxt="n", bty="n", xlab = "", ylab = "")
-  text(5, 8, paste0("Principal Component Analysis | ", stratum), cex = 2)
+  text(5, 8, paste0(project_name, " | Principal component analysis | ", stratum), cex = 2)
 
   for (dom in unique(pca_varlist$domain)){
     print(paste(stratum, dom))
@@ -60,11 +60,11 @@ gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_name=NU
       dplyr::select(all_of(vulnerability_vars))
 
     tbl <- data.frame(
-      factor = names(tbl),
+      variable = names(tbl),
       data_type = sapply(tbl, class),
       levels = sapply(tbl, function(x) n_distinct(x, na.rm = TRUE))
     ) %>%
-      arrange(factor)
+      arrange(variable)
 
     n <- nrow(tbl)
     n_half <- ceiling(n/2)
@@ -92,7 +92,7 @@ gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_name=NU
 
     grid.arrange(tbl1, tbl2,
                  ncol=2,
-                 top = textGrob(paste0("Vulnerability Factors for Domain: ", dom_label), gp = gpar(fontsize = 16, fontface = "bold"))
+                 top = textGrob(paste0("Vulnerability variables for Domain: ", dom_label), gp = gpar(fontsize = 16, fontface = "bold"))
     )
 
 
@@ -238,11 +238,11 @@ gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_name=NU
 
         # QUALITY OF VARIABLE REPRSENTATION IN EACH PC
         plot2 <- as.data.frame(get_pca_var(pca_res)$cos2) %>%
-          mutate(factor = rownames(.)) %>%
-          reshape2::melt(id.var="factor", variable.name="pc", value.name = "value") %>%
+          mutate(variable = rownames(.)) %>%
+          reshape2::melt(id.var="variable", variable.name="pc", value.name = "value") %>%
           mutate(pc = str_replace(pc, "Dim.", "PC"),
                  pc_order = as.integer(str_replace(pc, "PC", ""))) %>%
-          ggplot(aes(x = reorder(pc, pc_order), y = factor, fill = value)) +
+          ggplot(aes(x = reorder(pc, pc_order), y = variable, fill = value)) +
           geom_tile(color = "white",
                     lwd = 1.5,
                     linetype = 1) +
@@ -271,7 +271,7 @@ gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_name=NU
         }
 
 
-          for (i in seq(n_pcss)){
+          for (i in seq(n_pcs)){
 
             pc = c(i, i+1)
 

@@ -1,6 +1,6 @@
 # Pathways Segmentation overview
 
-The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a statistical and epidemiological approach to creating mutually exclusive groups of women within a population based on their socio-economic characteristics and health-related behaviors.
+The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population segmentation framework for understanding social, cultural, economic, and environmental vulnerability to improve women's health and wellbeing.
 
 # Table of contents
 
@@ -31,18 +31,21 @@ The pathways-segmentation repo contains the workflow for conducting a Pathways S
 
 #### Terminology
 
-* **Segmentation strata:** How the survey data should be initially divided for the segmentation analysis i.e., how many separate segmentation solutions will be produced?  This is often times an urban/rural split.
+* **Segmentation:** The process of dividing a population into smaller sub-groups (known as segments) based on shared characteristics.
+* **Segmentation strata:** Driven by the survey design; how the survey data should be initially divided for the segmentation analysis i.e., how many separate segmentation solutions will be produced?  This is often times an urban/rural split.
 * **Health Outcome:** A health-related event (e.g., number of ANC visits, U5 mortality)
-* **Vulnerability Factor:** A characteristic or behavior of the survey respondent that is believed to influence health vulnerability in some way.
-* **Pathways Domain:** A characteristic grouping of Vulnerability Factors.  A Vulnerability Factor can be associated with multiple Domains. There are 6 Domains total:
+* **Vulnerability factor:** A specific fact, situation, or construct that helps define how women experience vulnerability.
+* **Vulnerability variable:** A standardized way of quantifying factors so they can be used in statistical analysis.
+* **Pathways Domain:** A characteristic grouping of Vulnerability factors.  A Vulnerability Factor can be associated with multiple Domains. There are 6 Domains total:
     * Woman and her past experiences
-    * Healthcare and Mental Models
-    * Natural and Human Systems
-    * Household Relationships
-    * Household Economics
-    * Community Support
-* **Segmentation solution:** A population classification solution with N mutually exclusive groups created from a set of Vulnerability Factors and using latent classifiction analysis (LCA).
-* **Quantitative segmentation profile:** Health Outcomes and Vulnerability Factors viewed from the perspective of the segmentation solution highlighting differences across the segments.
+    * Health mental models
+    * Natural and human systems
+    * Household relationships
+    * Household economics and living conditions
+    * Social Support
+* **Segmentation solution:** The final set of segments resulting from completing the Pathways Segmentation methodology.
+* **Cluster analysis:** A statistical method used to organize observations into meantinful groups - or clusters - that share common characteristics.  The standard Pathways methodology uses latent classification analysis (LCA).
+* **Quantitative segmentation profile:** Health Outcomes and Vulnerability variables viewed from the perspective of the segmentation solution highlighting differences across the segments.
 
 ## Prerequisites
 
@@ -68,7 +71,7 @@ This project also uses the R "config" library and methods for defining file path
 
 ## The Pathways Workbook
 
-The Pathways Segmentation workflow is anchored by an Excel workbook that drives and captures decisions made throughout each phase of the analysis.  The workflow is designed so that, outside of generating the initial datasets for Health Outcomes and Vulnerability Factors in the data cleaning and variable generation phase, very little code needs to be edited directly.
+The Pathways Segmentation workflow is anchored by an Excel workbook that drives and captures decisions made throughout each phase of the analysis.  The workflow is designed so that, outside of generating the initial datasets for Health Outcomes and Vulnerability variables in the data cleaning and variable generation phase, very little code needs to be edited directly.
 
 ### Generating the Pathways Workbook
 
@@ -91,7 +94,7 @@ There are separate parameters in the config file for the "existing" and "new" Pa
     * **eda_include:** include in the exploratory analysis PDF plots
     * **profile_include:** include in the quantitative profile PDF plots
     * **notes:** space to capture information about decisions made, observations, etc
-* **vulnerabilities:** Vulnerability Factors used in the analysis; inclusion/exclusion decisions for each phase are drien from this tab.
+* **vulnerabilities:** Vulnerability variables used in the analysis; inclusion/exclusion decisions for each phase are drien from this tab.
     * **vulnerability_variable:** the name of the vulnerability_factor as defined in the coding scripts and datasets
     * **short_name:** the friendly label of the vulnerability variable that is used in plotting
     * **description:** variable definition
@@ -121,11 +124,11 @@ The workflow is modularized according to the different phases of a segmentation 
 
 * config - template.yml: define file paths and some commonly used variables throughout the analysis
 * 1_setup.R: create the environment for the project and import basic project files
-* 2_data_cleaning.R: generate the health Outcomes and Vulnerability Factors used through the analysis
+* 2_data_cleaning.R: generate the health Outcomes and Vulnerability variables used through the analysis
 * 3_univariate_analysis.R: generate a PDF output of univariate visualizations for each Outcome and Vulnerability Factor
 * 4_exploratory_analysis.R: generate a PDF output of exploratory plots to capture the relationship between each Vulnerability Factor and all health Outcomes
-* 5_principal_component_output.R: generate a PDF output of Principal Component Analysis for all Vulnerability Factors within a Pathways Domain
-* 6_latent_classification_output.R: generate a population segmentation output using a set of Vulnerability Factors
+* 5_principal_component_output.R: generate a PDF output of Principal Component Analysis for all Vulnerability variables within a Pathways Domain
+* 6_latent_classification_output.R: generate a population segmentation output using a set of Vulnerability variables
 * 7_segment_profiles.R: generate the quantitative profile segmentation plots for a segmentation solution
 * 8_typing_tool.R: generate the outputs to help define which variables should be used in developing a Pathways typing tool.
 * functions/*: functions called throughout each module of the workflow.
@@ -179,13 +182,13 @@ In this phase we set up the R environment for the analysis, including:
 
 ### Data cleaning and variable generation
 
-In this phase we import the survey data, clean the data, and code the Health Outcomes and Vulnerability Factors.  We assume that these are defined survey-specific based on the location, time, and sample population characteristics of the survey.
+In this phase we import the survey data, clean the data, and code the Health Outcomes and Vulnerability variables.  We assume that these are defined survey-specific based on the location, time, and sample population characteristics of the survey.
 
 The following guidance applies to coding variables:
 
 * **Health Outcomes:** Health Outcomes should be defined as binary 0/1 variables with 1 representing the less disirable health/behavioral state.  For example, the variable anc.less4.last should = 1 when the individual had 3 or less ANC visits during the most recent pregnancy and = 0 when there were 4 or more ANC visits.  Continuous variables may also be created for Health Outcomes but they will not fit into the quantitative segment profiling phase well.  Multi-level categorical variables should not be used as Health Outcomes as their complex interpretation as a dependent variable does not fit into the exploratory data analysis regression analysis.
 
-* **Vulnerability Factors:** Vulnerability Factors have more freedom in how they are defined relative to Health Outcomes as multi-level categorical variables are expected and it's often less clear what which is the more "positive" or "negative" state.  For example, type of work (Agricultural, Professional, etc.).  Variables should be coded as binary/categorical data type, or have an additional categorical version of the variable, as all phases beyond Exploratory Analysis are effectively treated as categorical. Continuous Vulnerability Factors can be created to be used in the Univariate and Exploratory Analysis phases in order to help identify thresholds and gradients across variable states.
+* **Vulnerability variables:** Vulnerability variables have more freedom in how they are defined relative to Health Outcomes as multi-level categorical variables are expected and it's often less clear what which is the more "positive" or "negative" state.  For example, type of work (Agricultural, Professional, etc.).  Variables should be coded as binary/categorical data type, or have an additional categorical version of the variable, as all phases beyond Exploratory Analysis are effectively treated as categorical. Continuous Vulnerability variables can be created to be used in the Univariate and Exploratory Analysis phases in order to help identify thresholds and gradients across variable states.
 
 **Scripts used:** The parent script 2_data_cleaning.R calls the function defined in:
 * functions/fun_gen_vulnerabilities.R
@@ -194,12 +197,12 @@ The following guidance applies to coding variables:
  * Inputs:
     * A survey dataset with one record per individual
  * Outputs:
-    * Dataframes for Health Outcomes (outcomes), Vulnerability Factors (vulnerability), and combination (outcomes_vulnerability) saved as rds and csv files.
+    * Dataframes for Health Outcomes (outcomes), Vulnerability variables (vulnerability), and combination (outcomes_vulnerability) saved as rds and csv files.
     * Pathways Workbook (xlsx) with all Outcomes, Vulnerabilities, and available metadata populated.
 
 ### Univariate analysis
 
-In this phase we generate univariate distribution plots (in PDF) for each of the Health Outcomes and Vulnerability Factors. These plots help us to understand the following:
+In this phase we generate univariate distribution plots (in PDF) for each of the Health Outcomes and Vulnerability variables. These plots help us to understand the following:
 
 * Is the variable coded as expected?
 * What is the sample size of the variable?
@@ -219,7 +222,7 @@ In this phase we generate univariate distribution plots (in PDF) for each of the
 
 ### Exploratory analysis
 
-In this phase we generate exploratory plots (in PDF) that identify the relationship between Vulnerability Factors and Health Outcomes. We want to create a segmentation solution using Vulnerability Factors that have a statistically significant relationship with relevant Health Outcomes. The PDF output contains bivariate regression results by Vulnerability Factor and the full set of Health Outcome (regress Outcome on Vulnerability Factor); these outputs help us determine the following:
+In this phase we generate exploratory plots (in PDF) that identify the relationship between Vulnerability variables and Health Outcomes. We want to create a segmentation solution using Vulnerability variables that have a statistically significant relationship with relevant Health Outcomes. The PDF output contains bivariate regression results by Vulnerability Factor and the full set of Health Outcome (regress Outcome on Vulnerability Factor); these outputs help us determine the following:
 
 * Is the Vulnerability Factor consistently associated with important Health Outcomes (e.g., ANC visits, U5 mortality)
 * Can some levels in a categorical variable be collapsed based on their relationship with important Health Outcomes?  I.e., is the predicted probability of the Health Outcome effectively the same for multiple categories?
@@ -238,10 +241,10 @@ In this phase we generate exploratory plots (in PDF) that identify the relations
 
 ### Principal component analysis (PCA)
 
-In this phase we are looking to reduce dimensionality of Vulnerability Factors within a Pathways Domain. From this phase forward, the analyses are conducted separately for each Segmentation strata. The PDF outputs help us determine the following:
+In this phase we are looking to reduce dimensionality of Vulnerability variables within a Pathways Domain. From this phase forward, the analyses are conducted separately for each Segmentation strata. The PDF outputs help us determine the following:
 
 * Wich variables are highly correlated with each other and can be dropped from the next (LCA) phase?
-* Do we have Vulnerability Factors from each Domain included before we move to the LCA phase?
+* Do we have Vulnerability variables from each Domain included before we move to the LCA phase?
 * Are the data types correct?
 
 **Scripts used:** The parent script 5_principal_component_analysis.R calls the function defined in functions/fun_pca_output.R
@@ -254,7 +257,7 @@ In this phase we are looking to reduce dimensionality of Vulnerability Factors w
 
 ### Latent classification analysis (LCA)
 
-In this critical phase we input a set of Vulnerability Factors into the LCA algorithm to generate a series of n-class solutions (n = [2,10]). This phase is conducted separately for each segmentation strata. There are two types of PDF outputs generated at this phase: diagnostic plots, which focus on the statistical properties of the classification solution, and exploratory plots which focus on the differences across the input variables based on the classes of the output. This approach balances statistical and socio-epidemiological criteria in deciding upon the correct n-class solution.
+In this critical phase we input a set of Vulnerability variables into the LCA algorithm to generate a series of n-class solutions (n = [2,10]). This phase is conducted separately for each segmentation strata. There are two types of PDF outputs generated at this phase: diagnostic plots, which focus on the statistical properties of the classification solution, and exploratory plots which focus on the differences across the input variables based on the classes of the output. This approach balances statistical and socio-epidemiological criteria in deciding upon the correct n-class solution.
 
 **Scripts used:** The parent script 6_latent_classification_algorithm.R calls the functions defined in:
 
@@ -274,7 +277,7 @@ In this critical phase we input a set of Vulnerability Factors into the LCA algo
 
 ### Quantitative segment profiling
 
-In this phase we have chosen our n-class solution and want to view how the larger scope of Health Outcomes and Vulnerability Factors differ across the segments. 
+In this phase we have chosen our n-class solution and want to view how the larger scope of Health Outcomes and Vulnerability variables differ across the segments. 
 
 These visual outputs help us to create a quantitative narrative for each segment. 
 
@@ -283,13 +286,19 @@ These visual outputs help us to create a quantitative narrative for each segment
 * Inputs:
     * Pathways Workbook
     * Country shp file
-    * outcomes_vulnerability dataframe
+    * outcomes_vulnerability_class dataframe
 * Outputs:
     * {x}_segment_profile_plots.pdf (where x is Segmentation strata)
 
 ### Segment typing tool
 
-In this phase we use statistical methods to identify a parsimonious set of Vulnerability Factors that determine segment membership.  The overarching goal for this phase is to develop the inputs for a questionnaire tool that can be used to classify out-of-sample women.
+In this phase we use statistical methods to identify a parsimonious set of Vulnerability variables that determine segment membership.  The overarching goal for this phase is to develop the inputs for a questionnaire tool that can be used to classify out-of-sample women.
+
+* Inputs:
+    * Pathways Workbook
+    * outcomes_vulnerability_class dataframe
+* Outputs:
+    * typing_tool_outputs_{x}.pdf (where x is Segmentation strata)
 
 ## Pathways Segmentation analysis walkthrough
 
@@ -301,13 +310,13 @@ The following is a step-by-step walkthrough of the 8 phases of a Pathways Segmen
 2. rename the config - template.yml to config.yml (this file name will automatically be picked up when config:: functions are called)
 3. open the pathways-segmentation.Rpoj file to automatically set the working directory
 4. from within RStudio, open and edit the config.yml parameters directly
-5. open the 1_setup.R script and run the entire script to install libraries, define input variables, and set file paths
+5. open the 1_setup.R script and run the entire script to install libraries, define input variables, and set file paths.
 6. import the Pathways Workbook if config.create_new_pathways_workbook == FALSE, if starting a new analysis set this parameter to TRUE
 
 ### Data cleaning and variable generation 
 
 1. open the 2_data_cleaning.R script and ensure the code to read in the survey data is correct
-2. edit functions/fun_gen_vulnerabilities.R to define the initial coding for Vulnerability Factors
+2. edit functions/fun_gen_vulnerabilities.R to define the initial coding for Vulnerability variables
 3. edit functions/fun_get_outcomes.R to define the initial coding for Health Outcomes
 4. create a new Pathways Workbook if config.create_new_pathways_workbook == FALSE
 5. review the contents of this workbook and fill in any missing values
@@ -321,7 +330,7 @@ The following is a step-by-step walkthrough of the 8 phases of a Pathways Segmen
 
 ### Exploratory analysis
 
-1. edit the eda_include columns in the 'outcomes' and 'vulnerabilities' tabs in the Pathways Workbook, set to 1 to include variable in the Exploratory Analysis PDFs
+1. edit the eda_include columns in the 'outcomes' and 'vulnerabilities' tabs in the Pathways Workbook, set to 1 to include variable in the Exploratory Analysis PDFs.  By default all variables created in the data cleaning phase are set to be included.
 2. save and close the Workbook
 3. open the 4_exploratory_analysis.R script and run the entire script to generate the PDF outputs
 4. review the PDF outputs and make any changes to to the function scripts in the Variable Generation step

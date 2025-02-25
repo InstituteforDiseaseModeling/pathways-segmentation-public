@@ -125,7 +125,7 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
           res_glm <- svyglm(outcome ~ var, family=quasibinomial, design=df.design, data=df1)
 
 
-          # VULNERABILITY FACTOR IS NUMERIC
+          # VULNERABILITY VARIABLE IS NUMERIC
           if (exp.numeric == TRUE){
 
 
@@ -149,10 +149,10 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
                             model = stratum)
                             # DNF_status = status)
 
-            tbl_text = paste0("Binary Outcome variable: ", out, " and numeric Vulnerability Factor: ", measure, ". Odds ratio displayed.")
+            tbl_text = paste0("Binary Outcome variable: ", out, " and numeric Vulnerability variable: ", measure, ". Odds ratio displayed.")
 
 
-          # VULNERABILITY FACTOR IS CATEGORICAL
+          # VULNERABILITY VARIABLE IS CATEGORICAL
           } else if (exp.character == TRUE){
 
 
@@ -176,7 +176,7 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
                             ref_cat_class = case_when(var == ref_cat ~ "Yes",
                                                       TRUE ~ "No"))
 
-            tbl_text = paste0("Binary Outcome variable: ", out, " and categorical Vulnerability Factor: ", measure, ". Odds ratio displayed.")
+            tbl_text = paste0("Binary Outcome variable: ", out, " and categorical Vulnerability variable: ", measure, ". Odds ratio displayed.")
 
 
           }
@@ -189,7 +189,7 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
           res_glm <- svyglm(outcome ~ var, family=gaussian(link ="identity"), design=df.design, data=df1)
 
 
-          # VULNERABILITY FACTOR IS NUMERIC
+          # VULNERABILITY VARIABLE IS NUMERIC
           if (exp.numeric == TRUE){
 
 
@@ -209,10 +209,10 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
                             model = stratum)
                             # DNF_status = status)
 
-            tbl_text = paste0("Numeric Outcome variable: ", out, " and numeric Vulnerability Factor: ", measure, ". Regression coefficient displayed.")
+            tbl_text = paste0("Numeric Outcome variable: ", out, " and numeric Vulnerability variable: ", measure, ". Regression coefficient displayed.")
 
 
-          # VULNERABILITY FACTOR IS CATEGORICAL
+          # VULNERABILITY VARIABLE IS CATEGORICAL
           } else if (exp.character == TRUE){
 
 
@@ -233,7 +233,7 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
                             ref_cat_class = case_when(var == ref_cat ~ "Yes",
                                                       TRUE ~ "No"))
 
-            tbl_text = paste0("Numeric Outcome variable: ", out, " and categorical Vulnerability Factor: ", measure, ". Regression coefficient displayed.")
+            tbl_text = paste0("Numeric Outcome variable: ", out, " and categorical Vulnerability variable: ", measure, ". Regression coefficient displayed.")
 
 
           }
@@ -422,7 +422,7 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
           ylab("") +
           # ylim(0, 1) +
           scale_fill_brewer(palette="Dark2") +
-          ggtitle(paste0("Survey weighted distribution of vulnerability factor: ", measure_label))
+          ggtitle(paste0("Survey weighted distribution of vulnerability variable: ", measure_label))
         # print(plot3)
 
 
@@ -468,7 +468,7 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
           ylim(0, 1) +
           scale_x_discrete(labels = function(x) str_wrap(x, width = 15), guide = guide_axis(check.overlap = TRUE)) +
           scale_fill_brewer(palette="Dark2") +
-          ggtitle(paste0("Survey weighted distribution of vulnerability factor: ", measure_label))
+          ggtitle(paste0("Survey weighted distribution of vulnerability variable: ", measure_label))
         # print(plot3)
 
 
@@ -577,7 +577,7 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
       )
 
     }, error = function(e) {
-      message(paste0(out, " ~ ", measure, " did not fit; check values for Outcome and Vulnerability Factor"))
+      message(paste0(out, " ~ ", measure, " did not fit; check values for Outcome and Vulnerability variable"))
     }
 
     )
