@@ -151,7 +151,7 @@ The workflow is modularized according to the different phases of a segmentation 
 ## Quickstart
 
 1. Navigate to the [GitHub repository](https://github.com/InstituteforDiseaseModeling/pathways-segmentation-public) and Git Clone the repository using GitHub Desktop or any other Git method
-2. Open the pathways-segmentation.rproj in the analyses/a-new-analysis-template folder which will automatically call renv::restore()
+2. Open the pathways-segmentation.rproj in the analyses/a-new-analysis-template folder and run renv::restore() in the console to install project libraries
 2. Edit the parameters in the config.yml file
 3. Run the 1_setup.R script to set up the environment
 
