@@ -7,7 +7,7 @@ default:
   ## PROJECT DETAILS AND FILE PATH ROOTS
   project_name: "Ethiopia DHS 2016"
   root_path: "C:/Users/jeremyco/OneDrive - Bill & Melinda Gates Foundation/scenario_dhs_ethiopia_2016/"
-  user_path: "workshop/"
+  user_path: "workshop_prep/"
 
 
   ## PATHWAYS WORKBOOK PARAMETERS

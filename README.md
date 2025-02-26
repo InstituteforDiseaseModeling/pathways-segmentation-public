@@ -31,11 +31,20 @@ The pathways-segmentation repo contains the workflow for conducting a Pathways S
 
 #### Terminology
 
+* **Vulnerability:** The quality or state of potentially being harmed, either physically, socially, cognitively, or emotionally, related to reproductive, newborn, maternal and child health and nutrition
+
+* **Segment:**
+
 * **Segmentation:** The process of dividing a population into smaller sub-groups (known as segments) based on shared characteristics.
+
 * **Segmentation strata:** Driven by the survey design; how the survey data should be initially divided for the segmentation analysis i.e., how many separate segmentation solutions will be produced?  This is often times an urban/rural split.
-* **Health Outcome:** A health-related event (e.g., number of ANC visits, U5 mortality)
+
+* **Health Outcome:** A health-related event (e.g., number of ANC visits, U5 mortality).
+
 * **Vulnerability factor:** A specific fact, situation, or construct that helps define how women experience vulnerability.
-* **Vulnerability variable:** A standardized way of quantifying factors so they can be used in statistical analysis.
+
+* **Vulnerability variable (measures):** A standardized way of quantifying factors so they can be used in statistical analysis.
+
 * **Pathways Domain:** A characteristic grouping of Vulnerability factors.  A Vulnerability Factor can be associated with multiple Domains. There are 6 Domains total:
     * Woman and her past experiences
     * Health mental models
@@ -43,8 +52,11 @@ The pathways-segmentation repo contains the workflow for conducting a Pathways S
     * Household relationships
     * Household economics and living conditions
     * Social Support
+
 * **Segmentation solution:** The final set of segments resulting from completing the Pathways Segmentation methodology.
-* **Cluster analysis:** A statistical method used to organize observations into meantinful groups - or clusters - that share common characteristics.  The standard Pathways methodology uses latent classification analysis (LCA).
+
+* **Cluster analysis:** A statistical method used to organize observations into meantinful groups - or clusters - that share common characteristics.  The standardized Pathways methodology uses latent class analysis (LCA).
+
 * **Quantitative segmentation profile:** Health Outcomes and Vulnerability variables viewed from the perspective of the segmentation solution highlighting differences across the segments.
 
 ## Prerequisites

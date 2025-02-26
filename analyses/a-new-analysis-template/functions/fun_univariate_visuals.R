@@ -77,6 +77,7 @@ gen_univariate_plots <- function(df=NULL, metadata=NULL, plot_path=NULL){
         #
         # plot_label = df_plot$short_name[1]
         plot_label = metadata[metadata$indicator == var, c("short_name")][[1]]
+        plot_label = paste0(plot_label, " (", var, ")")
 
 
         # LOGIC FOR HANDLING NAS

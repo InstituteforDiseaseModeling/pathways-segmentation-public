@@ -153,7 +153,7 @@ if (create_new_pathways_workbook==TRUE){
     ) %>%
     base::merge(dd_vulnerabilities, by=c("vulnerability_variable"), all.x=TRUE) %>%
     dplyr::select(vulnerability_variable, short_name, description, univariate_include, eda_include, pca_strata, pca_include, lca_strata, lca_include, profile_strata, profile_include, typing_tool_strata, typing_tool_include, notes,
-                  Woman.and.her.past.experiences, Health.and.mental.models, Natural.and.human.systems, Household.relationships, Household.economics.living.conditions, Social.support) %>%
+                  Woman.and.her.past.experiences, Health.and.mental.models, Natural.and.human.systems, Household.relationships, Household.economics.and.living.conditions, Social.support) %>%
     arrange(vulnerability_variable)
 
 
