@@ -1,5 +1,5 @@
 rm(list=ls())
-pacman::p_load(RODBC, dplyr, tidyverse, openxlsx, tidyselect)
+pacman::p_load(RODBC, dplyr, tidyverse, tidyselect)
 pacman::p_load("foreign", "stringr", "magrittr", "reshape2", "data.table", "psych", "vtable", "corrplot", "haven", 
                "survey", "ggplot2", "dplyr", "tidyr", "sf", "RColorBrewer")
 #conn <- odbcConnect("IDMAzureDatabricks_DSN") 

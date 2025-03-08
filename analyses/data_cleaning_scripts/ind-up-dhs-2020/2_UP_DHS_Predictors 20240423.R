@@ -1,5 +1,5 @@
 rm(list=ls())
-pacman::p_load(RODBC, dplyr, tidyverse, openxlsx, tidyselect)
+pacman::p_load(RODBC, dplyr, tidyverse, tidyselect)
 pacman::p_load("foreign", "stringr", "magrittr", "reshape2", "data.table", "psych", "vtable", "corrplot", "haven", 
                "survey", "ggplot2", "dplyr", "tidyr", "sf", "RColorBrewer", "readxl")
 #conn <- odbcConnect("IDMAzureDatabricks_DSN") 
@@ -1485,7 +1485,7 @@ HH$v002 <- HH$hv002
 
 IR.HH <- base::merge(IR, HH, by=c("v001", "v002"), all.x=T)
 
-predictors <- read_excel("UP_DHS_2020_Data_Dictionary.xlsx", sheet="predictors")
+predictors <- read.csv("UP_DHS_2020_Data_Dictionary.csv", fileEncoding = "UTF-8")
 predictors <- predictors %>% 
   select(varnames) %>%
   filter(!is.na(varnames))

@@ -1,0 +1,133 @@
+category,outcome_variable,short_name,description
+Pregnancy/postpartum​,anc.1sttri,ANC 1st Tri,ANC started In 1st trimester
+Pregnancy/postpartum​,anc.1stvisit,ANC 1st Visit,Month of first ANC visit
+Pregnancy/postpartum​,anc.4plus,anc.4plus,Had 4+ ANC visits during the last pregancy
+Pregnancy/postpartum​,anc.less4,ANC Less Than 4,If <4 ANC visits then =1
+Pregnancy/postpartum​,anc.less4.last,ANC Visits < 4,If <4 ANC visits then =1
+Pregnancy/postpartum​,anc.month,ANC Month,Categorical variable for month of first ANC visit
+Pregnancy/postpartum​,anc.num,ANC Visits,Number of ANC visits
+Pregnancy/postpartum​,anc.start,ANC 1st Visit,in which month of pregnancy start ANC visits
+Pregnancy/postpartum​,anc.total,anc.total,Total # of ANC visits
+Pregnancy/postpartum​,baby.nohlthck,No Baby Checkup,If no baby health check then =1
+Pregnancy/postpartum​,baby.nohlthck1,Baby No HlthChk 2mos,Baby did not have a health check before being discharged or within 2 months of birth
+Malnourishment,bmi1,BMI,Body Mass Index
+Child care behaviors,breastfed,breastfed,whether the last child was breastfed
+Child care behaviors,breastfed.6mo,breastfed.6mo,whether the last child was breastfed for at least 6 months
+Child care behaviors,breastfeed.cnt,Breastfed Child Count,Count of children breastfed
+Child care behaviors,breastfeed.yn,Breastfed Y/N,If any child breastfed then =1
+Child health,dau.hosp_sum,dau.hosp_sum,total number of daughters hospitalized
+Child mortality,death.u5,death.u5,whether had child born alive but died before 5 years old
+Child mortality,death.u5.dau,death.u5.dau,whether had daughter born alive but died before 5 years old
+Child mortality,death.u5.son,death.u5.son,whether had boy born alive but died before 5 years old
+Women's health,depress,depress,"whether has stree and pression in general (take depress.mean < 3, because 1=always, 2= most of the time, 3=half the time, 4=rarely, 5=never)"
+Women's health,depress.mean,depress.mean,average status of depression and stress
+Child care behaviors,dpt.full.cnt,DPT Immz Count,Count of children immz DPT
+Child care behaviors,dpt.full.yn,DPT Immz Y/N,If any child DPT immz then =1
+Women's health,fp.current.any,fp.current.any,whether she is currently using any FP
+Women's health,fp.current.modern,fp.current.modern,whether she is currently using modern FP
+Women's health,fp.previous.any,fp.previous.any,whether she ever used any FP
+Women's health,fp.previous.modern,fp.previous.modern,whether she ever used any modern FP
+Child health,haz.last,HAZ Last,Height/Age Standard Deviation <-2 below the mean
+Pregnancy/postpartum​,hb.1,Home Birth Latest,If latest birth was home birth then =1
+Pregnancy/postpartum​,hb.dau,hb.dau,the number of daughters she delivered at home
+Pregnancy/postpartum​,hb.dau.yn,hb.dau.yn,whether she has delivered a daughter at home
+Pregnancy/postpartum​,hb.son,hb.son,the number of sons she delivered at home
+Pregnancy/postpartum​,hb.son.yn,hb.son.yn,whether she has delivered a son at home
+Pregnancy/postpartum​,hb.sum,hb.sum,total number of home births
+Pregnancy/postpartum​,hb.sum.3plus,hb.sum.3plus,whether she has had 3 or more home births
+Pregnancy/postpartum​,hb.sum.yn,hb.sum.yn,whether she has ever delivered a baby at home
+Women's health,her.ill.3mo,her.ill.3mo,whether she had any of the above illness
+Women's health,her.ill.4plus,her.ill.4plus,whether she had more than 4 illness
+Women's health,her.ill.sum,her.ill.sum,total reported illness
+Women's health,her.wasting,her.wasting,whether woman is wasting
+Women's health,idds,IDDS,Individual Dietary Diversity Score
+Child health,kid.hosp,kid.hosp,whether any kid hospitalized
+Child health,kid.ill.3mo,kid.ill.3mo,whether children had any of the above illness
+Child health,kid.ill.3plus,kid.ill.3plus,whether children has more than 3 illness
+Child health,kid.ill.sum,kid.ill.sum,total reported illness
+Child health,kid.stunt,kid.stunt,whether has any child stunting
+Child care behaviors,meas.full.cnt,MMR Immz Count,Count of children immz MMR
+Child care behaviors,meas.full.yn,MMR Immz Y/N,If any child MMR immz then =1
+Women's health,mens.noboth,,
+Women's health,mens.nopriv,,
+Women's health,mens.noprod,,
+Pregnancy/postpartum​,no.anc.1st.tri,No ANC 1st Tri,No ANC visit in first trimester
+Child care behaviors,no.breastfed,Breastfed Last Y/N,If last child not breastfed then =1
+Child care behaviors,no.breastfed2,No Breastfed Last,Did not breastfeed last child
+Women's health,nofp.dis.5yr,No FP Dis 5yr,Discontinued use of a modern FP method in the past 5 years
+Women's health,nofp.mod.ever,No Modern FP Use,If no modern family planning method use ever then =1
+Women's health,nofp.mod.now,No Modern FP Use Now,If not currently using modern family planning method then =1
+Child health,obese,Obese,Obese
+Child health,overweight.obese,Overweight/Obese,Overweight or obese
+Child health,ovrwgt.cnt,Overweight Child Count,Count of children overweight
+Child health,ovrwgt.last,Overweight Last,Last child is overweight
+Child health,ovrwgt.yn,Overweight Child Y/N,If any child overweight then =1
+Child care behaviors,polio.full.cnt,Polio Immz Count,Count of children immz polio
+Child care behaviors,polio.full.yn,Polio Immz Y/N,If any child Polio immz then  =1
+Pregnancy/postpartum​,preg.current,preg.current,whether currently pregnant
+Pregnancy/postpartum​,preg.live,preg.live,number of live births
+Pregnancy/postpartum​,preg.loss,preg.loss,whether had any pregnancy loss
+Pregnancy/postpartum​,preg.loss.num,preg.loss.num,"total number of pregancy loss (sum of stillbirth, abortion, miscarriage)"
+Pregnancy/postpartum​,preg.num,preg.num,"total number of pregnancy (sum of live births, still birth, abortion, miscarriage)"
+Pregnancy/postpartum​,preg.risk,preg.risk,whether any of the above risk was true
+Pregnancy/postpartum​,preg.risk.anc,preg.risk.anc,whether told by professional she needed to go more often for ANC checkups
+Pregnancy/postpartum​,preg.risk.deliver,preg.risk.deliver,whether told by professional she needed to go to hospital for delivery
+Pregnancy/postpartum​,preg.risk.diff,preg.risk.diff,whether told by professional she would have a difficult birth
+Pregnancy/postpartum​,preg.risk.surgery,preg.risk.surgery,whether told by professional she might need surgery during delivery
+Child health,son.hosp_sum,son.hosp_sum,total number of sons hospitalized
+Child mortality,stl.cnt,Stillbirth Cnt,Stillbirth children count
+Child mortality,stl.yn,Still birth Y/N,If any still births then =1
+Child health,stunt.cat1.last,Stunt Cat 1,Categorical variable for child stunting
+Child health,stunt.cat2.cnt,Stunted Child Count,Count of stunted children
+Child health,stunt.cat2.last,Stunted Last Y/N,Binary outcome for last child stunted (<-2 HAZ)
+Child health,stunt.cat2.yn,Stunted Child Y/N,If any child stunted then =1
+Child health,stunt_sum,stunt_sum,total number of children stunting
+Child mortality,u1mort.yn,U1 Mortality Y/N,If any u1 mortality then =1
+Child mortality,u1mortcnt,U1 Mortality Cnt,Count of under 1 year old mortality
+Child mortality,u5mort.yn,U5 Mortality Y/N,If any u5 mortality then =1
+Child mortality,u5mortcnt,U5 Mortality Cnt,Count of under 5 year old mortality
+Women's health,underweight,Underweight,If woman is underweight
+Child health,undwgt.cnt,Underweight Child Count,Count of children underweight
+Child health,undwgt.last,Underweight Last,Last child is underweight
+Child health,undwgt.yn,Underweight Child Y/N,If any child underweight then =1
+Child health,waste.cat2.cnt,Wasted Child Count,Count of wasted children
+Child health,waste.cat2.yn,Wasted Child Y/N,If any child wasted then =1
+Child health,waz.last,WAZ Last,Weight/Age Standard Deviation <-2 below the mean
+Child health,whz.last,WHZ Last,Weight/Height Standard Deviation <-2 below the mean
+Pregnancy/postpartum​,wom.nohlthck,No Woman Checkup,If no woman health check then=1
+Pregnancy/postpartum​,wom.nohlthck1,Wom No Hlth Chk,Woman did not have a health check after birth
+Child care behaviors,zerodose.cnt,Zero Dose Immz Count,Count of children w/o any DPT immz
+Child care behaviors,zerodose.yn,Zero Dose Immz Y/N,If any child without DPT immz then =1
+Child health,ari.cnt,Acute Respitory Illness Count,
+Child health,ari.last,Acute Respitory Illness Last,
+Women's health,bmi,BMI,
+Child care behaviors,care.cnt,Care Count,
+Child health,chest.prob.cnt,Chest Prob Count,
+Child health,chest.prob.last,Chest Prob Last,
+Child health,chest.prob.yn,Chest Prob Y/N,
+Child health,cough.2wks.last,Cough 2 Weeks Last,
+Child health,cough.cnt,Cough Count,
+Child health,cough.yn,Cough Y/N,
+Child health,diarrhea.2wks.last,Diarrhea 2 Weeks Last,
+Child health,diarrhea.cnt,Diarrhea Count,
+Child health,diff.breath.cnt,Diff Breathing Count,
+Child health,diff.breath.last,Diff Breathing Last,
+Child health,diff.breath.yn,Diff Breathing Y/N,
+Child health,fever.2wks.last,Fever 2 Weeks Last,
+Child health,fever.cnt,Fever Count,
+Child health,fever.cough.2wks.last,Fever / Cough 2 Weeks Last,
+Child health,fever.yn,Fever Y/N,
+Pregnancy/postpartum​,home.birth.cnt,Home Birth Count,
+Pregnancy/postpartum​,home.birth.last,Home Birth Last,
+Pregnancy/postpartum​,home.birth.yn,Home Birth Y/N,
+Child care behaviors,no.breastfeed.cnt,No Breastfeed Count,
+Child care behaviors,no.breastfeed.last,No Breastfeed Last,
+Child care behaviors,no.breastfeed.yn,No Breastfeed Y/N,
+Child care behaviors,no.breastfeed2.cnt,No Breastfeed 2 Count,
+Child care behaviors,no.breastfeed2.last,No Breastfeed 2 Last,
+Child care behaviors,no.breastfeed2.yn,No Breastfeed 2 Y/N,
+Child care behaviors,no.fever.cough.care.yn,No Fever / Cough Care Y/N,
+Child mortality,u1mort.cnt,U1 Mortality Count,
+Child mortality,u5mort.cnt,U5 Mortality Count,
+Child health,waste.cat2.last,Wasted Child Last,
+Women's health,woman.underweight,Woman Underweight,

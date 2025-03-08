@@ -85,7 +85,7 @@ The Pathways Segmentation workflow is anchored by an Excel workbook that drives 
 
 ### Generating the Pathways Workbook
 
-While possible to create this workbook manually; there is a process in the data_cleaning.R script to generate this workbook directly using the variables coded in fun_gen_outcomes.R and fun_gen_vulnerabilities.R scripts.  These variable lists will join with the "pathways data dictioary.xlsx" in the top repo folder to get additional metadata about these variables (if they exist) before creating the tab in the Excel workbook.  There may need to be some review and editing of this metadata if the variable is new or named differently.
+While possible to create this workbook manually; there is a process in the data_cleaning.R script to generate this workbook directly using the variables coded in fun_gen_outcomes.R and fun_gen_vulnerabilities.R scripts.  These variable lists will join with the metadata provided in  "pathways data dictioary" folder in the top repo folder to get additional metadata about these variables (if they exist) before creating the tab in the Excel workbook.  There may need to be some review and editing of this metadata if the variable is new or named differently.
 
 There are separate parameters in the config file for the "existing" and "new" Pathways Workbook to allow for both to exist for comparison.  The "new" file should be renamed to match the "existing" file once created.
 
@@ -124,7 +124,7 @@ There are separate parameters in the config file for the "existing" and "new" Pa
 
 The current repo is structured in the following:
 
-At the top level exists the "pathways data dictionary" (.xlsx), readme, and other repo level artifacts.
+At the top level exists the "pathways data dictionary" (folder with set of csv files), readme, and other repo level artifacts.
 
 Within the "analyses" folder exists the templated file set for a new analysis (a-new-analysis-template) along with archived segmentation analysis projects for reference.
 
@@ -209,7 +209,7 @@ The following guidance applies to coding variables:
     * A survey dataset(s)
  * Outputs:
     * Dataframes for Health Outcomes (outcomes), Vulnerability variables (vulnerability), and combination (outcomes_vulnerability) saved as rds and csv files.
-    * Pathways Workbook (xlsx) with all Outcomes, Vulnerabilities, and available metadata populated.
+    * Pathways Workbooks (csv) with all Outcomes, Vulnerabilities, and available metadata populated.
 
 ### Univariate analysis
 

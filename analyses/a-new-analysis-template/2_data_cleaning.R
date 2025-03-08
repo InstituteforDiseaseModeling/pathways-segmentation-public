@@ -158,11 +158,18 @@ if (create_new_pathways_workbook==TRUE){
 
 
   l <- list("params" = df_params, "outcomes" = df_outcomes, "vulnerabilities" = df_vulnerability)
-  path = new_pathways_workbook_path
-  write.xlsx(l, file = path)
-  print(paste0("New Pathways Workbook Created: ", path))
 
+  # Create the folder if it doesn't exist
+  if (!dir.exists(new_pathways_workbook_path)) {
+    dir.create(new_pathways_workbook_path, recursive = TRUE)
 }
+
+# Loop through the list and save each dataframe as a CSV file
+for (name in names(l)) {
+  file_path <- file.path(output_folder, paste0(name, ".csv"))  # Construct file path
+  write.csv(l[[name]], file = file_path, row.names = FALSE, fileEncoding = "UTF-8")
+}
+print(paste0("New Pathways Workbooks Created: ", new_pathways_workbook_path))
 
 
 

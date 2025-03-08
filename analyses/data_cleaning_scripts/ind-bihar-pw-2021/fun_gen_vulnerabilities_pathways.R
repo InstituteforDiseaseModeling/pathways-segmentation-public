@@ -10,7 +10,7 @@
 # DEFINE FUNCTION
 gen_vulnerability_factors_pathways <- function(survey=NULL){
 
-  pacman::p_load(RODBC, dplyr, tidyverse, openxlsx, tidyselect, zscorer)
+  pacman::p_load(RODBC, dplyr, tidyverse, tidyselect, zscorer)
 
   woman <- survey
 

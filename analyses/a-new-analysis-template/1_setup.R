@@ -19,8 +19,8 @@
 if (!require("pacman")) install.packages("pacman")
 
 # LOAD ALL LIBRARY DEPENDENCIES
-pacman::p_load(dplyr, stringr, reshape2, data.table, survey, ggplot2, broom, jtools, readxl, openxlsx, gridExtra, factoextra, modelsummary,
-               poLCA, readstata13, fastDummies, huxtable, openxlsx, config, ggdist, sf, scatterpie, networkD3, htmlwidgets, remotes,
+pacman::p_load(dplyr, stringr, reshape2, data.table, survey, ggplot2, broom, jtools, readxl, gridExtra, factoextra, modelsummary,
+               poLCA, readstata13, fastDummies, huxtable, config, ggdist, sf, scatterpie, networkD3, htmlwidgets, remotes,
                conflicted, webshot, magick, zscorer, haven)
 
 # if (!require("ggsankey")) remotes::install_github("davidsjoberg/ggsankey")
@@ -159,26 +159,26 @@ for (f in functions){
 
 
 # READ IN PATHWAYS DATA DICTIONARY
-dd_outcomes <- read_excel(path=file.path("../../pathways data dictionary.xlsx"), sheet="outcomes")
+dd_outcomes <- read.csv(file.path(pathways_workbook_path, "outcomes.csv"), fileEncoding = "UTF-8")
 saveRDS(dd_outcomes, file = dd_outcomes_excel_file)
 
-dd_vulnerabilities <- read_excel(path=file.path("../../pathways data dictionary.xlsx"), sheet="vulnerabilities")
+dd_vulnerabilities <- read.csv(file.path(pathways_workbook_path, "vulnerability.csv"), fileEncoding = "UTF-8")
 saveRDS(dd_vulnerabilities, file = dd_vulnerabilities_excel_file)
 
 
 # READ IN PATHWAYS WORKBOOK
 if(create_new_pathways_workbook == FALSE){
 
-  outcomes_sheet <- read_excel(pathways_workbook_path, sheet="outcomes")
+outcomes_sheet <- read.csv(file.path(pathways_workbook_path, "outcomes.csv"), fileEncoding = "UTF-8")
 
   # PARAMS
-  params_sheet <- read_excel(pathways_workbook_path, sheet="params")
+params_sheet <- read.csv(file.path(pathways_workbook_path, "params.csv"), fileEncoding = "UTF-8")
 
   saveRDS(params_sheet, file = params_excel_file)
 
 
   # OUTCOMES
-  outcomes_sheet <- read_excel(pathways_workbook_path, sheet="outcomes")
+outcomes_sheet <- read.csv(file.path(pathways_workbook_path, "outcomes.csv"), fileEncoding = "UTF-8")
   outcomes_sheet <- outcomes_sheet %>%
     mutate(short_name = ifelse(is.na(short_name), outcome_variable, short_name))
 
@@ -186,7 +186,7 @@ if(create_new_pathways_workbook == FALSE){
 
 
   # VULNERABILITY
-  vulnerability_sheet <- read_excel(pathways_workbook_path, sheet="vulnerabilities")
+vulnerability_sheet <- read.csv(file.path(pathways_workbook_path, "vulnerability.csv"), fileEncoding = "UTF-8")
   vulnerability_sheet <- vulnerability_sheet %>%
     mutate(short_name = ifelse(is.na(short_name), vulnerability_variable, short_name))
 
