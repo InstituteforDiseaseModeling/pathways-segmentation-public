@@ -39,4 +39,8 @@ univariate_plots_file = paste0(univariate_plots, "univariate_plots_vulnerability
 gen_univariate_plots(df = vulnerability, metadata = vulnerability_sheet, plot_path = univariate_plots_file)
 
 
+###################################
+print("3_univariate_analysis.R script complete! Proceed to run 4_exploratory_data_analysis.R script after updating Pathways Workbook. Refer to the README for instructions if needed.")
+
+
 

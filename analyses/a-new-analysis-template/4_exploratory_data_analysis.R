@@ -55,10 +55,6 @@ vulnerability.list <- sort(vulnerability.list)
 ###################################
 # LOOP THROUGH LIST OF VULNERABILITY VARIABLES AND GENERATE PDF OUTPUTS
 
-# TEMPORARILY RUN A SAMPLE
-sample <- c("age.1stbrth.cat1", "age.1stbrth.cat2", "age.1stbrth.cat3", "part.working1")
-vulnerability.list <- sample
-
 
 for(m in vulnerability.list){
 
@@ -72,7 +68,7 @@ for(m in vulnerability.list){
 
 
 ###################################
-
+print("4_exploratory_data_analysis.R script complete! Proceed to run 5_principal_component_analysis.R script after updating Pathways Workbook. Refer to the README for instructions if needed.")
 
 
 

@@ -7,24 +7,14 @@
 
 
 ###################################
-# RESTORE LIBRARIES FROM RENV LOCK FILE
-# if (!require("renv")) install.packages("renv")
-# renv::activate()
-# renv::restore()
-# renv::deactivate()
+# RUN 1_libraries.R TO INSTALL LIBRARIES AT THE START OF EACH SESSION
 
+if (!"pacman" %in% names(sessionInfo()$otherPkgs)){
 
-###################################
-# LIBRARY INSTALL
-if (!require("pacman")) install.packages("pacman")
+  print("Running 1_libraries.R to load libraries.")
+  source("1_libraries.R")
 
-# LOAD ALL LIBRARY DEPENDENCIES
-pacman::p_load(dplyr, stringr, reshape2, data.table, survey, ggplot2, broom, jtools, readxl, openxlsx, gridExtra, factoextra, modelsummary,
-               poLCA, readstata13, fastDummies, huxtable, openxlsx, config, ggdist, sf, scatterpie, networkD3, htmlwidgets, remotes,
-               conflicted, webshot, magick, zscorer, haven)
-
-# if (!require("ggsankey")) remotes::install_github("davidsjoberg/ggsankey")
-# if (!require("ggradar")) remotes::install_github("ricardo-bion/ggradar")
+}
 
 
 ###################################
@@ -196,6 +186,7 @@ if(create_new_pathways_workbook == FALSE){
 
 
 ###################################
+print("1_setup.R script complete!")
 
 
 

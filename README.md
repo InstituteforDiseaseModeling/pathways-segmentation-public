@@ -1,6 +1,6 @@
 # Pathways Segmentation overview
 
-The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population segmentation framework used for understanding social, cultural, economic, and environmental vulnerability to improve women's health and wellbeing.
+The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population segmentation framework used for understanding social, cultural, economic, and environmental vulnerability to improve women's health and well-being.
 
 # Table of contents
 
@@ -37,13 +37,13 @@ The pathways-segmentation repo contains the workflow for conducting a Pathways S
 
 * **Segmentation:** The process of dividing a population into smaller sub-groups (known as segments) based on shared characteristics.
 
-* **Segmentation strata:** Driven by the survey design; how the survey data should be initially divided for the segmentation analysis i.e., how many separate segmentation solutions will be produced?  This is often times an urban/rural split.
+* **Segmentation strata:** Driven by the survey design; how the survey data should be initially divided for the segmentation analysis i.e., how many independent segmentation solutions will be produced?  Often times this is represented by separate urban/rural solutions.
 
 * **Health Outcome:** A health-related event (e.g., number of ANC visits, U5 mortality).
 
 * **Vulnerability factor:** A specific fact, situation, or construct that helps define how women experience vulnerability.
 
-* **Vulnerability variable (measures):** A standardized way of quantifying factors so they can be used in statistical analysis.
+* **Vulnerability variable (measure):** A standardized way of quantifying factors so they can be used in statistical analysis.
 
 * **Pathways Domain:** A characteristic grouping of Vulnerability factors.  A Vulnerability Factor can be associated with multiple Domains. There are 6 Domains total:
     * Woman and her past experiences
@@ -63,11 +63,26 @@ The pathways-segmentation repo contains the workflow for conducting a Pathways S
 
 ### Technical requirements
 
+#### Statistical experience
+
+An advanced understanding of applied statistics is expected in order to conduct a Pathways Segmentation analysis.  This includes the following statistical topics:
+
+* variable distribution parameters (mean, median, standard deviation)
+* bivariate regression interpretation (linear, logistic, predicted probabilities, odds ratios, statistical significance)
+* principal component analysis (PCA) and interpretation of PCA visuals
+* latent class analysis (LCA) algorithm and model fit statistics
+
+#### R experience
+
+An intermediate level of coding in R and using RStudio Desktop is expected in order to successfully work with this codebase.  While most phases of the analysis require minimal coding and are more centered on variable selection via the Pathways Workbook, the initial variable recoding requires researchers to define these variables directly in the fun_gen_vulnerabilities.R and fun_gen_outcomes_dhs.R scripts.  A good source for R relevant training is [this]() course in Codecademy.
+
 #### Software requirements
 
-* Software will run on Windows or MAC operating system
 * [R (recommended 4.4.2) & RStudio Desktop](https://posit.co/download/rstudio-desktop/)
+* Microsoft Excel
 * [GitHub Desktop](https://desktop.github.com/download/) (suggested for managing code from GitHub repository)
+
+Software will run on Windows or MAC operating system
 
 #### Hardware requirements
 
@@ -77,7 +92,7 @@ The pathways-segmentation repo contains the workflow for conducting a Pathways S
 
 The R environment is defined via the [renv library](https://rstudio.github.io/renv/articles/renv.html).  This library is installed and initialized at the beginning in the 1_setup.R script.  Once initialized, the renv framework will install all libraries and their appropriate versions used in the analysis as per the specifications in the lock.file.
 
-This project also uses the R "config" library and methods for defining file paths and variables used throughout the project. This can be edited directly in RStudio and should be included in the .gitignore.
+This project also uses the R "config" library and methods for defining file paths and variables used throughout the project. Using a config file creates a layer of abstraction for managing the codebase between users/projects.  This can be edited directly in RStudio and should be included in the .gitignore.
 
 ## The Pathways Workbook
 

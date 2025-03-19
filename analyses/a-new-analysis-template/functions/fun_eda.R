@@ -8,9 +8,9 @@
 
 ###################################
 # RUN SETUP
-# outcomes.list <- c("care.cnt")
-# out <- "care.cnt"
-# measure = "condom.2nd.last.sex"
+# outcomes.list <- c("zerodose.yn")
+# out <- "zerodose.yn"
+# measure = "part.working1"
 # df = outcomes_vulnerability
 # plot_path = exploratory_plots
 
@@ -316,7 +316,7 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
 
 
       # DEFINE COLORS FOR URBAN | RURAL
-      plot.color <- c(rural = "#1B9E77", urban = "#D95F02")
+      plot.color <- c(rural = "#0072B2", urban = "#E69F00")
 
 
       # PLOT MODEL PROBABILITIES
@@ -404,6 +404,12 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
                  strata = paste0(strata, " sample size = ", sample_size))
 
 
+        plot.color <- setNames(
+          ifelse(grepl("urban", unique(df_plot$strata), ignore.case = TRUE), "#E69F00", "#0072B2"),
+          unique(df_plot$strata)
+        )
+
+
         plot3 <- df_plot %>%
           ggplot(aes(x=var, y=prop_wt, fill=strata)) +
           geom_bar(stat="identity") +
@@ -421,7 +427,8 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
           xlab("") +
           ylab("") +
           # ylim(0, 1) +
-          scale_fill_brewer(palette="Dark2") +
+          # scale_fill_brewer(palette="Dark2") +
+          scale_fill_manual(values=plot.color) +
           ggtitle(paste0("Survey weighted distribution of vulnerability variable: ", measure_label))
         # print(plot3)
 
@@ -449,6 +456,12 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
                  strata = paste0(strata, " sample size = ", sample_size))
 
 
+        plot.color <- setNames(
+          ifelse(grepl("urban", unique(df_plot$strata), ignore.case = TRUE), "#E69F00", "#0072B2"),
+          unique(df_plot$strata)
+        )
+
+
         plot3 <- df_plot %>%
           ggplot(aes(x=var, y=prop_wt, fill=strata)) +
           geom_bar(stat="identity") +
@@ -467,7 +480,8 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
           ylab("") +
           ylim(0, 1) +
           scale_x_discrete(labels = function(x) str_wrap(x, width = 15), guide = guide_axis(check.overlap = TRUE)) +
-          scale_fill_brewer(palette="Dark2") +
+          # scale_fill_brewer(palette="Dark2") +
+          scale_fill_manual(values=plot.color) +
           ggtitle(paste0("Survey weighted distribution of vulnerability variable: ", measure_label))
         # print(plot3)
 
@@ -498,6 +512,13 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
           mutate(sample_size = sum(sample_size),
                  strata = paste0(strata, " sample size = ", sample_size))
 
+
+        plot.color <- setNames(
+          ifelse(grepl("urban", unique(df_plot$strata), ignore.case = TRUE), "#E69F00", "#0072B2"),
+          unique(df_plot$strata)
+        )
+
+
         plot4 <- df_plot %>%
           ggplot(aes(x=outcome, y=prop_wt, fill=strata)) +
           geom_bar(stat="identity") +
@@ -516,7 +537,8 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
           ylab("") +
           ylim(0, 1) +
           scale_x_discrete(labels = function(x) str_wrap(x, width = 15), guide = guide_axis(check.overlap = TRUE)) +
-          scale_fill_brewer(palette="Dark2") +
+          # scale_fill_brewer(palette="Dark2") +
+          scale_fill_manual(values=plot.color) +
           ggtitle(paste0("Survey weighted distribution of health outcome: ", outcome_label))
         # print(plot4)
 
@@ -543,6 +565,12 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
                  strata = paste0(strata, " sample size = ", sample_size))
 
 
+        plot.color <- setNames(
+          ifelse(grepl("urban", unique(df_plot$strata), ignore.case = TRUE), "#E69F00", "#0072B2"),
+          unique(df_plot$strata)
+        )
+
+
         plot4 <- df_plot %>%
           ggplot(aes(x=outcome, y=prop_wt, fill=strata)) +
           geom_bar(stat="identity") +
@@ -560,7 +588,8 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
           xlab("") +
           ylab("") +
           # ylim(0, 1) +
-          scale_fill_brewer(palette="Dark2") +
+          # scale_fill_brewer(palette="Dark2") +
+          scale_fill_manual(values=plot.color) +
           ggtitle(paste0("Survey weighted distribution of health outcome: ", outcome_label))
         # print(plot4)
 

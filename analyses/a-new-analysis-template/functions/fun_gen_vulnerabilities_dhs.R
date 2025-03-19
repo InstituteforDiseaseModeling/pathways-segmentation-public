@@ -30,11 +30,6 @@
 ###################################
 # DEFINE FUNCTION
 
-# IR <- IR_raw
-# BR <- BR_raw
-# HH <- HH_raw
-# MR <- MR_raw
-
 
 gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dhs=7){
 
@@ -55,8 +50,8 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
   # PLACE OF RESIDENCE
   HH <- HH %>% dplyr::mutate(hh.urban = case_when(
-    hv025=="rural" ~ "rural",
-    hv025== "urban" ~ "urban"))
+    hv025=="rural" ~ "No",
+    hv025== "urban" ~ "Yes"))
 
 
   # ELECTRICITY
@@ -64,10 +59,6 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     hv206 == "yes" ~ 1,
     hv206 == "no" ~ 0))
 
-  # INTERNET
-  # HH <- HH %>% dplyr::mutate(hh.internet = case_when(
-  #   sh121o == "yes" ~ 1,
-  #   sh121o == "no" ~ 0))
 
   # HOUSEHOLD BANK ACCOUNT
   HH <- HH %>% dplyr::mutate(hh.bank.acct = case_when(
@@ -131,7 +122,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # BINARY FACTOR FOR MOTOR TRANSPORT
-  HH$hh.motortransport.yn <- ifelse(HH$hh.motor==1 | HH$hh.car==1,1,0)
+  HH$hh.motortransport.yn <- ifelse(HH$hh.motor=="Yes" | HH$hh.car=="Yes",  "Yes", "No")
 
 
   # COMPUTER
@@ -140,67 +131,46 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     hv243e == "no" ~ 0))
 
 
-  # STOVE
-  # HH <- HH %>% dplyr::mutate(hh.stove = case_when(
-  #   sh121j == "yes" ~ 1,
-  #   sh121j == "no" ~ 0))
-
-
-  # VIDEO/DVD
-  # HH <- HH %>% dplyr::mutate(hh.video = case_when(
-  #   sh121l == "yes" ~ 1,
-  #   sh121l == "no" ~ 0))
-
-
   # OWN LAND USABLE FOR AGRICULTURE
   HH <- HH %>% dplyr::mutate(hh.land = case_when(
-    hv244 == "yes" ~ 1,
-    hv244 == "no" ~ 0))
-
-
-  # HECTARES FOR AGRICULTURAL LAND
-  # HH <- HH %>% dplyr::mutate(hh.land.ha = case_when(
-  #   hv244 == "no" ~ "0",
-  #   hv245 %in% c(1:5) ~ "0.1-0.5 ha",
-  #   hv245 %in% c(6:10) ~ "0.6-1.0 ha",
-  #   hv245 %in% c(10:950) ~ "More than 1.0 ha",
-  #   hv245 %in% c(998, 999) ~ "Unknown"))
+    hv244 == "yes" ~ "Yes",
+    hv244 == "no" ~ "No"))
 
 
   # LIVESTOCK, HERDS, OR ANIMALS
   HH <- HH %>% dplyr::mutate(hh.animal = case_when(
-    hv246 == "yes" ~ 1,
-    hv246 == "no" ~ 0))
+    hv246 == "yes" ~ "Yes",
+    hv246 == "no" ~ "No"))
 
 
   # ANY COWS, BULLS
   HH <- HH %>% dplyr::mutate(hh.cows = case_when(
-    hv246b %in% c(1:98, "95 or more", "unknown") ~ 1, ## Assume they have animals (but don't know how many) if they said 98
-    hv246b %in% c(0, "none") ~ 0))
+    hv246b %in% c(1:98, "95 or more", "unknown") ~ "Yes", ## Assume they have animals (but don't know how many) if they said 98
+    hv246b %in% c(0, "none") ~ "No"))
 
 
   # ANY HORSES, DONKEYS, MULES
   HH <- HH %>% dplyr::mutate(hh.horses = case_when(
-    hv246c %in% c(1:98, "95 or more", "unknown") ~ 1, ## Assume they have animals (but don't know how many) if they said 99
-    hv246c %in% c(0, "none") ~ 0))
+    hv246c %in% c(1:98, "95 or more", "unknown") ~ "Yes", ## Assume they have animals (but don't know how many) if they said 99
+    hv246c %in% c(0, "none") ~ "No"))
 
 
   # ANY GOATS
   HH <- HH %>% dplyr::mutate(hh.goats = case_when(
-    hv246d %in% c(1:98, "95 or more", "unknown") ~ 1, ## Assume they have animals (but don't know how many) if they said 99
-    hv246d %in% c(0, "none") ~ 0))
+    hv246d %in% c(1:98, "95 or more", "unknown") ~ "Yes", ## Assume they have animals (but don't know how many) if they said 99
+    hv246d %in% c(0, "none") ~ "No"))
 
 
   # ANY SHEEP
   HH <- HH %>% dplyr::mutate(hh.sheep = case_when(
-    hv246e %in% c(1:98, "95 or more", "unknown") ~ 1, ## Assume they have animals (but don't know how many) if they said 99
-    hv246e %in% c(0, "none") ~ 0))
+    hv246e %in% c(1:98, "95 or more", "unknown") ~ "Yes", ## Assume they have animals (but don't know how many) if they said 99
+    hv246e %in% c(0, "none") ~ "No"))
 
 
   # ANY CHICKENS/POULTRY
   HH <- HH %>% dplyr::mutate(hh.chickens = case_when(
-    hv246f %in% c(1:98, "95 or more", "unknown") ~ 1, ## Assume they have animals (but don't know how many) if they said 99
-    hv246f %in% c(0, "none") ~ 0))
+    hv246f %in% c(1:98, "95 or more", "unknown") ~ "Yes", ## Assume they have animals (but don't know how many) if they said 99
+    hv246f %in% c(0, "none") ~ "No"))
 
 
   # HOUSEHOLD COMBINED WEALTH INDEX
@@ -234,17 +204,15 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # CATEGORICAL FACTOR FOR HOUSEHOLD MEMBERS 15+
-  HH <- HH %>% dplyr::mutate(num.15up.cat = case_when(
-    num.15up %in% c(0, 1) ~ "0-1",
-    num.15up %in% c(2) ~ "2",
-    num.15up %in% c(3:4) ~ "3-4",
-    num.15up >=5 ~ "5 and up"))
-  HH$num.15up.cat <- factor(HH$num.15up.cat,levels=c("5 and up","0-1","2","3-4"))
+  HH <- HH %>%
+    dplyr::mutate(num.15up.cat = case_when(
+      num.15up >= 5 ~ "5+",
+      num.15up < 5 ~ "<5"
+  ))
 
 
   # Recode num.15up as binary
-  # HH$num.15up.4plus<-ifelse(HH$num.15up>=4,1,0)
-  HH$num.15up.4plus<-ifelse(HH$num.15up>=4, "Yes", "No")
+  HH$num.15up.4plus <- ifelse(HH$num.15up >= 4, "Yes", "No")
 
 
   # CATEGORICAL FACTOR FOR HOUSEHOLD MEMBERS UNDER 15
@@ -261,13 +229,14 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     rowwise() %>%
     mutate(num.kids.house = sum(v202, v203, na.rm=TRUE))
 
+
   IR <- IR %>% mutate(num.kids.house.cat = case_when(
     num.kids.house %in% c(0) ~ "0",
     num.kids.house %in% c(1) ~ "1",
     num.kids.house %in% c(2,3) ~ "2-3",
     num.kids.house >=4 ~ "4 or more"))
 
-  # IR$num.kids.house.4plus <- ifelse(IR$num.kids.house.cat=="4 or more",1,0)
+
   IR$num.kids.house.4plus <- ifelse(IR$num.kids.house.cat=="4 or more", "Yes", "No")
 
 
@@ -276,10 +245,17 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # CATEGORICAL FACTOR FOR CHILDREN/WOMEN RATIO
-  HH$hh.kidwom.rat.cat<-ifelse(HH$hh.kidwom.rat==0,0,
-                               ifelse(HH$hh.kidwom.rat>0 & HH$hh.kidwom.rat<1,1,
-                                      ifelse(HH$hh.kidwom.rat>=1 & HH$hh.kidwom.rat<2,2,
-                                             ifelse(HH$hh.kidwom.rat>=2 & HH$hh.kidwom.rat<3,3,4))))
+  # HH$hh.kidwom.rat.cat<-ifelse(HH$hh.kidwom.rat==0,0,
+  #                              ifelse(HH$hh.kidwom.rat>0 & HH$hh.kidwom.rat<1,1,
+  #                                     ifelse(HH$hh.kidwom.rat>=1 & HH$hh.kidwom.rat<2,2,
+  #                                            ifelse(HH$hh.kidwom.rat>=2 & HH$hh.kidwom.rat<3,3,4))))
+  HH <- HH %>%
+    dplyr::mutate(hh.kidwom.rat.cat = case_when(hh.kidwom.rat == 0 ~ 0,
+                                                hh.kidwom.rat > 0 & hh.kidwom.rat < 1 ~ 1,
+                                                hh.kidwom.rat >= 1 & hh.kidwom.rat < 2 ~ 2,
+                                                hh.kidwom.rat >= 2 & hh.kidwom.rat < 3 ~ 3,
+                                                TRUE ~ 4))
+
 
 
   ## LARGER ENVIRONMENT
@@ -304,11 +280,11 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # LOCATION OF COOKING INSIDE HOUSE
-  HH$hh.cook.inside.yn<-ifelse(HH$hv241 == "in the house", 1, 0)
+  HH$hh.cook.inside.yn <- ifelse(HH$hv241 == "in the house", "Yes", "No")
 
 
   # CLEAN COOKING FUEL
-  HH$hh.clean.fuel<-ifelse(HH$hv226 %in% c("electricity","lpg","natural gas","biogas"), 1, 0)
+  HH$hh.clean.fuel <- ifelse(HH$hv226 %in% c("electricity","lpg","natural gas","biogas"), "Yes", "No")
 
 
   # NUMBER OF HOUSEHOLD ROOMS FOR SLEEPING
@@ -325,11 +301,11 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
   # BINARY FACTOR FOR TOILET TYPE: LATRINE
   HH$latrine <- ifelse(HH$hv205 %in% c("pit latrine without slab/ open pit", "no facility/bush/field",
-                                       "bucket toilet", "hanging toilet/latrine", "other"), 1,0)
+                                       "bucket toilet", "hanging toilet/latrine", "other"), 1, 0)
 
 
   # TOILET FACILITY DOES NOT EXIST
-  HH$no.latrine <- ifelse(HH$hv205 %in% c("no facility/bush/field", "no facility"), 0,1)
+  HH$no.latrine <- ifelse(HH$hv205 %in% c("no facility/bush/field", "no facility"), "No", "Yes")
 
 
   # LOCATION OF TOILET FACILITY
@@ -337,7 +313,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     hv205 =="no facility/bush/field" ~ "No facility",
     hv238a == "in own dwelling" ~ "In own dwelling",
     hv238a == "in own yard/plot" ~ "In own yard/plot",
-    hv238a == "elsewhere" ~"Elsewhere"))
+    hv238a == "elsewhere" ~ "Elsewhere"))
 
 
   # HOUSEHOLD HAS SHARED TOILET
@@ -351,17 +327,14 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     hv225 == "no" ~ 1,
     hv225 == "don't know" ~ 1))
 
+
   # WHO DEFNITION IMPROVED NOT SHARED LATRINE
-  HH$hh.noimp.latrine<-ifelse(HH$latrine==1 | (HH$latrine==0 & HH$hh.shared.latrine==1),1,0)
+  HH$hh.noimp.latrine<-ifelse(HH$latrine=="Yes" | (HH$latrine=="No" & HH$hh.shared.latrine=="Yes"), 1, 0)
 
 
   # SOURCE OF DRINKING WATER
   HH$water <- ifelse(HH$hv201 %in% c("unprotected well", "unprotected spring", "river/dam/lake/ponds/ stream/canal/irrigation channel",
-                                     "rainwater", "other"), 1,0)
-
-
-  # SOURCE OF NON-DRINKING WATER
-  # HV202 only asked of people using bottled water for drinking
+                                     "rainwater", "other"), 1, 0)
 
 
   # WATER SOURCE LOCATION
@@ -375,11 +348,11 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
   # PIPED WATER TYPE
   HH$hh.water.notpiped <- ifelse(HH$hv201== "piped into dwelling" | HH$hv201== "piped to yard/plot" | HH$hv201 == "piped to neighbor" |
-                                   HH$hv201== "public tap/standpipe", 0,1)
+                                 HH$hv201== "public tap/standpipe", "No", "Yes")
 
 
   # WATER TREATMENT: ANYTHING DONE TO MAKE WATER SAFE TO DRINK
-  HH$hh.nowatpur <- ifelse(HH$hv237 == "yes",0,1)
+  HH$hh.nowatpur <- ifelse(HH$hv237 == "yes", "No", "Yes")
 
 
   # DURATION TO GET WATER
@@ -393,7 +366,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # WHO Definition IMPROVED WATER
-  HH$hh.noimp.water <- ifelse(HH$water==1 | (HH$water==0 & HH$hh.wat.time == ">30 minutes"), 1, 0)
+  HH$hh.noimp.water <- ifelse(HH$water=="Yes" | (HH$water=="No" & HH$hh.wat.time == ">30 minutes"), "Yes", "No")
 
 
   # WATER INTERRUPTED
@@ -406,30 +379,26 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # NATURAL/RUDIMENTARY FLOOR MATERIAL
-  HH$hh.noimp.floor <- ifelse(HH$hv213 == "earth, sand" | HH$hv213== "dung" | HH$hv213== "wood planks" | HH$hv213== "palm, bamboo",1,0)
-
-
-  # # NATURAL/RUDIMENTARY WALL MATERIAL
-  # HH$hh.noimp.wall <- ifelse(HH$hv214 < 30 & HH$hv214 == 96, 1, 0)
+  HH$hh.noimp.floor <- ifelse(HH$hv213 == "earth, sand" | HH$hv213== "dung" | HH$hv213== "wood planks" | HH$hv213== "palm, bamboo", "Yes", "No")
 
 
   ###################################
   # Urban slum - UN definition
-  HH$floor <- ifelse(HH$hv213 == "earth, sand" | HH$hv213== "dung" | HH$hv213== "wood planks" | HH$hv213== "palm, bamboo",1,0)
+  HH$floor <- ifelse(HH$hv213 == "earth, sand" | HH$hv213== "dung" | HH$hv213== "wood planks" | HH$hv213== "palm, bamboo", 1, 0)
 
   HH$wall <- ifelse(HH$hv214 == "no walls" | HH$hv214== "cane / palm / trunks" | HH$hv214== "dung / mud / sod" | HH$hv214== "grass" |
-                      HH$hv214 == "bamboo with mud" | HH$hv214 == "stone with mud" | HH$hv214 == "uncovered adobe" |
-                      HH$hv214 == "cardboard" | HH$hv214 == "reused wood" | HH$hv214 == "iron sheets", 1, 0)
+                    HH$hv214 == "bamboo with mud" | HH$hv214 == "stone with mud" | HH$hv214 == "uncovered adobe" |
+                    HH$hv214 == "cardboard" | HH$hv214 == "reused wood" | HH$hv214 == "iron sheets", "Yes", "No")
 
   HH$members<-ifelse(HH$hv012 == 0, HH$hv013, HH$hv012)
 
   HH$memsleep <- ifelse(HH$hh.rooms.num == 0, HH$members, HH$members/HH$hh.rooms.num)
 
-  HH$living <- ifelse(HH$memsleep > 3,1,0)
+  HH$living <- ifelse(HH$memsleep > 3, 1, 0)
 
-  HH<-HH %>%
+  HH <- HH %>%
     rowwise() %>%
-    mutate(slum.sum = sum(floor, water, latrine, living, na.rm=T))
+    dplyr::mutate(slum.sum = sum(floor, water, latrine, living, na.rm=T))
 
   HH<-HH %>% mutate(slum1 = case_when(
     hv025=="rural" ~ "rural",
@@ -437,8 +406,8 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     (hv025 == "urban" & slum.sum < 2) ~ "urban non-slum"))
 
   # Urban slum 2 - Zulu et al, 2002
-  HH$piped <- ifelse(HH$hv201 == "piped water" | HH$hv201== "piped into dwelling" | HH$hv201== "piped to yard/plot" | HH$hv201== "public tap/standpipe", 0,1)
-  HH$slum2 <- ifelse(HH$hh.urban == 1 & HH$hh.electricity == 0 & HH$latrine == 1 & HH$piped == 1, 1, 0)
+  HH$piped <- ifelse(HH$hv201 == "piped water" | HH$hv201== "piped into dwelling" | HH$hv201== "piped to yard/plot" | HH$hv201== "public tap/standpipe", "No", "Yes")
+  HH$slum2 <- ifelse(HH$hh.urban == "Yes" & HH$hh.electricity == 0 & HH$latrine == 1 & HH$piped == "Yes", "Yes", "No")
 
 
   # CATEGORICAL FACTOR FOR SANITATION
@@ -457,7 +426,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # HAND WASHING STATION OBSERVED
-  HH$hh.sanitation.yn<-ifelse(HH$hh.sanitation=="No washing station" | HH$hh.sanitation=="No water or soap observed", 0, 1)
+  HH$hh.sanitation.yn<-ifelse(HH$hh.sanitation=="No washing station" | HH$hh.sanitation=="No water or soap observed", "No", "Yes")
 
 
   # NUMBER OF HOUSEHOLD MEMBERS
@@ -480,11 +449,14 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
   # Wealth index combined
   HH$wealth.index <- factor(HH$hv270)
 
+
   # Wealth index urban/rural
   HH$wealth.index.ur <- factor(HH$hv270a)
 
+
   # Binary urban/rural wealth index -
-  HH$wealth.index.poor <- ifelse(HH$wealth.index.ur=="poorest", 1, 0)
+  HH$wealth.index.poor <- ifelse(HH$wealth.index.ur=="poorest", "Yes", "No")
+
 
   # Ordinal urban/rural wealth index
   #1 is poorest
@@ -497,7 +469,9 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # CURRENT PARTNERSHIP STATUS
+  # CODE AS 1/0 TO EASILY HANDLE SKIP PATTERNS ACROSS DATASET
   IR$marr.cohab <- ifelse(IR$v501 == "married" | IR$v501 == "living with partner", 1, 0)
+
 
   # MARITAL CAT
   IR<-IR %>% dplyr::mutate(marital.cat = case_when(
@@ -505,23 +479,23 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     v501 == "married" | v501 == "living with partner" ~ "married",
     v501 == "widowed" | v501 == "divorced" | v501 == "separated" ~ "widowed/ divorced/ separate"))
 
+
   # TYPE OF MARRIAGE, AMONG MARRIED WOMEN
-  # IR$polygamy <- ifelse(IR$v506 %in% c(1:20), 1, 0)
+  IR <- IR %>%
+    dplyr::mutate(polygamy = case_when(v506 %in% c(1:20) ~ "Yes",
+                                       marr.cohab == 0 ~ "not partnered",
+                                       v506 %in% c(98, "don't know") ~ NA,
+                                       TRUE ~ "No"))
 
-  IR$polygamy <- ifelse(IR$v506 %in% c(1:20), "yes", "no")
-  IR$polygamy[IR$marr.cohab==0] <- 'not partnered'
-  IR$polygamy[IR$v506 %in% c(98, "don't know")] <- NA
 
-
-  # WIFE ORDER AMONG WOMEN IN POLYGAMOUS UNION - MOH
-  IR$wife.order <- IR$v506
-  IR$wife.order[IR$v506 == 98] <- NA
-  IR$wife.order[IR$v506 == 1] <- "1"
-  IR$wife.order[IR$v506 == 2] <- "2"
-  IR$wife.order[IR$v506 >= 3] <- "3+"
-  IR$wife.order[IR$marr.cohab==0] <- 'not currently married'
-  # IR$wife.order[IR$marr.cohab==1 & (IR$v505==0 | !is.na(IR$v505))] <- 'married with no other wives'
-  IR$wife.order[IR$marr.cohab==1 & (IR$v505==0 | !is.na(IR$v505)) & is.na(IR$v506)] <- 'married with no other wives'
+  # WIFE ORDER AMONG WOMEN IN POLYGAMOUS UNION
+  IR <- IR %>%
+    dplyr::mutate(wife.order = case_when(v506 == 98 ~ NA,
+                                         v506 == 1 ~ "1",
+                                         v506 == 2 ~ "2",
+                                         v506 >= 3 ~ "3+",
+                                         marr.cohab == 0 ~ "not partnered",
+                                         TRUE ~ as.character(v506)))
 
 
   # RESPONDENT IS FIRST WIFE
@@ -529,123 +503,108 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     dplyr::mutate(first.wife = case_when(v506 == 1 ~ "First wife",
                                          v506 %in% c(2:20) ~ "Second or more wife",
                                          v506 %in% c(98, "don't know") ~ "Not known",
-                                         !(v501 %in% c("married", "living with partner")) ~ "Not in union",
+                                         !(v501 %in% c("married", "living with partner")) ~ "not partnered",
                                          v505 %in% c(0, "no other wives") ~ "Monomgaous union"))
-  IR$first.wife[IR$first.wife=='Not in union'] <- 'not partnered'
-  IR$first.wife[IR$first.wife=='Not known'] <- NA
 
 
   # ABILITY TO CONCEIVE
-  IR$infecund.meno <- ifelse(IR$v625 == "infecund, menopausal", 1,
-                             ifelse(!(is.na(IR$v625)), 0, NA))
+  IR <- IR %>%
+    dplyr::mutate(infecund.meno = case_when(v625 == "infecund, menopausal" ~ "Yes",
+                                            !is.na(v625) ~ "No"))
 
 
   # HUSBAND/PARTNER OPPOSES FP USE
-  IR <- IR %>% dplyr::mutate(fp.partner.oppose = case_when(
-    v3a08j == "yes" ~ "Partner opposes",
-    v3a08j == "no" ~ "Partner does not oppose",
-    is.na(v3a08j) ~ "No identified need for FP"))
+  IR <- IR %>%
+    dplyr::mutate(fp.partner.oppose = case_when(v3a08j == "yes" ~ "Partner opposes",
+                                                v3a08j == "no" ~ "Partner does not oppose",
+                                                is.na(v3a08j) ~ "No identified need for FP"))
 
 
   ## BARRIERS TO HC
   # GETTING PERMISSION
-  IR$med.permis <- IR$v467b
-  IR <- IR %>% dplyr::mutate(med.permis = case_when(
-    v467b =="not a big problem" | v467b =="no problem" ~0,
-    v467b == "big problem" ~1))
-
-
-  # # DON'T KNOW WHERE TO GO
-  # IR <- IR %>% mutate(med.dnk = case_when(
-  #   v467a =="not a big problem" | v467a =="not a problem" ~0,
-  #   v467a == "big problem" ~1))
+  IR <- IR %>%
+    dplyr::mutate(med.permis = case_when(v467b =="not a big problem" | v467b =="no problem" ~ 0,
+                                         v467b == "big problem" ~ 1))
 
 
   # COST FOR NECESSARY TREATMENT
-  IR$med.cost <- IR$v467c
-  IR <- IR %>% dplyr::mutate(med.cost = case_when(
-    v467c =="not a big problem" | v467c =="no problem" ~0,
-    v467c == "big problem" ~1))
+  IR <- IR %>%
+    dplyr::mutate(med.cost = case_when(v467c =="not a big problem" | v467c =="no problem" ~ 0,
+                                       v467c == "big problem" ~ 1))
 
 
   # DISTANCE TO HEALTH FACILITY
-  IR$med.dist <- IR$v467d
-  IR <- IR %>% dplyr::mutate(med.dist = case_when(
-    v467d =="not a big problem" | v467d =="no problem" ~0,
-    v467d == "big problem" ~1))
+  IR <- IR %>%
+    dplyr::mutate(med.dist = case_when(v467d =="not a big problem" | v467d =="no problem" ~ 0,
+                                       v467d == "big problem" ~ 1))
 
 
   # TRANSPORTATION TO THE HEALTH FACILITY
-  IR <- IR %>% mutate(med.transp = case_when(
-    v467e =="not a big problem" | v467e =="not a problem" ~0,
-    v467e == "big problem" ~1))
+  IR <- IR %>%
+    dplyr::mutate(med.transp = case_when(v467e =="not a big problem" | v467e =="not a problem" ~ 0,
+                                         v467e == "big problem" ~ 1))
 
 
   # DOESN'T WANT TO GO ALONE
-  IR$med.alone <- IR$v467f
-  IR <- IR %>% dplyr::mutate(med.alone = case_when(
-    v467f =="not a big problem"| v467f =="no problem" ~0,
-    v467f == "big problem" ~1))
+  IR <- IR %>%
+    dplyr::mutate(med.alone = case_when(v467f =="not a big problem"| v467f =="no problem" ~ 0,
+                                        v467f == "big problem" ~ 1))
 
 
   # CONCERN THERE MAY NOT BE A FEMALE HEALTH PROVIDER
-  IR <- IR %>% mutate(med.fempro = case_when(
-    v467g =="not a big problem" | v467g =="not a problem"  ~0,
-    v467g == "big problem" ~1))
+  IR <- IR %>%
+    dplyr::mutate(med.fempro = case_when(v467g =="not a big problem" | v467g =="not a problem"  ~ 0,
+                                         v467g == "big problem" ~ 1))
 
 
   # CONCERN THERE MAY NOT BE A PROVIDER
-  IR <- IR %>% mutate(med.nopro = case_when(
-    v467h =="not a big problem"| v467g =="not a problem" ~0,
-    v467h == "big problem" ~1))
+  IR <- IR %>%
+    dplyr::mutate(med.nopro = case_when(v467h =="not a big problem"| v467g =="not a problem" ~ 0,
+                                        v467h == "big problem" ~ 1))
 
 
   # CONCERN THERE MAY NOT BE MEDICATIONS
-  IR <- IR %>% mutate(med.nomeds = case_when(
-    v467i =="not a big problem" | v467i =="not a problem" ~0,
-    v467i == "big problem" ~1))
+  IR <- IR %>%
+    dplyr::mutate(med.nomeds = case_when(v467i =="not a big problem" | v467i =="not a problem" ~ 0,
+                                         v467i == "big problem" ~ 1))
 
 
   # CREATE INDEX FROM BARRIERS TO HC VARIABLES
-  # MUTATED ABOVE SO THAT 1 IS A BIG PROBLEM, THE REST IS ZERO
-  # IR$med.nacnt <- IR  %>%
-  #   rowwise() %>%
-  #   dplyr::summarise(med.nacnt = sum(is.na(med.dnk), is.na(med.permis), is.na(med.cost), is.na(med.dist), is.na(med.transp), is.na(med.alone), is.na(med.fempro), is.na(med.nopro), is.na(med.nomeds)))
-
   IR<-IR %>%
     rowwise() %>%
     dplyr::mutate(med.sum = sum(med.permis, med.cost, med.dist, med.transp, med.alone, med.fempro, med.nopro, med.nomeds, na.rm=TRUE))
 
-  # IR$med.index <- ifelse(IR$med.nacnt == 9, NA, IR$med.sum)
   IR$med.index <- IR$med.sum
   IR$med.index <- as.numeric(IR$med.index)
 
   # BINARY INDICATOR FROM INDEX
-  IR$med.index.3plus<-ifelse(IR$med.index>=3,1,0)
+  IR$med.index.3plus <- ifelse(IR$med.index >= 3, 1, 0)
 
 
   # VISITED BY A HEALTHWORKER
-  IR$hw.visit.12mo<-ifelse(IR$v393=="yes",1,0)
+  IR$hw.visit.12mo <- ifelse(IR$v393=="yes", "Yes", "No")
 
 
   # DID HEALTHWORKER TALK ABOUT FAMILY PLANNING
-  IR <- IR %>% dplyr::mutate(hw.visit.fp = case_when(
-    v393a == "yes" ~ "HW discussed FP",
-    v393a == "no" ~ "HW did not discuss FP",
-    is.na(v393a) ~ "No HW visit"))
+  IR <- IR %>%
+    dplyr::mutate(hw.visit.fp = case_when(v393a == "yes" ~ "HW discussed FP",
+                                          v393a == "no" ~ "HW did not discuss FP",
+                                          is.na(v393a) ~ "No HW visit"))
 
 
   ## EMPLOYMENT FACTORS
   # RESPONDENT'S OCCUPATION
-  IR$occupation <- factor(IR$v717)
-  IR$occupation.cat <- case_when(
-    IR$occupation %in% c('professional/technical/ managerial','clerical') ~ 'professional/mangerial/ clerical',
-    IR$occupation %in% c('skilled manual','unskilled manual') ~ 'manual',
-    IR$occupation %in% c('services','household and domestic') ~ 'service/domestic',
-    IR$occupation %in% c('agricultural - self employed','agricultural - employee') ~ 'agricultural',
-    IR$occupation %in% c('sales') ~ 'sales',
-    IR$occupation %in% c('other') ~ 'other',
-    IR$occupation %in% c('not working') ~ 'not working')
+  IR$occupation <- IR$v717
+
+  IR <- IR %>%
+    dplyr::mutate(occupation.cat <- case_when(
+      occupation %in% c('professional/technical/ managerial','clerical') ~ 'professional/mangerial/ clerical',
+      occupation %in% c('skilled manual','unskilled manual') ~ 'manual',
+      occupation %in% c('services','household and domestic') ~ 'service/domestic',
+      occupation %in% c('agricultural - self employed','agricultural - employee') ~ 'agricultural',
+      occupation %in% c('sales') ~ 'sales',
+      occupation %in% c('other') ~ 'other',
+      occupation %in% c('not working') ~ 'not working'))
 
 
   # RESPONDENT WORKS FOR FAMILY, OTHERS, SELF-EMPLOYED
@@ -663,9 +622,9 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     (v731 == "no") ~ "No work in the past 12 months",
     (v731 == "in the past year") ~ "Worked in the past year"))
 
-  IR$working.yn <- ifelse(IR$working=="Currently working" | IR$working=="Worked in the past year" | IR$working=="On leave/absent",1,0)
+  IR$working.yn <- ifelse(IR$working=="Currently working" | IR$working=="Worked in the past year" | IR$working=="On leave/absent", "Yes", "No")
 
-  IR$workingnow.yn <- ifelse(IR$working=="Currently working",1,0)
+  IR$workingnow.yn <- ifelse(IR$working=="Currently working", "Yes", "No")
 
 
   # WORK SEASONALITY
@@ -674,6 +633,13 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     v732 == "occasional" ~ "Occassional",
     v732 == "seasonal" ~ "Seasonal",
     v732 == "all year" ~ "All year"))
+
+
+  # WORK SEASONALITY | BINARY
+  IR <- IR %>% dplyr::mutate(work.seasonal2 = case_when(
+    work.seasonal %in% c("Occasional", "No work in past 12 months", "All year") ~ "Not Seasonal",
+    work.seasonal == "Seasonal" ~ "Seasonal"
+  ))
 
 
   ###################################
@@ -688,19 +654,12 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
   ###################################
   # HUSBAND/PARTNER WORKING 2
   # ACCOUNT FOR PARTNER STATUS SURVEY SKIP PATTERN
-  # IR <- IR %>% dplyr::mutate(part.working = case_when(
-  #   !(v501 %in% c("married","living with partner"))  ~ "no partner",
-  #   v704a == "didn't work last 12 months" ~ "Didn't work last 12 months",
-  #   v704a == "worked last 7 days" ~ "Worked last 7 days",
-  #   v704a == "worked last 12 months" ~ "Worked last 12 months",
-  #   v704a == "don't know" ~ "Don't know"))
-
-
-  # # BINARY FACTOR FOR HUSBAND/PARTNER EMPLOYED CURRENTLY
-  # IR <- IR %>% dplyr::mutate(part.workingnow.yn = case_when(
-  #   part.working == "no partner" ~ "no partner",
-  #   part.working == "Worked last 7 days" ~ "Yes",
-  #   part.working %in% c("didn't work last 12 months", "worked last 12 months", "don't know") ~ "No"))
+  IR <- IR %>% dplyr::mutate(part.working = case_when(
+    !(v501 %in% c("married","living with partner"))  ~ "no partner",
+    v704a == "didn't work last 12 months" ~ "Didn't work last 12 months",
+    v704a == "worked last 7 days" ~ "Worked last 7 days",
+    v704a == "worked last 12 months" ~ "Worked last 12 months",
+    v704a == "don't know" ~ "Don't know"))
 
 
   IR <- IR %>% mutate(partner.working = case_when(
@@ -711,9 +670,9 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     v704a == "don't know" ~ "Don't know"))
 
 
-  IR$partner.working.yn <- ifelse(IR$partner.working %in% c("Worked last 7 days", "Worked last 12 months"), 1, 0)
+  IR$partner.working.yn <- ifelse(IR$partner.working %in% c("Worked last 7 days", "Worked last 12 months"), "Yes", "No")
 
-  IR$partner.workingnow.yn <- ifelse(IR$partner.working %in% c("Worked last 7 days"), 1, 0)
+  IR$partner.workingnow.yn <- ifelse(IR$partner.working %in% c("Worked last 7 days"), "Yes", "No")
 
 
   # HUSBAND/PARTNER'S OCCUPATION
@@ -754,7 +713,6 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     v137 == 1 ~ "1",
     v137 ==2 ~ "2",
     (v137 >=3 & !is.na(v137)) ~ "3+"))
-  IR$num.under5 <- factor(IR$num.under5.cat,levels=c("3+","0","1","2"))
 
 
   # NUMBER OF CHILDREN LIVING
@@ -767,7 +725,6 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     v218 %in% c(1:2) ~ "1-2",
     v218 %in% c(3:5) ~ "3-5",
     (v218 >=6 & !is.na(v218)) ~ "6+"))
-  IR$num.child.alive.cat <- factor(IR$num.child.alive.cat,levels=c("6+","0","1-2","3-5"))
 
 
   # CHILDREN THAT HAVE DIED
@@ -779,10 +736,6 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     num.child.die %in% c(0) ~ "0",
     num.child.die %in% c(1) ~ "1",
     num.child.die >=2 ~ "2 or more"))
-
-
-  # CATEGORICAL FACTOR FOR NUMBER OF CHILDREN THAT HAVE DIED - MOH
-  IR$num.child.die.moh.yn <- ifelse(IR$v206 + IR$v207 > 0 , 1, 0)
 
 
   # NUMBER OF BIOLOGICAL CHILDREN IN THE HOUSEHOLD
@@ -807,162 +760,178 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # BINARY FACTOR FOR PARTNER IS ABSENT FROM HOUSEHOLD
-  IR$partner.absent.yn <- ifelse(IR$partner.absent == "Yes", 1, 0)
+  IR$partner.absent.yn <- ifelse(IR$partner.absent == "Yes", "Yes", "No")
 
 
   # SEX OF HEAD OF HOUSEHOLD
   IR$head.sex <- IR$v151
-  #IR$head.sex.male.num <- ifelse(IR$head.sex == "male", 1, 0)
-
-
-  # CURRENT PARTNERSHIP STATUS
-  IR$yrs.curr.pship <- ifelse(IR$v501 %in% c("married", "living with partner"), IR$v512, NA)
-  IR$yrs.curr.pship[IR$marr.cohab==0] <- 'not partnered'
-
-
-  # # DURATION OF MARRIAGE, AMONG WOMEN STILL WITH FIRST PARTNER
-  IR <- IR %>% dplyr::mutate(yrs.curr.pship.cat = case_when(
-    v501 %in% c("never in union") ~ "Never in union",
-    (v501 %in% c("widowed", "divorced", "no longer living together/ separated") | v503 %in% c("more than once")) ~ "No longer with first partner",
-    yrs.curr.pship %in% c(0:4) ~ "Less than 5 years",
-    yrs.curr.pship %in% c(5:9) ~ "5 to 9 years",
-    yrs.curr.pship %in% c(10:39) ~ "10 or more years"))
-  IR$yrs.curr.pship.cat <- factor(IR$yrs.curr.pship.cat, levels = c("Never in union", "Less than 5 years", "More than 5 years", "No longer with first partner"))
 
 
   ## VIOLENCE IN HOUSEHOLD
   # DOMESTIC VIOLENCE - PHYSICAL
-  IR <- IR %>% dplyr::mutate(dv.physical = case_when(
+  IR <- IR %>%
+    dplyr::mutate(dv.physical = case_when(
     (d106 == "no" & d107 == "no") ~ "No",
     (d106 == "yes" | d107 == "yes") ~ "Yes"))
 
+
   # DOMESTIC VIOLENCE - EMOTIONAL
-  IR <- IR %>% dplyr::mutate(dv.emotional = case_when(
+  IR <- IR %>%
+    dplyr::mutate(dv.emotional = case_when(
     d104 == "yes" ~ "Yes",
     d104 == "no" ~ "No"))
 
+
   # DOMESTIC VIOLENCE - SEXUAL
-  IR <- IR %>% dplyr::mutate(dv.sexual = case_when(
+  IR <- IR %>%
+    dplyr::mutate(dv.sexual = case_when(
     d108 == "yes" ~ "Yes",
     d108 == "no" ~ "No"))
+
 
   # HUSBAND/PARTNER JEALOUS IF RESPONDENT TALKS WITH OTHER MEN
   IR <- IR %>% dplyr::mutate(dv.jealous.othermen = case_when(
     d101a == "yes" ~ "Yes",
     d101a == "no" ~ "No"))
 
+
   # HUSBAND/PARTNER DOES NOT PERMIT RESPONDENT TO MEET FEMALE FRIENDS
   IR <- IR %>% dplyr::mutate(dv.nofriends = case_when(
     d101c == "yes" ~ "Yes",
     d101c == "no" ~ "No"))
 
+
   # HUSBAND/PARTNER TRIES TO LIMIT RESPONDENT'S CONTACT WITH FAMILY
-  IR <- IR %>% dplyr::mutate(dv.nofamily.contact = case_when(
+  IR <- IR %>%
+    dplyr::mutate(dv.nofamily.contact = case_when(
     d101d == "yes" ~ "Yes",
     d101d == "no" ~ "No"))
+
 
   # EVER BEEN HUMILIATED BY HUSBAND/PARTNER
   IR$dv.humiliated <- as.character(IR$d103a)
 
+
   # EVER BEEN THREATENED WITH HARM BY HUSBAND/PARTNER
   IR$dv.threatened <- as.character(IR$d103b)
+
 
   # EVER BEEN INSULTED OR MADE TO FEEL BAD BY HUSBAND/PARTNER
   IR$dv.insulted <- as.character(IR$d103c)
 
+
   # EVER BEEN PUSHED, SHOOK, OR HAD SOMETHING THROWN BY HUSBAND/PARTNER
   IR$dv.pushed <- as.character(IR$d105a)
+
 
   # EVER BEEN SLAPPED BY HUSBAND/PARTNER
   IR$dv.slapped <- as.character(IR$d105b)
 
+
   # EVER BEEN KICKED OR DRAGGED BY HUSBAND/PARTNER
   IR$dv.kicked <- as.character(IR$d105d)
+
 
   # EVER BEEN STRANGLED OR BURNT BY HUSBAND/PARTNER
   IR$dv.strangled <- as.character(IR$d105e)
 
+
   # EVER BEEN ATTACKED WITH KNIFE/GUN OR OTHER WEAPON BY HUSBAND/PARTNER
   IR$dv.weapon <- as.character(IR$d105f)
 
-  # EVER CS PHYSICAL VIOLENCE BY HUSBAND/PARTNER
-  # IR$dv.cs.physical <- as.character(IR$d105g)
 
   # EVER BEEN PHYSICALLY FORCED INTO UNWANTED SEX BY HUSBAND/PARTNER
   IR$dv.forcedsex1 <- as.character(IR$d105h)
 
+
   # EVER BEEN FORCED INTO OTHER UNWANTED SEXUAL ACTS BY HUSBAND/PARTNER
   IR$dv.forcedsex2 <- as.character(IR$d105i)
+
 
   # EVER HAD ARM TWISTED OR HAIR PULLED BY HUSBAND/PARTNER
   IR$dv.armtwist <- as.character(IR$d105j)
 
+
   # Ever been physically forced to perform sexual acts respondent didn't want to
   IR$dv.forcedsex3 <- as.character(IR$d105k)
+
 
   # HUSBAND/PARTNER: PERSON WHO HURT RESPONDENT DURING A PREGNANCY
   IR <- IR %>% dplyr::mutate(dv.hurtpreg.husband = case_when(
     d118a == "yes" ~ "Yes",
     d118a == "no" ~ "No"))
 
+
   # FORMER PARTNER: PERSON WHO HURT RESPONDENT DURING A PREGNANCY
   IR <- IR %>% dplyr::mutate(dv.hurtpreg.formerp = case_when(
     d118j == "yes" ~ "Yes",
     d118j == "no" ~ "No"))
 
+
   # PREVIOUS HUSBAND: EVER HIT, SLAP, KICK, OR PHYSICALLY HURT RESPONDENT
   IR$dv.prevparter.hurt <- as.character(IR$d130a)
+
 
   # PREVIOUS HUSBAND: PHYSICALLY FORCED TO HAVE SEX OR PERFORM SEXUAL ACTS
   IR$dv.prevparter.forcedsex <- as.character(IR$d130b)
 
+
   # FRIEND: PERSON RESPONDENT WENT TO SEEK HELP
   IR <- IR %>% dplyr::mutate(dv.friend.help = case_when(
     d119xd == "yes" ~ "Yes",
-    d119xd == "no" ~ "No"))
+    d119xd == "no" ~ "No",))
   IR$dv.friend.help[IR$d128 == 'no'] <- 'Did not seek any help'
+
 
   # OWN FAMILY: PERSON RESPONDENT WENT TO SEEK HELP
   IR <- IR %>% dplyr::mutate(dv.family.help = case_when(
+    d128 == "no" ~ "Did not seek any help",
     d119h == "yes" ~ "Yes",
     d119h == "no" ~ "No"))
-  IR$dv.family.help[IR$d128 == 'no'] <- 'Did not seek any help'
+
 
   # HUSBAND/PARTNER FAMILY: PERSON RESPONDENT WENT TO SEEK HELP
   IR <- IR %>% dplyr::mutate(dv.husband.help = case_when(
+    d128 == "no" ~ "Did not seek any help",
     d119i == "yes" ~ "Yes",
     d119i == "no" ~ "No"))
-  IR$dv.husband.help[IR$d128 == 'no'] <- 'Did not seek any help'
+
 
   # CURRENT/FORMER HUSBAND/PARTNER: PERSON RESPONDENT WENT TO SEEK HELP
   IR <- IR %>% dplyr::mutate(dv.formerp.help = case_when(
+    d128 == "no" ~ "Did not seek any help",
     d119j == "yes" ~ "Yes",
     d119j == "no" ~ "No"))
-  IR$dv.formerp.help[IR$d128 == 'no'] <- 'Did not seek any help'
+
 
   # CURRENT/FORMER BOYFRIEND: PERSON RESPONDENT WENT TO SEEK HELP
   IR <- IR %>% dplyr::mutate(dv.formerb.help = case_when(
+    d128 == "no" ~ "Did not seek any help",
     d119k == "yes" ~ "Yes",
     d119k == "no" ~ "No"))
-  IR$dv.formerb.help[IR$d128 == 'no'] <- 'Did not seek any help'
+
 
   # NEIGHBOR: PERSON RESPONDENT WENT TO SEEK HELP
   IR <- IR %>% dplyr::mutate(dv.neighbor.help = case_when(
+    d128 == "no" ~ "Did not seek any help",
     d119u == "yes" ~ "Yes",
     d119u == "no" ~ "No"))
-  IR$dv.neighbor.help[IR$d128 == 'no'] <- 'Did not seek any help'
+
 
   # OTHER: PERSON RESPONDENT WENT TO SEEK HELP
   IR <- IR %>% dplyr::mutate(dv.other.help = case_when(
+    d128 == "no" ~ "Did not seek any help",
     d119x == "yes" ~ "Yes",
     d119x == "no" ~ "No"))
-  IR$dv.other.help[IR$d128 == 'no'] <- 'Did not seek any help'
+
 
   # SOCIAL SERVICE ORGANIZATION: PERSON RESPONDENT WENT TO SEEK HELP
   IR <- IR %>% dplyr::mutate(dv.sso.help = case_when(
+    d128 == "no" ~ "Did not seek any help",
     d119xb == "yes" ~ "Yes",
     d119xb == "no" ~ "No"))
   IR$dv.sso.help[IR$d128 == 'no'] <- 'Did not seek any help'
+
 
   # RELIGIOUS LEADER: PERSON RESPONDENT WENT TO SEEK HELP
   IR <- IR %>% dplyr::mutate(dv.religious.help = case_when(
@@ -970,88 +939,89 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     d119xf == "no" ~ "No"))
   IR$dv.religious.help[IR$d128 == 'no'] <- 'Did not seek any help'
 
+
   # EVER TOLD ANYONE ELSE ABOUT VIOLENCE
-  # IR$dv.anyone.help <- IR$d128
   IR <- IR %>%
     dplyr::mutate(dv.anyone.help = case_when(
+      d128 == "no" ~ "Did not seek any help",
       d128 == "yes" ~ "Yes",
       d128 == "no" ~ "No"))
-  IR$dv.anyone.help[IR$d128 == 'no'] <- 'Did not seek any help'
 
 
   ## DECISION-MAKING
 
   # JOINT DECISION: FINANCIAL
-  IR$desc.ownincome <- as.character(IR$v739)
-  IR$desc.ownincome[(IR$v741 %in% c("not paid", "in-kind only") | IR$v731 == "no")] <- "Not paid in cash or not working"
-  IR$desc.ownincome[IR$marr.cohab==0] <- 'not partnered'
+  IR <- IR %>%
+    dplyr::mutate(desc.ownincome = case_when(
+      marr.cohab == 0 ~ "not partnered",
+      (v741 %in% c("not paid", "in-kind only") | v731 == "no") ~ "Not paid in cash or not working",
+      !is.na(v739) ~ as.character(v739),
+      TRUE ~ NA_character_
+    ))
 
-  IR$jd.ownincome <- ifelse(IR$v739== "respondent and husband/partner",1,0)
-
+  IR$jd.ownincome <- ifelse(IR$v739== "respondent and husband/partner", 1, 0)
 
   # OWN DECISION: FINANCIAL
-  IR$wd.ownincome <- ifelse(IR$v739== "respondent alone",1,0)
-
+  IR$wd.ownincome <- ifelse(IR$v739== "respondent alone", 1, 0)
 
   # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: FINANCIAL
-  IR$jdwd.ownincome <- ifelse(IR$v739== "respondent alone" | IR$v739=="respondent and husband/partner",1,0)
+  IR$jdwd.ownincome <- ifelse(IR$v739== "respondent alone" | IR$v739=="respondent and husband/partner", 1, 0)
 
 
   # JOINT DECISION: LARGE HOUSEHOLD PURCHASES
-  IR$desc.lrgpur <- as.character(IR$v743b)
-  IR$desc.lrgpur[IR$marr.cohab==0] <- 'not partnered'
+  IR <- IR %>%
+    dplyr::mutate(desc.lrgpur = case_when(marr.cohab == 0 ~ "not partnered",
+                                          TRUE ~ as.character(v743b)))
 
-  IR$jd.lrgpur <- ifelse(IR$v743b== "respondent and husband/partner",1,0)
+  IR$jd.lrgpur <- ifelse(IR$v743b== "respondent and husband/partner", 1, 0)
 
-
-  # # OWN DECISION: LARGE HOUSEHOLD PURCHASES
-  IR$wd.lrgpur <- ifelse(IR$v743b== "respondent alone",1,0)
-
+  # OWN DECISION: LARGE HOUSEHOLD PURCHASES
+  IR$wd.lrgpur <- ifelse(IR$v743b== "respondent alone", 1, 0)
 
   # # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: LARGE HOUSEHOLD PURCHASES
-  IR$jdwd.lrgpur <- ifelse(IR$v743b== "respondent alone" | IR$v743b=="respondent and husband/partner",1,0)
+  IR$jdwd.lrgpur <- ifelse(IR$v743b== "respondent alone" | IR$v743b=="respondent and husband/partner", 1, 0)
 
 
   # JOINT DECISION: HUSBAND'S INCOME
-  IR$desc.money <- as.character(IR$v743d)
-  IR$desc.money[IR$marr.cohab==0] <- 'not partnered'
-
+  IR <- IR %>%
+    dplyr::mutate(desc.money = case_when(marr.cohab == 0 ~ "not partnered",
+                                         TRUE ~ as.character(v743d)))
 
   # OWN DECISION: HUSBAND'S INCOME
-  IR$wd.money <- ifelse(IR$v743f== "respondent alone",1,0)
-
+  IR$wd.money <- ifelse(IR$v743f== "respondent alone", 1, 0)
 
   # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: HUSBAND'S INCOME
-  IR$jdwd.money <- ifelse(IR$v743f== "respondent alone" | IR$v743f=="respondent and husband/partner",1,0)
+  IR$jdwd.money <- ifelse(IR$v743f== "respondent alone" | IR$v743f=="respondent and husband/partner", 1, 0)
 
 
   # JOINT DECISION: HEALTH
-  IR$desc.hlth <- as.character(IR$v743a)
-  IR$desc.hlth[IR$marr.cohab==0] <- 'not partnered'
-
+  IR <- IR %>%
+    dplyr::mutate(desc.hlth = case_when(marr.cohab == 0 ~ "not partnered",
+                                        TRUE ~ as.character(v743a)))
 
   # OWN DECISION: HEALTH
-  IR$wd.hlth <- ifelse(IR$v743a== "respondent alone",1,0)
-
+  IR$wd.hlth <- ifelse(IR$v743a== "respondent alone", 1, 0)
 
   # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: HEALTH
-  IR$jdwd.hlth <- ifelse(IR$v743a== "respondent alone" | IR$v743a=="respondent and husband/partner",1,0)
+  IR$jdwd.hlth <- ifelse(IR$v743a== "respondent alone" | IR$v743a=="respondent and husband/partner", 1, 0)
 
 
   # JOINT DECISION: FAMILY PLANNING
-  IR <- IR %>% dplyr::mutate(desc.fp = case_when(
+  IR <- IR %>%
+    dplyr::mutate(desc.fp = case_when(
+    v213 == "yes" ~ "currently pregnant",
     (v632 %in% c("joint decision") | v632a %in% c("joint decision")) ~ "respondent and husband/ partner",
     (v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent")) ~ "respondent alone",
     (v632 %in% c("mainly husband, partner") | v632a %in% c("mainly husband, partner")) ~ "husband/ partner alone",
     (v632 %in% c("other") | v632a %in% c("other")) ~ "other",
     (marr.cohab %in% 0) ~ "not partnered"))
-  IR$desc.fp[IR$v213 %in% 'yes'] <- 'currently pregnant'
-
 
   # OWN DECISION: FAMILY PLANNING
-  IR <- IR %>% dplyr::mutate(wd.fp = case_when(
-    (v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent")) ~ "Yes",((!is.na(v632) & !(v632 == "mainly respondent")) | (!is.na(v632a) & !(v632a == "mainly respondent"))) ~ "No"))
-  IR$wd.fp <- ifelse(IR$wd.fp=="Yes",1,0)
+  IR <- IR %>%
+    dplyr::mutate(wd.fp = case_when(
+    (v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent")) ~ "Yes",
+    ((!is.na(v632) & !(v632 == "mainly respondent")) | (!is.na(v632a) & !(v632a == "mainly respondent"))) ~ "No"))
+  IR$wd.fp <- ifelse(IR$wd.fp=="Yes", 1, 0)
 
 
   # CATEGORICAL FACTOR FOR OWN DECISION: FAMILY PLANNING
@@ -1067,20 +1037,19 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     v632 %in% c("joint decision") | v632a %in% c("joint decision") | v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent") ~ "Yes",
     v632 %in% c("mainly husband, partner") | v632 %in% c("other") ~ "No",
     v632a %in% c("mainly husband, partner") | v632a %in% c("other") ~ "No"))
-  IR$jdwd.fp <- ifelse(IR$jdwd.fp=='Yes',1,0)
+  IR$jdwd.fp <- ifelse(IR$jdwd.fp=='Yes', 1, 0)
 
 
   # JOINT DECISION: EVERYDAY DECISIONS
-  IR$desc.visit <- as.character(IR$v743d)
-  IR$desc.visit[IR$marr.cohab==0] <- 'not partnered'
-
+  IR <- IR %>%
+    dplyr::mutate(desc.visit = case_when(marr.cohab == 0 ~ "not partnered",
+                                         TRUE ~ as.character(v743d)))
 
   # OWN DECISION: EVERYDAY DECISIONS
-  IR$wd.visit <- ifelse(IR$v743d== "respondent alone",1,0)
-
+  IR$wd.visit <- ifelse(IR$v743d== "respondent alone", 1, 0)
 
   # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: EVERYDAY DECISIONS
-  IR$jdwd.visit <- ifelse(IR$v743d== "respondent alone" | IR$v743d=="respondent and husband/partner",1,0)
+  IR$jdwd.visit <- ifelse(IR$v743d== "respondent alone" | IR$v743d=="respondent and husband/partner", 1, 0)
 
 
   # JOINT DECISON-MAKING INDEX
@@ -1090,10 +1059,8 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     IR$desc.hlth %in% 'respondent and husband/partner' +
     IR$desc.fp %in% 'respondent and husband/partner' +
     IR$desc.visit %in% 'respondent and husband/partner'
-  IR$jd.index[IR$marr.cohab==0] <- 'not partnered'
-  IR$jd.index <- ifelse(IR$jd.index == 0,'0',
-                        ifelse(IR$jd.index %in% c(1,2,3), '1-3',
-                               ifelse(IR$jd.index %in% c(4,5,6), '4+', 'not partnered')))
+  IR$jd.index <- ifelse(IR$marr.cohab==0, 'not partnered', IR$jd.index)
+
 
   # WOMEN'S DECISION MAKING INDEX
   IR$wd.index <- IR$desc.ownincome %in% 'respondent alone' +
@@ -1102,10 +1069,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     IR$desc.hlth %in% 'respondent alone' +
     IR$desc.fp %in% 'respondent alone' +
     IR$desc.visit %in% 'respondent alone'
-  IR$wd.index[IR$marr.cohab==0] <- 'not partnered'
-  IR$wd.index <- ifelse(IR$wd.index == 0,'0',
-                        ifelse(IR$wd.index %in% c(1,2,3), '1-3',
-                               ifelse(IR$wd.index %in% c(4,5,6), '4+', 'not partnered')))
+  IR$wd.index <- ifelse(IR$marr.cohab==0, 'not partnered', IR$wd.index)
 
 
   # JOINT OR WOMAN DECISION MAKING INDEX
@@ -1114,32 +1078,29 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     dplyr::mutate(jdwd.sum = sum(jdwd.hlth, jdwd.fp, jdwd.lrgpur, jdwd.visit, jdwd.money, jdwd.ownincome, na.rm=TRUE))
 
 
-  # IR <- IR  %>%
-  #   rowwise() %>%
-  #   summarise(jdwd.nacnt = sum(is.na(jdwd.hlth), is.na(jdwd.fp), is.na(jdwd.lrgpur), is.na(jdwd.visit), is.na(jdwd.money), is.na(jdwd.ownincome)))
+  IR$jdwd.index <- as.numeric(IR$jdwd.sum)
 
 
-  # IR$jdwd.index <- ifelse(IR$jdwd.nacnt == 6, NA, IR$jdwd.sum)
-  IR$jdwd.index <- IR$jdwd.sum
-  IR$jdwd.index <- as.numeric(IR$jdwd.index)
+  IR$jdwd.index.5plus <- ifelse(IR$jdwd.index >= 5, 1, 0)
 
-  IR$jdwd.index.5plus <- ifelse(IR$jdwd.index>=5,1,0)
-  IR$jdwd.index.5plus[IR$marr.cohab==0] <- 0
 
   # CATEGORICAL FACTOR FOR JOINT/WOMEN DECISION-MAKING INDEX
-  IR <- IR %>% dplyr::mutate(jdwd.index.cat = case_when(
+  IR <- IR %>%
+    dplyr::mutate(jdwd.index.cat = case_when(
     marr.cohab == 0 ~ "Not partnered",
     jdwd.index == 0 ~ "None",
     jdwd.index %in% c(1:4) ~ "One to four",
     jdwd.index %in% c(5:6) ~ "Five to six"
   ))
 
+
   # CATEGORICAL FACTOR FOR JOINT DECISION-MAKING INDEX
-  IR <- IR %>% dplyr::mutate(jd.index.cat = case_when(
-    marr.cohab == 0 ~ "Not partnered",
+  IR <- IR %>%
+    dplyr::mutate(jd.index.cat = case_when(
+    jd.index == "not partnered" ~ "Not partnered",
     jd.index == 0 ~ "None",
-    jd.index %in% c(1:4) ~ "One to four",
-    jd.index %in% c(5:6) ~ "Five to six"
+    jd.index %in% c(1:3) ~ "1-3",
+    jd.index %in% c(4:6) ~ "4-6"
   ))
 
 
@@ -1154,8 +1115,9 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
   ## PARTNER CHARACTERISTICS
   # PARTNER'S AGE
-  IR$partner.age <- IR$v730
-  IR$partner.age[IR$marr.cohab==0] <- 'not partnered'
+  IR <- IR %>%
+    dplyr::mutate(partner.age = case_when(marr.cohab == 0 ~ "not partnered",
+                                          TRUE ~ as.character(v730)))
 
 
   # CATEGORICAL FACTOR FOR PARTNER'S AGE
@@ -1166,13 +1128,12 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     v730 == 98 ~ "Don't know",
     v730 == 99 ~ "Missing",
     !(v501 %in% c("married", "living with partner")) ~ "not partnered"))
-  IR$partner.age.cat <- factor(IR$partner.age.cat,levels=c("30-59","under 30","60+","not partnered"))
 
 
   # DIFFERENCE BETWEEN WOMAN AND PARTNER'S AGE
-  IR$age.diff <- IR$v730 - IR$v012
-  IR$age.diff[is.na(IR$v730) | IR$v730 > 96] <- NA
-  IR$age.diff[IR$marr.cohab==0] <- 'not partnered'
+  IR <- IR %>%
+    dplyr::mutate(age.diff = case_when(is.na(v730) | v730 > 96 ~ NA,
+                                       TRUE ~ v730 - v012))
 
 
   # WOMAN HAD PREVIOUS PARTNERSHIPS
@@ -1182,12 +1143,8 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     v501 %in% c("never in union") ~ "Never in union"))
 
 
-  # Partnership status
-IR$pship.status <- factor(IR$v501)
-IR$marr.cohab<-ifelse(IR$v501 == "married" | IR$v501 == "living with partner", 1, 0) # ==> consider revising cutoff or making another variable for ever partnered?
-
 #Partnership by category AG 2/21/23
-IR$pship.cat <- IR$pship.status
+IR$pship.status <- (IR$v501)
 IR<- IR %>% mutate(pship.cat = case_when
                    (
                      pship.status == "never in union" ~ "never",
@@ -1201,26 +1158,30 @@ IR<- IR %>% mutate(pship.cat = case_when
 
 
   # RESPONDENT HAS TELEPHONE
-  IR<-IR %>% dplyr::mutate(has.mobile = case_when(
-    v169a=="no" ~ 0,
-    v169a== "yes" ~ 1))
+  IR<-IR %>%
+    dplyr::mutate(has.mobile = case_when(
+      v169a=="no" ~ "No",
+      v169a== "yes" ~ "Yes"))
 
 
   # USE MOBILE PHONE FOR FINANCIAL TRANSACTIONS
-  IR <- IR %>% dplyr::mutate(mobile.financial = case_when(
-    is.na(v169b) ~ "no",
-    v169b == "no" ~ "no",
-    v169b == "yes" ~ "yes"))
+  IR <- IR %>%
+    dplyr::mutate(mobile.financial = case_when(
+      v169b == "no" ~ "No",
+      v169b == "yes" ~ "Yes"))
 
 
   # HAS BANK ACCOUNT
-  IR$has.bank <- IR$v170
+  IR <- IR %>%
+    dplyr::mutate(has.bank = case_when(
+      v170 == "no" ~ "No",
+      v170 == "yes" ~ "Yes"))
 
 
   # USE OF INTERNET
   IR<-IR %>% dplyr::mutate(internet.use = case_when(
-    v171a %in% c("never","yes, before last 12 months") ~ 0,
-    v171a== "yes, last 12 months" ~ 1))
+    v171a %in% c("never", "yes, before last 12 months") ~ "No",
+    v171a== "yes, last 12 months" ~ "Yes"))
 
 
   ## CHILD HEALTH
@@ -1254,36 +1215,38 @@ IR<- IR %>% mutate(pship.cat = case_when
 
   # GAVE CHILD FORTIFIED BABY FOOD (CERELAC, ETC)
   IR<-IR %>% dplyr::mutate(bf.fortified.food = case_when(
-    v412a %in% c("no","don't know") ~ 0,
-    v412a== "yes" ~ 1))
+    v412a %in% c("no","don't know") ~ "No",
+    v412a== "yes" ~ "Yes"))
 
 
   # GAVE CHILD MEAT (BEEF, PORK, LAMB, CHICKEN, ETC)
   IR<-IR %>% dplyr::mutate(bf.meat = case_when(
-    v414h %in% c("no","don't know") ~ 0,
-    v414h== "yes" ~ 1))
+    v414h %in% c("no","don't know") ~ "No",
+    v414h== "yes" ~ "Yes"))
 
 
   # GAVE CHILD FOOD MADE FROM BEANS, PEAS, LENTILS
   IR<-IR %>% dplyr::mutate(bf.beans = case_when(
-    v414o %in% c("no","don't know") ~ 0,
-    v414o== "yes" ~ 1))
+    v414o %in% c("no","don't know") ~ 'No',
+    v414o== "yes" ~ "Yes"))
 
 
   # GAVE CHILD OTHER SOLID-SEMISOLID FOOD
   IR<-IR %>% dplyr::mutate(bf.other.solid = case_when(
-    v414s %in% c("no","don't know") ~ 0,
-    v414s== "yes" ~ 1))
+    v414s %in% c("no","don't know") ~ "No",
+    v414s== "yes" ~ "Yes"))
 
 
   ## WOMAN CHARACTERISTICS
   # RELIGION
-  IR$religion <- as.character(IR$v130)
-  IR$religion[IR$religion=="chistiane"] <- 'christian'
+  IR <- IR %>%
+    dplyr::mutate(religion = case_when(v130 == "chistiane" ~ "christian",
+                                       v130 == "muslin" ~ "muslim",
+                                       TRUE ~ as.character(v130)))
 
 
   # MUSLIM RELIGION
-  IR$muslim <- ifelse(IR$v130 %in% c("muslin", "muslim"), 1, 0)
+  IR$muslim <- ifelse(IR$religion == "muslim", "Yes", "No")
 
 
   #re-categorizing traditional, other and protestant together given extremely small sample sizes
@@ -1296,7 +1259,7 @@ IR<- IR %>% mutate(pship.cat = case_when
     (religion=="orthodox") ~ "orthodox",
     (religion=="muslin") ~ "muslim"))
 
-  IR$orthodox <- ifelse(IR$v130 =="orthodox", 1, 0)
+  IR$orthodox <- ifelse(IR$v130 =="orthodox", "Yes", "No")
 
 
   ## EDUCATION FACTORS
@@ -1304,44 +1267,35 @@ IR<- IR %>% mutate(pship.cat = case_when
   IR$ed.level <- IR$v106
 
 
-  # # EDUCATION LEVEL MOH CAT 1
-  # IR <- IR %>%
-  #   dplyr::mutate(ed.level.moh.cat1 = case_when(v106 %in% c("primary", "others", "higher", "secondary") ~ "education",
-  #                                               v106 %in% c("no education") ~ "no education"))
-  #
-  #
-  # # EDUCATION LEVEL MOH CAT 2
-  # IR <- IR %>%
-  #   dplyr::mutate(ed.level.moh.cat2 = case_when(v106 %in% c("higher", "secondary") ~ "higher education",
-  #                                               v106 %in% c("no education", "primary", "others") ~ "some education"))
-
-
   # BINARY FACTOR FOR WOMAN'S EDUCATION
-  # IR$anyed.yn <- ifelse(IR$v149 == "no education", 0, 1)
   IR$anyed.yn <- ifelse(IR$v149 == "no education", "No", "Yes")
 
 
   # HUSBAND/PARTNER'S EDUCATION LEVEL
-  IR$partner.ed.level <- as.character(IR$v701)
-  IR$partner.ed.level[IR$marr.cohab==0] <- 'not partnered'
+  IR <- IR %>%
+    dplyr::mutate(partner.ed.level = case_when(
+      marr.cohab == 0 ~ "not partnered",
+      TRUE ~ as.character(v701)))
 
 
   ###################################
-  IR <- IR %>% dplyr::mutate(partner.ed.cat = case_when(
-    partner.ed.level == "no education" ~ "no",
-    partner.ed.level == "higher" ~ "higher",
-    partner.ed.level == "primary" ~ "primary",
-    partner.ed.level == "secondary" ~ "secondary",
-    partner.ed.level == "don't know" ~ "don't know",
-    partner.ed.level == "not partnered" ~ "not partnered"))
+  IR <- IR %>%
+    dplyr::mutate(partner.ed.cat = case_when(
+      partner.ed.level == "no education" ~ "no",
+      partner.ed.level == "higher" ~ "higher",
+      partner.ed.level == "primary" ~ "primary",
+      partner.ed.level == "secondary" ~ "secondary",
+      partner.ed.level == "don't know" ~ "don't know",
+      partner.ed.level == "not partnered" ~ "not partnered"))
 
 
   ###################################
-  IR <- IR %>% dplyr::mutate(partner.anyed.yn = case_when(
-    partner.ed.level == "no education" ~ "no",
-    partner.ed.level %in% c("higher","primary","secondary") ~ "yes",
-    partner.ed.level == "don't know" ~ "don't know",
-    partner.ed.level == "not partnered" ~ "not partnered"))
+  IR <- IR %>%
+    dplyr::mutate(partner.anyed.yn = case_when(
+      partner.ed.level == "no education" ~ "no",
+      partner.ed.level %in% c("higher","primary","secondary") ~ "yes",
+      partner.ed.level == "don't know" ~ "don't know",
+      partner.ed.level == "not partnered" ~ "not partnered"))
 
 
   # HUSBAND/PARTNER'S EDUCATION LEVEL - CAT 1
@@ -1357,33 +1311,25 @@ IR<- IR %>% mutate(pship.cat = case_when
 
 
   ## PARTNERSHIP
-
-  # EVER-MARRIED SAMPLE
-  # IR$ever.married <- IR$v020
-
-
-  # AGE AT FIRST MARRIAGE/COHABITATION
-  # IR$age.1stcohab <- IR$v511
-  # IR$age.1stcohab[IR$v501] <- 'never partnered'
-
   IR <- IR %>%
     dplyr::mutate(age.1stcohab = case_when(v501 == "never partnered" ~ "never partnered",
                                            TRUE ~ as.character(v511)))
 
 
   #CATEGORICAL FACTOR FOR AGE AT FIRST MARRIAGE/COHABITATION
-  IR<- IR %>% dplyr::mutate(age.1stcohab.cat = case_when(
-    v501 == "never in union" ~ "never",
-    (v511 > 0 & v511 < 15) ~ "5-14",
-    (v511 >= 15 & v511 < 20) ~ "15-19",
-    (v511 >= 20) ~ "20+"))
+  IR<- IR %>%
+    dplyr::mutate(age.1stcohab.cat = case_when(
+      v501 == "never in union" ~ "never",
+      (v511 > 0 & v511 < 15) ~ "5-14",
+      (v511 >= 15 & v511 < 20) ~ "15-19",
+      (v511 >= 20) ~ "20+"))
 
 
   ## REPRODUCTIVE HISTORY
   # AGE AT FIRST SEX (IMPUTED)
-  IR$age.1stsex <- ifelse(IR$v531 == 97,NA,
-                          ifelse(IR$v531 == 98, NA,
-                                 ifelse(IR$v531 == 0, NA, as.numeric(IR$v531))))
+  IR <- IR %>%
+    dplyr::mutate(age.1stsex = case_when(v531 %in% c(97, 98, 0) ~ NA,
+                                         TRUE ~ as.numeric(v531)))
 
 
   ###################################
@@ -1398,15 +1344,14 @@ IR<- IR %>% mutate(pship.cat = case_when
   ###################################
   # CATEGORICAL FACTOR FOR AGE AT FIRST SEX
   # ACCOUNTING FOR SKIP PATTERNS WHICH CREATE NA
-  # IR<- IR %>%
-  #   dplyr::mutate(age.1stsex.cat = case_when(v531 %in% c(0, "not had sex") ~ "never",
-  #                                            (age.1stsex > 0 & age.1stsex < 15) ~ "5-14",
-  #                                            (age.1stsex >= 15 & age.1stsex < 20) ~ "15-19",
-  #                                            (age.1stsex >= 20 & age.1stsex < 50) ~ "20+",
-  #                                            v531 %in% c(97, 98, "inconsistent", "don't know") ~ "Inconsistent or don't know"))
+  IR<- IR %>%
+    dplyr::mutate(age.1stsex.cat = case_when(v531 %in% c(0, "not had sex") ~ "never",
+                                             (age.1stsex > 0 & age.1stsex < 15) ~ "5-14",
+                                             (age.1stsex >= 15 & age.1stsex < 20) ~ "15-19",
+                                             (age.1stsex >= 20 & age.1stsex < 50) ~ "20+",
+                                             v531 %in% c(97, 98, "inconsistent", "don't know") ~ "Inconsistent or don't know"))
 
 
-  # IR$early.sex.15 <- ifelse(IR$v531 >0 & IR$v531 <15, 1, 0)
   IR$early.sex.15 <- ifelse(IR$v531 >0 & IR$v531 <15, "Yes", "No")
 
 
@@ -1435,11 +1380,20 @@ IR<- IR %>% mutate(pship.cat = case_when
                                                v212 >= 40 ~ "40+"))
 
 
+  # AGE AT FIRST BIRTH CATEGORY 4
+  IR <- IR %>%
+    dplyr::mutate(age.1stbrth.cat4 = case_when(v212 < 15 ~ "<15",
+                                               v212 >= 15 & v212 < 20 ~ "15-19",
+                                               v212 >= 20 & v212 < 25 ~ "20-24",
+                                               v212 >= 25 & v212 < 30 ~ "25-29",
+                                               v212 >= 30 ~ "30+"))
+
+
   # NUMBER OF PREGNANCIES
-  IR$num.preg <- IR$v201
-  IR$num.preg <- ifelse(IR$v228 == "yes" & IR$v234 == "yes", IR$v201 + 2,
-                        ifelse(IR$v228 == "yes" & IR$v234 == "no", IR$v201 + 1,
-                               IR$v201))
+  IR <- IR %>%
+    dplyr::mutate(num.preg = case_when(v228 == "yes" & v234 == "yes" ~ v201 + 2,
+                                       v228 == "yes" & v234 == "no" ~ v201 + 1,
+                                       TRUE ~ v201))
 
 
   # CATEGORICAL FACTOR FOR NUMBER OF PREGNANCIES
@@ -1450,32 +1404,26 @@ IR<- IR %>% mutate(pship.cat = case_when
                                is.na(IR$num.preg) ~ NA)
 
 
-  # CATEGORICAL FACTOR FOR NUMBER OF PREGNANCIES - MOH
-  # IR <- IR %>%
-  #   dplyr::mutate(num.preg.moh.cat = case_when(num.preg == 0 ~ "0",
-  #                                              num.preg == 1 ~ "1",
-  #                                              num.preg > 1 ~ "2+"))
-
-
   IR <- IR %>%
     dplyr::mutate(total.sex.partners = case_when(v836 %in% c("98", "don't know") ~ NA,
                                                  v836 == "95+" ~ 95,
-                                                 TRUE ~ as.numeric(v836))) %>%
-    dplyr::mutate(total.sex.partners = case_when(total.sex.partners == 1 ~ "1",
-                                                 total.sex.partners == 2 ~ "2",
-                                                 total.sex.partners > 2 ~ "3+"))
+                                                 TRUE ~ as.numeric(v836)))
 
+
+  IR <- IR %>%
+    dplyr::mutate(total.sex.partners.cat = case_when(total.sex.partners == 1 ~ "1",
+                                                     total.sex.partners == 2 ~ "2",
+                                                     total.sex.partners > 2 ~ "3+"))
 
 
   # WHO CHECKED RESPONDENT HEALTH AFTER DISCHARGE
-  IR$discharge.checkedhealth <- as.character(IR$m68_1)
-  IR$discharge.checkedhealth[IR$v201==0] <- 'no births'
-  IR$discharge.checkedhealth <- case_when(
-    IR$discharge.checkedhealth %in% c("midwife",'auxiliary midwife (matrone)') ~ 'midwife/aux midwife',
-    IR$discharge.checkedhealth %in% c("doctor",'nurse') ~ 'doctor/nurse',
-    IR$discharge.checkedhealth %in% c("other",'traditional birth attendant') ~ 'other/TBA',
-    IR$discharge.checkedhealth == 'no births' ~ 'no births',
-    is.na(IR$discharge.checkedhealth) ~ 'no one')
+  IR <- IR %>%
+    dplyr::mutate(discharge.checkedhealth = case_when(v201 == 0 ~ "no births",
+                                                      m68_1 %in% c("midwife",'auxiliary midwife (matrone)') ~ 'midwife/aux midwife',
+                                                      m68_1 %in% c("doctor",'nurse') ~ 'doctor/nurse',
+                                                      m68_1 %in% c("other",'traditional birth attendant') ~ 'other/TBA',
+                                                      m68_1 == 'no births' ~ 'no births',
+                                                      is.na(IR$m68_1) ~ 'no one'))
 
 
   # DISAGREEMENT ON CHILD PREFERENCE
@@ -1491,20 +1439,19 @@ IR<- IR %>% mutate(pship.cat = case_when
 
 
   # FERTILITY PREFERENCE
-  IR$fertility.pref <- as.character(IR$v602)
-  IR$fertility.pref[IR$fertility.pref %in% c('sterilized (respondent or partner)','declared infecund')] <- 'sterilized/infecund'
+  IR <- IR %>%
+    dplyr::mutate(fertility.pref = case_when(v602 %in% c('sterilized (respondent or partner)','declared infecund') ~ "sterilized/infecund",
+                                             TRUE ~ v602))
 
 
   # PREFERRED WAITING TIME FOR BIRTH OF A/ANOTHER CHILD (GROUPED)
-  IR$fertility.pref.temp <- as.character(IR$v604)
-  IR$fertility.pref.temp[IR$fertility.pref.temp=='non-numeric'] <- NA
-  IR$fertility.pref.temp[IR$v602!='have another'] <- 'No more'
-  IR$fertility.pref.cat <- case_when(
-    IR$fertility.pref.temp %in% c("<12 months", "1 year") ~ "<2 years",
-    IR$fertility.pref.temp %in% c("2 years", "3 years","4 years") ~ "2-4 years",
-    IR$fertility.pref.temp %in% c("5 years", "6+ years") ~ "5+ years",
-    IR$fertility.pref.temp %in% c("No more") ~ "No more",
-    IR$fertility.pref.temp %in% c("don't know") ~ "don't know")
+  IR <- IR %>%
+    dplyr::mutate(fertility.pref.cat = case_when(v604 == "non-numeric" ~ NA,
+                                                 v602 != "have another" ~ "No more",
+                                                 v604 %in% c("<12 months", "1 year") ~ "<2 years",
+                                                 v604 %in% c("2 years", "3 years","4 years") ~ "2-4 years",
+                                                 v604 %in% c("5 years", "6+ years") ~ "5+ years",
+                                                 v604 %in% c("don't know") ~ "don't know"))
 
 
   # IDEAL NUMBER OF CHILDREN CATEGORY
@@ -1513,14 +1460,17 @@ IR<- IR %>% mutate(pship.cat = case_when
                                                     v614 >= 3 & v614 <=5 ~ "3-5",
                                                     v614 > 5 ~ "6+"))
 
-  IR$ideal.n.child.cat <- case_when(
-    IR$ideal.n.child %in% c('0',"1","2","3","4") ~ '0-4',
-    IR$ideal.n.child %in% c('5',"6","More than 6") ~ '5+')
-  IR$ideal.n.child.cat <- factor(IR$ideal.n.child.cat,levels=c("5+","0-4"))
+
+  IR <- IR %>%
+    dplyr::mutate(ideal.n.child.cat = case_when(v614 %in% c(0:4) ~ '0-4',
+                                                v614 > 5 ~ '5+'))
+
+
 
   # HUSBAND'S DESIRE FOR CHILRDEN
-  IR$partner.desire.child <- as.character(IR$v621)
-  IR$partner.desire.child[IR$marr.cohab==0] <- 'not partnered'
+  IR <- IR %>%
+    dplyr::mutate(partner.desire.child = case_when(marr.cohab == 0 ~ "not partnered",
+                                                   TRUE ~ as.character(v621)))
 
 
   # CONDOM USED DURING LAST SEX WITH MOST RECENT PARTNER (WOMEN)
@@ -1548,46 +1498,28 @@ IR<- IR %>% mutate(pship.cat = case_when
 
 
   # SOURCE OF CONDOMS USED FOR LAST SEX
-  IR$condom.source <- as.character(IR$v762)
-  IR$condom.source[IR$condom.last.sex=='no'] <- 'condom not used'
-
-
-  # NUMBER OF SEX PARTNERS, EXCLUDING SPOUSE, IN THE LAST 12 MONTHS
-  # IR$n.sex.excl.partner.12m <- IR$v766a
+  IR <- IR %>%
+    dplyr::mutate(condom.source = case_when(condom.last.sex == "no" ~ "condom not used",
+                                            TRUE ~ as.character(v762)))
 
 
   # NUMBER OF SEX PARTNERS, INCLUDING SPOUSE, IN LAST 12 MONTHS
-  # IR$n.sex.incl.partner.12m <- IR$v766b
+  IR$n.sex.incl.partner.12m <- IR$v766b
 
 
   # LAST 12 MONTHS HAD SEX IN RETURN FOR GIFTS, CASH, OTHER
-  IR$sex.gifts.12m <- as.character(IR$v791a)
-  IR$sex.gifts.12m[IR$n.sex.incl.partner.12m==0] <- 'no sex partners in past 12mon'
+  IR <- IR %>%
+    dplyr::mutate(sex.gifts.12m = case_when(n.sex.incl.partner.12m == 0 ~ "no sex partners in past 12m",
+                                            TRUE ~ as.character(v791a)))
 
 
   # SOURCE OF FAMILY PLANNING FOR NON USERS: GOVERNMENTS RURAL MATERNITY
   IR <- IR %>% dplyr::mutate(source.fp.gov = case_when(
-    v3a00e == "yes" ~ 1,
-    v3a00e == "no" ~ 0))
+    v3a00e == "yes" ~ "Yes",
+    v3a00e == "no" ~ "No"))
 
 
-  # # FP REASON FOR NOT USING
-  # IR <- IR %>% dplyr::mutate(no.fp.reason = case_when(
-  #   (v3a08a == "yes") ~ "not married",
-  #   (v3a08e == "yes" | v3a08d == "yes") ~ "meno/infecund/ hysterectomy",
-  #   (v3a08l == "yes") ~ "religious prohibition",
-  #   (v3a08q == "yes") ~ "lack of access",
-  #   (v3a08f == "yes" | v3a08g == "yes" | v3a08h == "yes" | v3a08p == "yes" |
-  #      v3a08s == "yes" | v3a08t == "yes" | v3a08x == "yes") ~ "other",
-  #   (v3a08u == "yes" | v3a08v == "yes") ~ "any or pref method unavailable",
-  #   (v3a08j == "yes" | v3a08i=="yes") ~ "respondent or partner opposed",
-  #   (v3a08m == "yes" | v3a08n == "yes") ~ "knows no method/source",
-  #   (v3a08b == "yes" | v3a08c == "yes") ~ "not having/infrequent sex",
-  #   (v3a08r == "yes") ~ "costs too much",
-  #   (v3a08z == "yes: don't know") ~ "don't know"))
-
-  #
-  # IR <- IR1
+  # FP MEASURES
   IR.fp <- IR %>%
     dplyr::select(caseid, starts_with("v3a08")) %>%
     reshape2::melt(id.vars=c("caseid")) %>%
@@ -1598,6 +1530,7 @@ IR<- IR %>% mutate(pship.cat = case_when
 
   IR <- IR %>%
     base::merge(IR.fp, by=c("caseid"))
+
 
   IR <- IR %>% dplyr::mutate(no.fp.access = case_when(
     (v3a08q == "yes" | v3a08r == "yes") ~ "yes",
@@ -1623,39 +1556,37 @@ IR<- IR %>% mutate(pship.cat = case_when
     v361 != "currently using" ~ "not currently using",
     v361 == "currently using" ~ "currently using"))
 
-  # test <- IR %>% dplyr::select(caseid, fp.all.na, no.fp.access, no.fp.oppose, no.fp.noneed, no.fp.supply)
-
 
   ## ATTITUDES ABOUT DOMESTIC VIOLENCE
 
   # BEATING JUSTIFIED IF WIFE GOES OUT WITHOUT TELLING HUSBAND
   IR <- IR %>% dplyr::mutate(dv.out = case_when(
-    v744a =="no" ~0,
-    v744a == "yes" ~1))
+    v744a =="no" ~ 0,
+    v744a == "yes" ~ 1))
 
 
   # BEATING JUSITIFIED IF WIFE NEGLECTS CHILDREN
   IR <- IR %>% dplyr::mutate(dv.negkid = case_when(
-    v744b =="no" ~0,
-    v744b == "yes" ~1))
+    v744b =="no" ~ 0,
+    v744b == "yes" ~ 1))
 
 
   # BEATING JUSTIFIED IF WIFE ARGUES WITH HUSBAND
   IR <- IR %>% dplyr::mutate(dv.argue = case_when(
-    v744c =="no" ~0,
-    v744c == "yes" ~1))
+    v744c =="no" ~ 0,
+    v744c == "yes" ~ 1))
 
 
   # BEATING JUSTIFIED IF WIFE REFUSES TO HAVE SEX WITH HUSBAND
   IR <- IR %>% dplyr::mutate(dv.nosex = case_when(
-    v744d =="no" ~0,
-    v744d == "yes" ~1))
+    v744d =="no" ~ 0,
+    v744d == "yes" ~ 1))
 
 
   # BEATING JUSTIFIED IF WIFE BURNS FOOD
   IR <- IR %>% dplyr::mutate(dv.burnfd = case_when(
-    v744e =="no" ~0,
-    v744e == "yes" ~1))
+    v744e =="no" ~ 0,
+    v744e == "yes" ~ 1))
 
 
   # INDEX OF WOMAN'S ATTITUDES ABOUT DOMESTIC VIOLENCE
@@ -1680,71 +1611,51 @@ IR<- IR %>% mutate(pship.cat = case_when
     g102 == "yes" ~ "Yes"))
 
 
-  # BINARY FACTOR FOR FEMALE CIRCUMCISION
-  #IR$female.circumcision.yn <- ifelse(IR$g102=="yes", 1, 0)
-
-
   # EVER HEARD OF GENITAL CUTTING (PROBED) (WOMEN) or female circ
-  IR$know.genitalcut <- ifelse(IR$g101=='yes' | IR$g100=='yes', 1, 0)
+  IR$know.genitalcut <- ifelse(IR$g101=='yes' | IR$g100=='yes', "Yes", "No")
 
 
   # FLESH REMOVED FROM GENITAL AREA
-  IR$genitalflesh.removed <- as.character(IR$g103)
-  IR$genitalflesh.removed <- ifelse(IR$g102=='no','never circumcised',IR$genitalflesh.removed)
+  IR <- IR %>%
+    dplyr::mutate(genitalflesh.removed = case_when(g102 == "no" ~ "never circumcised",
+                                                   TRUE ~ as.character(g103)))
 
 
   # GENITAL AREA JUST NICKED WITHOUT REMOVING ANY FLESH
-  IR$genital.nicked <- as.character(IR$g104)
-  IR$genital.nicked <- ifelse(IR$g102=='no','never circumcised',IR$genital.nicked)
+  IR <- IR %>%
+    dplyr::mutate(genital.nicked = case_when(g102 == "no" ~ "never circumcised",
+                                             TRUE ~ as.character(g104)))
 
 
   # GENITAL AREA SEWN UP
-  IR$genital.sewn <- IR$g105
-  IR$genital.sewn <- ifelse(IR$g105=='no','never circumcised',IR$genital.nicked)
+  IR <- IR %>%
+    dplyr::mutate(genital.sewn = case_when(g102 == "no" ~ "never circumcised",
+                                             TRUE ~ as.character(g105)))
 
 
   ## MEDIA EXPOSURE
   # NEWS: READS
   IR$freq.newsp <- as.character(IR$v157)
-  # IR<-IR %>% dplyr::mutate(freq.newsp = case_when(
-  #   (v157== "not at all" | is.na(v157)) ~ 0,
-  #   v157=="at least once a week" ~2,
-  #   v157=="less than once a week" ~1))
-  # IR$freq.newsp <- factor(IR$freq.newsp)
-
 
   # BINARY FACTOR FOR NEWS: READS
-  IR$newsp.yn <- ifelse((IR$v157== "not at all" | is.na(IR$v157)),0,1)
+  IR$newsp.yn <- ifelse((IR$v157== "not at all" | is.na(IR$v157)), 0, 1)
 
 
   # NEWS: RADIO
   IR$freq.rad <- as.character(IR$v158)
-  # IR<-IR %>% dplyr::mutate(freq.rad = case_when(
-  #   (v158== "not at all" | is.na(v158)) ~ 0,
-  #   v158=="at least once a week" ~2,
-  #   v158=="less than once a week" ~1))
-  # IR$freq.rad <- factor(IR$freq.rad)
-
 
   # BINARY FACTOR FOR NEWS: RADIO
-  IR$rad.yn<-ifelse((IR$v158== "not at all" | is.na(IR$v158)),0,1)
+  IR$rad.yn<-ifelse((IR$v158== "not at all" | is.na(IR$v158)), 0, 1)
 
 
   # NEWS: TV
   IR$freq.tv <- as.character(IR$v159)
-  # IR<-IR %>% dplyr::mutate(freq.tv = case_when(
-  #   (v159=="not at all" | is.na(v159)) ~ 0,
-  #   v159 == "at least once a week" ~2,
-  #   v159 == "less than once a week" ~1))
-  # IR$freq.tv <- factor(IR$freq.tv)
-
 
   # BINARY FACTOR FOR NEWS: TV
-  IR$tv.yn<-ifelse((IR$v159=="not at all" | is.na(IR$v159)),0,1)
+  IR$tv.yn<-ifelse((IR$v159=="not at all" | is.na(IR$v159)), 0, 1)
 
 
   # BINARY FACTOR FOR NEWS: ANY
-  # IR$any.media.yn <- ifelse((IR$newsp.yn == 1 | IR$rad.yn == 1 | IR$tv.yn == 1), 1, 0)
   IR$any.media.yn <- ifelse((IR$newsp.yn == 1 | IR$rad.yn == 1 | IR$tv.yn == 1), "Yes", "No")
 
 
@@ -1762,23 +1673,14 @@ IR<- IR %>% mutate(pship.cat = case_when
     dplyr::mutate(num.kids.away = sum(lives.away, na.rm = TRUE))
 
 
-  # CATEGORICAL VARIABLE FOR NUMBER OF CHILDREN UNDER 15 LIVING ELSEWHERE
-  # BR <- BR %>% dplyr::mutate(num.kids.away.cat = case_when(
-  #   num.kids.away %in% c(0) ~ "0",
-  #   num.kids.away %in% c(1) ~ "1",
-  #   num.kids.away %in% c(2) ~ "2",
-  #   num.kids.away >=3 ~ "3 or more"))
-
-
   # IN THE LAST 12 MONTHS GIVEN: LOCAL NAME FOR MULTIPLE MICRONUTRIENT POWDERS
-  BR<-BR %>% dplyr::mutate(micronutrient.12m = case_when(
-    h80a %in% c("no","don't know") ~ 0,
-    h80a== "yes" ~ 1))
+  BR<-BR %>%
+    dplyr::mutate(micronutrient.12m = case_when(
+      h80a %in% c("no","don't know") ~ 0,
+      h80a== "yes" ~ 1))
 
 
   # NUMBER OF TIMES ATE SOLID, SEMI-SOLID OR SOFT FOOD
-  # BR$num.solidfood <- BR$m39
-
   BR <- BR %>%
     dplyr::mutate(num.solidfood = case_when(m39 %in% c(8, "don't know") ~ NA,
                                             m39 == "none" ~ 0,
@@ -1791,8 +1693,6 @@ IR<- IR %>% mutate(pship.cat = case_when
   # 4 | MR FILE
 
   # NUMBER OF WIVES/PARTNERS
-  # MR$m.num.partners <- MR$mv035
-
   MR <- MR %>%
     dplyr::mutate(m.num.partners = case_when(mv035 == "no wives/partners" ~ 0,
                                              TRUE ~ as.numeric(mv035)))
@@ -1809,7 +1709,7 @@ IR<- IR %>% mutate(pship.cat = case_when
   # DESIRE FOR MORE CHILDREN
   MR$m.more.children <- MR$mv605
   MR<-MR %>% dplyr::mutate(m.recent.sex = case_when(
-    mv605=="wants within 2 years" ~ "wants within 2 years",
+    mv605 == "wants within 2 years" ~ "wants within 2 years",
     mv605 == "wants after 2+ years" ~ "wants in 2+ years",
     mv605 %in% c("wants, unsure timing", "undecided") ~ "unsure timing",
     mv605 %in% c("sterilized (respondent or partner(s))",
@@ -1830,26 +1730,11 @@ IR<- IR %>% mutate(pship.cat = case_when
 
 
   # PERSON WHO USUALLY MAKES DECISIONS ABOUT: RESPONDENT'S HEALTH CARE
-  MR$m.men.dec.healthcare <- ifelse(MR$mv743a=="respondent alone",1,0)
+  MR$m.men.dec.healthcare <- ifelse(MR$mv743a=="respondent alone", "Yes", "No")
 
 
   # PERSON WHO USUALLY MAKES DECISIONS ABOUT: LARGE HOUSEHOLD PURCHASES
-  MR$m.men.dec.purchases <- ifelse(MR$mv743b=="respondent alone",1,0)
-
-
-  # PAID FOR SEX IN LAST 12 MONTHS
-  # Only 5 "yes" responses
-  #MR$m.paid.sex.12m <- MR$mv793
-
-
-  # CONDOM USED LAST TIME PAID FOR SEX IN LAST 12 MONTHS
-  # Only 5 "yes" responses
-  #MR$m.condom.last.paid.sex <- MR$mv793a
-
-
-  # CONDOM USED EVERY TIME PAID FOR SEX IN LAST 12 MONTHS
-  # Only 5 "yes" responses
-  #MR$m.condom.every.paid.sex <- MR$mv793b
+  MR$m.men.dec.purchases <- ifelse(MR$mv743b=="respondent alone", "Yes", "No")
 
 
   # SEE OR READ FP INFORMATION FROM POSTERS OR PANELS
@@ -1869,12 +1754,11 @@ IR<- IR %>% mutate(pship.cat = case_when
   IR$wt <- IR$v005/1000000
 
 
-  # PREP IR AND FILTER TO WOMEN WHO HAVE HAD A LIVE BIRTH IN THE LAST 10 YEARS
-  IR.seg <- IR #%>%
-  # dplyr::filter(v501 != "never in union")
+  # IR
+  IR.seg <- IR
 
 
-  # PREP HH
+  # HH
   HH.seg <- HH
 
 

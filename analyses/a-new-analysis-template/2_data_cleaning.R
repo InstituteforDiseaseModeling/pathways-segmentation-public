@@ -27,12 +27,21 @@ if (file.exists(vulnerability_excel_file)){ vulnerability_sheet <- readRDS(vulne
 
 ###################################
 # READ IN SURVEY | DHS
+# RUN 1_import_data.R TO IMPORT AND SAVE RAW SURVEY DATA
 
-IR_raw <- data.table(read.dta13(file = paste0(data_path, "ETIR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-BR_raw <- data.table(read.dta13(file = paste0(data_path, "ETBR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-KR_raw <- data.table(read.dta13(file = paste0(data_path, "ETKR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-HH_raw <- data.table(read.dta13(file = paste0(data_path, "ETHR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-MR_raw <- data.table(read.dta13(file = paste0(data_path, "ETMR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
+if (file.exists(paste0(data_path, "IR.rds")) == FALSE){
+
+  print("Running 1_import_data.R to load survey data and save as .rds objects for quicker load.")
+  source("1_import_data.R")
+
+}
+
+
+IR <- readRDS(file = paste0(data_path, "IR.rds"))
+BR <- readRDS(file = paste0(data_path, "BR.rds"))
+KR <- readRDS(file = paste0(data_path, "KR.rds"))
+HH <- readRDS(file = paste0(data_path, "HH.rds"))
+MR <- readRDS(file = paste0(data_path, "MR.rds"))
 
 
 ######################################################################
@@ -41,8 +50,8 @@ MR_raw <- data.table(read.dta13(file = paste0(data_path, "ETMR71FL.DTA"), fromEn
 
 
 # GENERATE VULNERABILITY FACTORS
-vulnerability <- gen_vulnerability_factors_dhs(IR=IR_raw, BR=BR_raw, HH=HH_raw, MR=MR_raw, dhs=7)
-vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR_raw), names(BR_raw), names(HH_raw), names(MR_raw))))
+vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=MR, dhs=7)
+vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH), names(MR))))
 vulnerability <- subset(vulnerability, select=unique(c("caseid", "survey", all_of(svy_id_var), all_of(svy_strata_var), all_of(data_state_var), vulnerability_vars)))
 
 
@@ -75,8 +84,8 @@ vulnerability <- readRDS(file = paste0(vulnerability_file, ".rds"))
 
 
 # GENERATE HEALTH OUTCOMES
-outcomes <- gen_outcome_variables_dhs(IR=IR_raw, KR=KR_raw, BR=BR_raw, DHS=7)
-outcomes_vars <- setdiff(names(outcomes), c(names(IR_raw), names(BR_raw), names(KR_raw)))
+outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=7)
+outcomes_vars <- setdiff(names(outcomes), c(names(IR), names(BR), names(KR)))
 outcomes <- subset(outcomes, select=unique(c("caseid", "v001", "v002", "survey", outcomes_vars)))
 
 
@@ -163,6 +172,10 @@ if (create_new_pathways_workbook==TRUE){
   print(paste0("New Pathways Workbook Created: ", path))
 
 }
+
+
+###################################
+print("2_data_cleaning.R script complete! Proceed to run 3_univariate_analysis.R script. Refer to the README for instructions if needed.")
 
 
 

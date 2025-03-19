@@ -64,6 +64,8 @@ for (stratum in strata_set$strata){
 
 
 ###################################
+print("5_principal_component_analysis.R script complete! Proceed to run 6_latent_classification_analysis.R script after updating Pathways Workbook. Refer to the README for instructions if needed.")
+
 
 
 
