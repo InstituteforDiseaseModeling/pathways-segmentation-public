@@ -84,7 +84,7 @@ An intermediate level of coding in R and using RStudio Desktop is expected in or
 * Microsoft Excel
 * [GitHub Desktop](https://desktop.github.com/download/) (suggested for managing code from GitHub repository)
 
-Software will run on Windows or MAC operating system
+Software will run on Windows or MAC operating system.
 
 #### Hardware requirements
 
