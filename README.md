@@ -2,6 +2,8 @@
 
 The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population segmentation framework used for understanding social, cultural, economic, and environmental vulnerability to improve women's health and well-being.
 
+This analysis is intended for researchers familiar with R and requires custom variable coding for each analysis.
+
 # Table of contents
 
 - [Abstract](#abstract)
