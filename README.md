@@ -1,6 +1,6 @@
 # Pathways Segmentation overview
 
-The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population segmentation framework used for understanding social, cultural, economic, and environmental vulnerability to improve women's health and well-being.
+The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population grouping framework used for understanding social, cultural, economic, and environmental vulnerability to improve women's health and well-being.
 
 This analysis is intended for researchers familiar with R and requires custom variable coding for each analysis.
 
@@ -35,7 +35,7 @@ This analysis is intended for researchers familiar with R and requires custom va
 
 * **Vulnerability:** The quality or state of potentially being harmed, either physically, socially, cognitively, or emotionally, related to reproductive, newborn, maternal and child health and nutrition
 
-* **Segment:**
+* **Segment:** A mutually exclusive grouping of individuals based on shared characteristics.
 
 * **Segmentation:** The process of dividing a population into smaller sub-groups (known as segments) based on shared characteristics.
 
