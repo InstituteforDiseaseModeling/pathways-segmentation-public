@@ -59,7 +59,7 @@ for (stratum in strata_set$strata){
   set.seed(99)
 
   lca_strata_input <- vulnerability_vars_lca %>%
-    dplyr::filter(lca_strata %in% c("both", "all", stratum)) %>%
+    dplyr::filter(tolower(lca_strata) %in% c("both", "all", stratum)) %>%
     dplyr::select(vulnerability_variable) %>%
     setNames(c("variable"))
 
@@ -128,7 +128,7 @@ for (stratum in strata_set$strata){
 
 
   lca_strata_input <- vulnerability_vars_lca %>%
-    dplyr::filter(lca_strata %in% c("both", "all", stratum)) %>%
+    dplyr::filter(tolower(lca_strata) %in% c("both", "all", stratum)) %>%
     dplyr::select(vulnerability_variable, short_name) %>%
     distinct()
 

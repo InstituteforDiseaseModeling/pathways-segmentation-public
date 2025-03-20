@@ -52,7 +52,7 @@ vulnerability <- readRDS(file = paste0(vulnerability_file, ".rds")) %>%
 for (stratum in strata_set$strata){
 
   pca_strata_input <- vulnerability_vars_pca %>%
-    dplyr::filter(pca_strata %in% c("both", "all", stratum))
+    dplyr::filter(tolower(pca_strata) %in% c("both", "all", stratum))
 
   vulnerability_input <- vulnerability %>%
     dplyr::filter(strata == stratum)

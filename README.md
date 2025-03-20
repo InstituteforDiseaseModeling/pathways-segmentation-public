@@ -148,7 +148,9 @@ Within the "analyses" folder exists the templated file set for a new analysis (a
 The workflow is modularized according to the different phases of a segmentation analysis.  Each module has a parent script which calls a function to generate the corresponding outputs (e.g., data.frame, PDF visualization file).
 
 * config - template.yml: define file paths and some commonly used variables throughout the analysis
-* 1_setup.R: create the environment for the project and import basic project files
+* 1_setup.R: create the folder structure for the project and import basic project files
+* 1_libraries.R: install/load all libraries required for the project
+* 1_import_data.R: load the survey data and save as .rds files for faster read
 * 2_data_cleaning.R: generate the health Outcomes and Vulnerability variables used through the analysis
 * 3_univariate_analysis.R: generate a PDF output of univariate visualizations for each Outcome and Vulnerability Factor
 * 4_exploratory_analysis.R: generate a PDF output of exploratory plots to capture the relationship between each Vulnerability Factor and all health Outcomes
@@ -156,12 +158,13 @@ The workflow is modularized according to the different phases of a segmentation 
 * 6_latent_classification_output.R: generate a population segmentation output using a set of Vulnerability variables
 * 7_segment_profiles.R: generate the quantitative profile segmentation plots for a segmentation solution
 * 8_typing_tool.R: generate the outputs to help define which variables should be used in developing a Pathways typing tool.
+* 9_analysis_helper_script.R: a script to run some ad-hoc analyses throughout the workflow
 * functions/*: functions called throughout each module of the workflow.
 
 #### Config.yml file variables
 
 * **project_name:** project title to be placed on PDF outputs
-* **root_path:** directory path from which analysis output paths will build from
+* **root_path:** directory path from which analysis output paths will build from; this is the location of the project
 * **user_path:** option to run different versions of the analysis
 
 * **create_new_pathways_workbook:** TRUE/FALSE (determines whether to import an existing Pathways Workbook or create a new one as part of the data cleaning and variable generation phase)
@@ -180,7 +183,7 @@ The workflow is modularized according to the different phases of a segmentation 
 1. Navigate to the [GitHub repository](https://github.com/InstituteforDiseaseModeling/pathways-segmentation-public) and Git Clone the repository using GitHub Desktop or any other Git method
 2. Open the pathways-segmentation.rproj in the analyses/a-new-analysis-template folder and run renv::restore() in the console to install project libraries
 2. Edit the parameters in the config.yml file
-3. Run the 1_setup.R script to set up the environment
+3. Run the 1_setup.R script to set up the environment (which will run 1_libraries.R if needed)
 
 ## Pathways Segmentation workflow phases
 
@@ -399,5 +402,16 @@ The following is a step-by-step walkthrough of the 8 phases of a Pathways Segmen
 2. edit the final_model column in the 'params' tab to identify the final models for each strata (e.g., LCA5_class for a 5 class solution)
 2. save and close the Workbook
 3. open the 8_typing_tool.R script and run the entire script to generate the typing tool PDF outputs
+
+## Common actions throughout the analysis
+
+### Adding a new variable to the Pathways Workbook
+
+After the initial creation of the Pathways Workbook in the Data cleaning step (2_data_cleaning.R), it is common to add additional variables to the fun_gen_vulnerabilities.R and fun_gen_outcomes.R scripts.  These new variables need to be added individually to the Pathways Workbook to be included in subsequent phases of the analysis.  The recommended workflow for this is as follows:
+
+1. Use the 9_analysis_helper_script.R to test out the new variable and ensure that the output is as expected.
+2. Add the variable(s) directly to the fun_gen_vulnerabilities.R and/or fun_gen_outcomes.R script.
+3. Add the variable to the appropriate Pathways Workbook tab (outcomes or vulnerabilities).
+4. Flag the appropriate columns to include in the analysis
 
 
