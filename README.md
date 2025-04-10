@@ -25,27 +25,17 @@ This analysis is intended for researchers familiar with R and requires custom va
     - [Latent classification analysis (LCA)](#latent-classification-analysis-lca)
     - [Quantitative segment profiling](#quantitative-segment-profiling)
     - [Segment typing tool](#segment-typing-tool)
-- [Pathways Segmentation analysis walkthrough](#pathways-segmentation-analysis-walkthrough)
+- [Pathways Segmentation analysis tutorial walkthrough](#pathways-segmentation-analysis-tutorial-walkthrough)
 
 ## Abstract
 
 ### Pathways Segmentation methodology
 
-#### Terminology
+#### 
 
-* **Vulnerability:** The quality or state of potentially being harmed, either physically, socially, cognitively, or emotionally, related to reproductive, newborn, maternal and child health and nutrition
-
-* **Segment:** A mutually exclusive grouping of individuals based on shared characteristics.
-
-* **Segmentation:** The process of dividing a population into smaller sub-groups (known as segments) based on shared characteristics.
-
-* **Segmentation strata:** Driven by the survey design; how the survey data should be initially divided for the segmentation analysis i.e., how many independent segmentation solutions will be produced?  Often times this is represented by separate urban/rural solutions.
+* **Cluster analysis:** A statistical method used to organize observations into meantinful groups - or clusters - that share common characteristics.  The standardized Pathways methodology uses latent class analysis (LCA).
 
 * **Health Outcome:** A health-related event (e.g., number of ANC visits, U5 mortality).
-
-* **Vulnerability factor:** A specific fact, situation, or construct that helps define how women experience vulnerability.
-
-* **Vulnerability variable (measure):** A standardized way of quantifying factors so they can be used in statistical analysis.
 
 * **Pathways Domain:** A characteristic grouping of Vulnerability factors.  A Vulnerability Factor can be associated with multiple Domains. There are 6 Domains total:
     * Woman and her past experiences
@@ -55,11 +45,21 @@ This analysis is intended for researchers familiar with R and requires custom va
     * Household economics and living conditions
     * Social Support
 
+* **Quantitative segmentation profile:** Health Outcomes and Vulnerability variables viewed from the perspective of the segmentation solution highlighting differences across the segments.
+
+* **Segment:** A mutually exclusive grouping of individuals based on shared characteristics.
+
+* **Segmentation:** The process of dividing a population into smaller sub-groups (known as segments) based on shared characteristics.
+
 * **Segmentation solution:** The final set of segments resulting from completing the Pathways Segmentation methodology.
 
-* **Cluster analysis:** A statistical method used to organize observations into meantinful groups - or clusters - that share common characteristics.  The standardized Pathways methodology uses latent class analysis (LCA).
+* **Segmentation strata:** Driven by the survey design; how the survey data should be initially divided for the segmentation analysis i.e., how many independent segmentation solutions will be produced?  Often times this is represented by separate urban/rural solutions.
 
-* **Quantitative segmentation profile:** Health Outcomes and Vulnerability variables viewed from the perspective of the segmentation solution highlighting differences across the segments.
+* **Vulnerability:** The quality or state of potentially being harmed, either physically, socially, cognitively, or emotionally, related to reproductive, newborn, maternal and child health and nutrition
+
+* **Vulnerability factor:** A specific fact, situation, or construct that helps define how women experience vulnerability.
+
+* **Vulnerability variable (measure):** A standardized way of quantifying factors so they can be used in statistical analysis.
 
 ## Prerequisites
 
@@ -331,16 +331,17 @@ In this phase we use statistical methods to identify a parsimonious set of Vulne
 * Outputs:
     * typing_tool_outputs_{x}.pdf (where x is Segmentation strata)
 
-## Pathways Segmentation analysis walkthrough
+## Pathways Segmentation analysis tutorial walkthrough
 
-The following is a step-by-step walkthrough of the 8 phases of a Pathways Segmentation analysis.
+The following is a step-by-step walkthrough of the 8 phases of a Pathways Segmentation analysis using a sample of the Ethiopia 2016 DHS survey data.
 
 ### Analysis setup
 
-1. copy all the files from the analyses/a-new-analysis-template folder into a new project folder (e.g., sen-2018-19)
+1. copy all the files from the analyses/a-new-analysis-template folder into a new project folder inside the projects folder (e.g., analyses/projects/eth-2016-tutorial)
 2. rename the config - template.yml to config.yml (this file name will automatically be picked up when config:: functions are called)
 3. open the pathways-segmentation.Rpoj file to automatically set the working directory
-4. from within RStudio, open and edit the config.yml parameters directly
+4. from within RStudio, open and edit the config.yml parameters directly.  For this tutorial use the following parameters:
+    -  
 5. open the 1_setup.R script and run the entire script to install libraries, define input variables, and set file paths.
 6. import the Pathways Workbook if config.create_new_pathways_workbook == FALSE, if starting a new analysis set this parameter to TRUE
 
