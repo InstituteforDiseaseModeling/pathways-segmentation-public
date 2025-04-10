@@ -30,8 +30,6 @@ set.seed(99)
 
 ###################################
 # GET DATA INPUTS
-
-
 vulnerability_vars <- readRDS(vulnerability_excel_file)
 
 vulnerability_vars_tt <- vulnerability_vars %>%

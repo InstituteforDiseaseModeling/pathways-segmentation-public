@@ -8,9 +8,9 @@
 
 ###################################
 # RESTORE LIBRARIES FROM RENV LOCK FILE
-# if (!require("renv")) install.packages("renv")
+if (!require("renv")) install.packages("renv")
 # renv::activate()
-# renv::restore()
+renv::restore()
 # renv::deactivate()
 
 
@@ -23,8 +23,8 @@ pacman::p_load(dplyr, stringr, reshape2, data.table, survey, ggplot2, broom, jto
                poLCA, readstata13, fastDummies, huxtable, openxlsx, config, ggdist, sf, scatterpie, networkD3, htmlwidgets, remotes,
                conflicted, webshot, magick, zscorer, haven)
 
-# if (!require("ggsankey")) remotes::install_github("davidsjoberg/ggsankey")
-# if (!require("ggradar")) remotes::install_github("ricardo-bion/ggradar")
+if (!require("ggsankey")) remotes::install_github("davidsjoberg/ggsankey")
+if (!require("ggradar")) remotes::install_github("ricardo-bion/ggradar")
 
 
 ###################################

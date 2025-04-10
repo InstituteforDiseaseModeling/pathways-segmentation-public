@@ -10,9 +10,7 @@ renv/library/
 renv/cache/
 renv/staging/
 
-# Ignore files for ETH workshop
-.Rprofile
-renv/*
-renv.lock
+# Ignore files for a specific project
+analyses/projects/*
 config.yml
 

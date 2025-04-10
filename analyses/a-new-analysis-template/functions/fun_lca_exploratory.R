@@ -6,7 +6,7 @@
 # ###################################
 # RUN SETUP
 # stratum = "urban"
-# n_clusters = 5
+# n_clusters = 2
 # data_path = lca_path
 # plot_path = lca_plots
 # lca_vars = lca_strata_input
@@ -49,7 +49,7 @@ gen_lca_explore <- function(lca_vars=NULL, stratum=NULL, n_clusters=NULL, data_p
   # SUMMARIZE DATA FRAME
   df_plot <- outcomes_vulnerability_class %>%
     dplyr::mutate(cluster_col = eval(parse(text=paste0("LCA", n_clusters, "_class")))) %>%
-    subset(select=c("caseid", "strata", "wt", "cluster_col", lca_vars$vulnerability_variable)) %>%
+    dplyr::select(dplyr::any_of(c("caseid", "strata", "wt", "cluster_col", lca_vars$vulnerability_variable))) %>%
     reshape2::melt(id.vars=c("caseid", "strata", "wt", "cluster_col"), variable.name = "vulnerability_variable") %>%
     dplyr::mutate(vulnerability_variable = as.character(vulnerability_variable),
            value = str_to_title(value)) %>% # str_to_sentence()

@@ -9,11 +9,11 @@
 ###################################
 # READ IN SURVEY | DHS
 
-IR <- data.table(read.dta13(file = paste0(data_path, "ETIR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-BR <- data.table(read.dta13(file = paste0(data_path, "ETBR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-KR <- data.table(read.dta13(file = paste0(data_path, "ETKR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-HH <- data.table(read.dta13(file = paste0(data_path, "ETHR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
-MR <- data.table(read.dta13(file = paste0(data_path, "ETMR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = "ET71FL")
+IR <- data.table(read.dta13(file = paste0(data_path, "ETIR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
+BR <- data.table(read.dta13(file = paste0(data_path, "ETBR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
+KR <- data.table(read.dta13(file = paste0(data_path, "ETKR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
+HH <- data.table(read.dta13(file = paste0(data_path, "ETHR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
+MR <- data.table(read.dta13(file = paste0(data_path, "ETMR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
 
 
 ###################################

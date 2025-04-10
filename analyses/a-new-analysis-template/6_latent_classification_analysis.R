@@ -10,7 +10,7 @@
 # RUN SETUP
 source("1_setup.R")
 
-nreps = 30
+nreps = 100
 
 
 ###################################
@@ -131,7 +131,6 @@ for (stratum in strata_set$strata){
     dplyr::filter(tolower(lca_strata) %in% c("both", "all", stratum)) %>%
     dplyr::select(vulnerability_variable, short_name) %>%
     distinct()
-
 
 
   #

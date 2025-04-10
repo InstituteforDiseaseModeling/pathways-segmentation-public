@@ -50,7 +50,8 @@ MR <- readRDS(file = paste0(data_path, "MR.rds"))
 
 
 # GENERATE VULNERABILITY FACTORS
-vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=MR, dhs=7)
+vulnerability <- gen_vulnerability_factors_dhs_pca(IR=IR, BR=BR, HH=HH, MR=MR, dhs=7)
+# vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=MR, dhs=7)
 vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH), names(MR))))
 vulnerability <- subset(vulnerability, select=unique(c("caseid", "survey", all_of(svy_id_var), all_of(svy_strata_var), all_of(data_state_var), vulnerability_vars)))
 
@@ -86,7 +87,7 @@ vulnerability <- readRDS(file = paste0(vulnerability_file, ".rds"))
 # GENERATE HEALTH OUTCOMES
 outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=7)
 outcomes_vars <- setdiff(names(outcomes), c(names(IR), names(BR), names(KR)))
-outcomes <- subset(outcomes, select=unique(c("caseid", "v001", "v002", "survey", outcomes_vars)))
+outcomes <- subset(outcomes, select=unique(c("caseid", "v001", "v002", "v003", "survey", outcomes_vars)))
 
 
 # ADD IN strata VARIABLE TO OUTCOMES

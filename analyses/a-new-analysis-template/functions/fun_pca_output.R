@@ -99,7 +99,7 @@ gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_name=NU
     #
     if (any(c("numeric", "integer") %in% tbl$data_type)==TRUE){
 
-      print(paste0(stratum, ": at least one variable in domain: ", dom_label, " has numeric data type.  Convert to catagorical and repeat PCA for proper interpretation."))
+      print(paste0(stratum, ": at least one variable in domain: ", dom_label, " has numeric data type.  Convert to catagorical and repeat PCA for proper interpretation (LCA algorithm treats all variables as categorical)."))
 
     }
 
@@ -232,7 +232,7 @@ gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_name=NU
           xlab('PC') +
           ylab("Cumulative Proportion") +
           scale_fill_brewer(palette="Dark2") +
-          ggtitle(paste0("Cumulative roportion of variance explained | ", dom_label, " | ", stratum))
+          ggtitle(paste0("Cumulative proportion of variance explained | ", dom_label, " | ", stratum))
         # print(plot1)
 
 

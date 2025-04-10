@@ -56,7 +56,7 @@ vulnerability.list <- sort(vulnerability.list)
 # LOOP THROUGH LIST OF VULNERABILITY VARIABLES AND GENERATE PDF OUTPUTS
 
 
-for(m in vulnerability.list){
+for(m in vulnerability.list[1:10]){
 
   # try({
 

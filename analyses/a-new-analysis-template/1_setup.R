@@ -23,6 +23,7 @@ Sys.setenv(R_CONFIG_ACTIVE = "default")
 
 create_new_pathways_workbook = config::get("create_new_pathways_workbook")
 project_name = config::get("project_name")
+survey_name = config::get("survey_name")
 
 # GET SURVEY DESIGN VARIABELS FROM CONFIG
 svy_id_var = config::get("svy_id_var")
@@ -149,38 +150,46 @@ for (f in functions){
 
 
 # READ IN PATHWAYS DATA DICTIONARY
-dd_outcomes <- read_excel(path=file.path("../../pathways data dictionary.xlsx"), sheet="outcomes")
+dd_outcomes <- read_excel(path=file.path("pathways data dictionary.xlsx"), sheet="outcomes")
 saveRDS(dd_outcomes, file = dd_outcomes_excel_file)
 
-dd_vulnerabilities <- read_excel(path=file.path("../../pathways data dictionary.xlsx"), sheet="vulnerabilities")
+dd_vulnerabilities <- read_excel(path=file.path("pathways data dictionary.xlsx"), sheet="vulnerabilities")
 saveRDS(dd_vulnerabilities, file = dd_vulnerabilities_excel_file)
 
 
 # READ IN PATHWAYS WORKBOOK
 if(create_new_pathways_workbook == FALSE){
 
-  outcomes_sheet <- read_excel(pathways_workbook_path, sheet="outcomes")
+  tryCatch({
 
-  # PARAMS
-  params_sheet <- read_excel(pathways_workbook_path, sheet="params")
+    outcomes_sheet <- read_excel(pathways_workbook_path, sheet="outcomes")
 
-  saveRDS(params_sheet, file = params_excel_file)
+    # PARAMS
+    params_sheet <- read_excel(pathways_workbook_path, sheet="params")
 
-
-  # OUTCOMES
-  outcomes_sheet <- read_excel(pathways_workbook_path, sheet="outcomes")
-  outcomes_sheet <- outcomes_sheet %>%
-    mutate(short_name = ifelse(is.na(short_name), outcome_variable, short_name))
-
-  saveRDS(outcomes_sheet, file = outcomes_excel_file)
+    saveRDS(params_sheet, file = params_excel_file)
 
 
-  # VULNERABILITY
-  vulnerability_sheet <- read_excel(pathways_workbook_path, sheet="vulnerabilities")
-  vulnerability_sheet <- vulnerability_sheet %>%
-    mutate(short_name = ifelse(is.na(short_name), vulnerability_variable, short_name))
+    # OUTCOMES
+    outcomes_sheet <- read_excel(pathways_workbook_path, sheet="outcomes")
+    outcomes_sheet <- outcomes_sheet %>%
+      mutate(short_name = ifelse(is.na(short_name), outcome_variable, short_name))
 
-  saveRDS(vulnerability_sheet, file = vulnerability_excel_file)
+    saveRDS(outcomes_sheet, file = outcomes_excel_file)
+
+
+    # VULNERABILITY
+    vulnerability_sheet <- read_excel(pathways_workbook_path, sheet="vulnerabilities")
+    vulnerability_sheet <- vulnerability_sheet %>%
+      mutate(short_name = ifelse(is.na(short_name), vulnerability_variable, short_name))
+
+    saveRDS(vulnerability_sheet, file = vulnerability_excel_file)
+
+  }, error = function(e) {
+
+    stop("Unable to read Pathways Workbook. Ensure the workbook is not open and is in the correct file location.")
+
+  })
 
 }
 
