@@ -231,11 +231,11 @@ gen_vulnerability_factors_dhs_pca <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
 
 
   # NUMBER OF KIDS < 5 IN THE HOUSE
-  IR <- IR %>% mutate(num.kids.house.cat = case_when(
-    num.kids.house %in% c(0) ~ "0",
-    num.kids.house %in% c(1) ~ "1",
-    num.kids.house %in% c(2,3) ~ "2-3",
-    num.kids.house >=4 ~ "4 or more"))
+  # IR <- IR %>% mutate(num.kids.house.cat = case_when(
+  #   num.kids.house %in% c(0) ~ "0",
+  #   num.kids.house %in% c(1) ~ "1",
+  #   num.kids.house %in% c(2,3) ~ "2-3",
+  #   num.kids.house >=4 ~ "4 or more"))
 
 
   # NUMBER OF KIDS < 5 IN THE HOUSE - RECODE
@@ -738,7 +738,6 @@ gen_vulnerability_factors_dhs_pca <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
   #   (v218 >=6 & !is.na(v218)) ~ "6+"))
 
   IR <- IR %>% dplyr::mutate(num.child.alive.cat = case_when(
-    # v218 %in% c(0) ~ "0",
     v218 %in% c(0:2) ~ "0-2",
     v218 %in% c(3:5) ~ "3-5",
     (v218 >=6 & !is.na(v218)) ~ "6+"))
@@ -1043,23 +1042,23 @@ gen_vulnerability_factors_dhs_pca <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
 
 
   # JOINT DECISION: FAMILY PLANNING
-  # IR <- IR %>%
-  #   dplyr::mutate(desc.fp = case_when(
-  #   v213 == "yes" ~ "currently pregnant",
-  #   (v632 %in% c("joint decision") | v632a %in% c("joint decision")) ~ "respondent and husband/ partner",
-  #   (v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent")) ~ "respondent alone",
-  #   (v632 %in% c("mainly husband, partner") | v632a %in% c("mainly husband, partner")) ~ "husband/ partner alone",
-  #   (v632 %in% c("other") | v632a %in% c("other")) ~ "other",
-  #   (marr.cohab %in% 0) ~ "not partnered"))
-
   IR <- IR %>%
     dplyr::mutate(desc.fp = case_when(
-      v213 == "yes" ~ "currently pregnant",
-      (v632 %in% c("joint decision") | v632a %in% c("joint decision")) ~ "respondent or respondent/partner",
-      (v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent")) ~ "respondent or respondent/partner",
-      (v632 %in% c("mainly husband, partner") | v632a %in% c("mainly husband, partner")) ~ "husband / partner alone",
-      (v632 %in% c("other") | v632a %in% c("other")) ~ "not partnered / other",
-      (marr.cohab == 0) ~ "not partnered / other"))
+    v213 == "yes" ~ "currently pregnant",
+    (v632 %in% c("joint decision") | v632a %in% c("joint decision")) ~ "respondent and husband/ partner",
+    (v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent")) ~ "respondent alone",
+    (v632 %in% c("mainly husband, partner") | v632a %in% c("mainly husband, partner")) ~ "husband/ partner alone",
+    (v632 %in% c("other") | v632a %in% c("other")) ~ "other",
+    (marr.cohab %in% 0) ~ "not partnered"))
+
+  # IR <- IR %>%
+  #   dplyr::mutate(desc.fp = case_when(
+  #     v213 == "yes" ~ "currently pregnant",
+  #     (v632 %in% c("joint decision") | v632a %in% c("joint decision")) ~ "respondent or respondent/partner",
+  #     (v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent")) ~ "respondent or respondent/partner",
+  #     (v632 %in% c("mainly husband, partner") | v632a %in% c("mainly husband, partner")) ~ "husband / partner alone",
+  #     (v632 %in% c("other") | v632a %in% c("other")) ~ "not partnered / other",
+  #     (marr.cohab == 0) ~ "not partnered / other"))
 
   # OWN DECISION: FAMILY PLANNING
   IR <- IR %>%
@@ -1365,7 +1364,7 @@ IR<- IR %>% mutate(pship.cat = case_when
 
   IR <- IR %>%
     dplyr::mutate(partner.ed.level.cat1 = case_when(v701 %in% c("primary", "others") ~ "primary",
-                                                    v701 %in% c("no education") ~ "no education",
+                                                    v701 %in% c("no education", "don't know") ~ "no education / don't know",
                                                     v701 %in% c("higher", "secondary") ~ "secondary +",
                                                     marr.cohab == 0 ~ "not partnered",
                                                     TRUE ~ v701))

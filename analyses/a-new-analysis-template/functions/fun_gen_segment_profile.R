@@ -14,7 +14,7 @@
 # DEFINE FUNCTION TO GENERATE SEGMENT PROFILES
 ###################################
 
-gen_profiles <- function(stratum=NULL, n_class=NULL, shp_file=NULL){
+fun_gen_segment_profile <- function(stratum=NULL, n_class=NULL, shp_file=NULL){
 
   ###################################
   # GET DATA
@@ -111,10 +111,13 @@ gen_profiles <- function(stratum=NULL, n_class=NULL, shp_file=NULL){
     dplyr::select(strata, model_cat, variable, short_name, category, segment, var_class_std_mean) %>%
     distinct() %>%
     group_by(variable) %>%
-    mutate(class_rank = rank(var_class_std_mean)) %>%
+    dplyr::mutate(class_rank = rank(var_class_std_mean)) %>%
     group_by(category, segment) %>%
-    mutate(mean_rank = mean(class_rank)) %>%
-    dplyr::select(strata, model_cat, segment, category, mean_rank) %>%
+    dplyr::mutate(mean_rank = mean(class_rank)) %>%
+    group_by(category) %>%
+    dplyr::mutate(var_count = n_distinct(variable),
+                  category_var_count = paste0(category, " (", var_count, ")")) %>%
+    dplyr::select(strata, model_cat, segment, category_var_count, category, mean_rank) %>%
     distinct()
 
 
@@ -389,15 +392,15 @@ gen_profiles <- function(stratum=NULL, n_class=NULL, shp_file=NULL){
   print(plot)
 
 
-  #
+  # RADAR PLOT
   data <- outcomes_melt1 %>%
-    dplyr::select(segment, category, mean_rank) %>%
-    reshape2::dcast(segment ~ category, value.var = "mean_rank")
+    dplyr::select(segment, category_var_count, mean_rank) %>%
+    reshape2::dcast(segment ~ category_var_count, value.var = "mean_rank")
 
   plot <- ggradar(plot.data = data, values.radar = c(5,3,1), grid.min = 1, grid.mid = 3, grid.max = 5) +
     theme(legend.position="bottom") +
     scale_color_brewer(palette="Dark2") +
-    ggtitle(paste0("Mean Ranking by Outcome Category"))
+    ggtitle(paste0("Mean ranking by outcome category (1 = least vulnerable)"))
   print(plot)
 
 

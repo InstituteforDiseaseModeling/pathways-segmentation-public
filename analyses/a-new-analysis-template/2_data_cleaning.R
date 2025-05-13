@@ -17,15 +17,6 @@ create_new_pathways_workbook = config::get("create_new_pathways_workbook")
 
 
 ###################################
-# READ PATHWAYS WORKBOOOK
-###################################
-
-
-if (file.exists(outcomes_excel_file)){ outcomes_sheet <- readRDS(outcomes_excel_file) }
-if (file.exists(vulnerability_excel_file)){ vulnerability_sheet <- readRDS(vulnerability_excel_file) }
-
-
-###################################
 # READ IN SURVEY | DHS
 # RUN 1_import_data.R TO IMPORT AND SAVE RAW SURVEY DATA
 
@@ -114,6 +105,7 @@ write.csv(outcomes_vulnerability, file = paste0(outcomes_vulnerability_file, ".c
 
 if (create_new_pathways_workbook==TRUE){
 
+
   # GET DATA DICTIONARIES
   dd_outcomes <- readRDS(dd_outcomes_excel_file)
   dd_vulnerabilities <- readRDS(dd_vulnerabilities_excel_file)
@@ -160,17 +152,39 @@ if (create_new_pathways_workbook==TRUE){
     typing_tool_strata = NA,
     typing_tool_include = NA,
     notes = NA
-    ) %>%
+  ) %>%
     base::merge(dd_vulnerabilities, by=c("vulnerability_variable"), all.x=TRUE) %>%
     dplyr::select(vulnerability_variable, short_name, description, univariate_include, eda_include, pca_strata, pca_include, lca_strata, lca_include, profile_strata, profile_include, typing_tool_strata, typing_tool_include, notes,
                   Woman.and.her.past.experiences, Health.and.mental.models, Natural.and.human.systems, Household.relationships, Household.economics.and.living.conditions, Social.support) %>%
     arrange(vulnerability_variable)
 
 
-  l <- list("params" = df_params, "outcomes" = df_outcomes, "vulnerabilities" = df_vulnerability)
-  path = new_pathways_workbook_path
-  write.xlsx(l, file = path)
-  print(paste0("New Pathways Workbook Created: ", path))
+  if (pathways_workbook_is_excel == TRUE){
+
+
+    l <- list("params" = df_params, "outcomes" = df_outcomes, "vulnerabilities" = df_vulnerability)
+    path = paste0(new_pathways_workbook_path, ".xlsx")
+    write.xlsx(l, file = path)
+
+    print(paste0("New Pathways Workbook Excel created: ", new_pathways_workbook_path))
+
+
+  } else if (pathways_workbook_is_excel == FALSE){
+
+
+    # PARAMS AS CSV
+    write.csv(df_params, file = paste0(new_pathways_workbook_path, " - params.csv"), row.names = FALSE)
+
+    # OUTCOMES AS CSV
+    write.csv(df_outcomes, file = paste0(new_pathways_workbook_path, " - outcomes.csv"), row.names = FALSE)
+
+    # VULNERABILITIES AS CSV
+    write.csv(df_vulnerability, file = paste0(new_pathways_workbook_path, " - vulnerabilities.csv"), row.names = FALSE)
+
+    print(paste0("New Pathways Workbook CSVs created: ", new_pathways_workbook_path))
+
+
+  }
 
 }
 

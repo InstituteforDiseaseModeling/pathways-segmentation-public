@@ -16,17 +16,17 @@
 ###################################
 
 
-gen_lca_explore <- function(lca_vars=NULL, stratum=NULL, n_clusters=NULL, data_path=NULL, plot_path=NULL){
+fun_gen_lca_exploratory_output <- function(lca_vars=NULL, stratum=NULL, nreps=NULL, n_clusters=NULL, data_path=NULL, plot_path=NULL){
 
   # GET DATA
-  path = paste0(lca_path, stratum, "_outcomes_vulnerability_class.rds")
+  path = paste0(lca_path, "nreps", nreps, "/", stratum, "_outcomes_vulnerability_class.rds")
   outcomes_vulnerability_class <- readRDS(path)
 
   # OUTCOMES
   outcomes <- readRDS(file = paste0(outcomes_file, ".rds"))
 
 
-  lca_plots_file = paste0(plot_path, stratum, "_", n_clusters, "_lca_exploratory_plots.pdf")
+  lca_plots_file = paste0(plot_path, "nreps", nreps, "/", stratum, "_", n_clusters, "_lca_exploratory_plots_n", nreps, ".pdf")
   # lca_plots_file = paste0(plot_path, "lca_profile_plots_lite_", stratum, "_", n_clusters, ".pdf")
   dir.create(dirname(lca_plots_file), showWarnings = F, recursive = T)
   ###################################

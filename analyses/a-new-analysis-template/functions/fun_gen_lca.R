@@ -14,7 +14,7 @@
 ###################################
 
 
-gen_lca_output <- function(df=NULL, input_vars=NULL, nreps=NULL, output_path=NULL){
+fun_gen_lca <- function(df=NULL, input_vars=NULL, nreps=NULL, output_path=NULL){
 
   #
   stratum = df$strata[[1]]
@@ -26,7 +26,7 @@ gen_lca_output <- function(df=NULL, input_vars=NULL, nreps=NULL, output_path=NUL
     na.omit()
 
   # SAVE INPUT DF FOR LCA
-  path = paste0(output_path, stratum, "_lca_input.rds")
+  path = paste0(output_path, "nreps", nreps, "/", stratum, "_lca_input.rds")
   dir.create(dirname(path), showWarnings = F, recursive = T)
   saveRDS(lca_input, path)
 
@@ -41,7 +41,7 @@ gen_lca_output <- function(df=NULL, input_vars=NULL, nreps=NULL, output_path=NUL
     data <- poLCA(f, data=lca_input, nclass=i, maxiter=3000, nrep=nreps)
     assign(name, data)
 
-    path = paste0(output_path, name, ".rds")
+    path = paste0(output_path, "nreps", nreps, "/", name, ".rds")
     dir.create(dirname(path), showWarnings = F, recursive = T)
     saveRDS(data, path)
 

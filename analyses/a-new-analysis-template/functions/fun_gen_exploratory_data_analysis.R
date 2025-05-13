@@ -13,7 +13,6 @@
 # measure = "part.working1"
 # df = outcomes_vulnerability
 # plot_path = exploratory_plots
-
 # stratum = "rural"
 
 
@@ -21,7 +20,7 @@
 # DEFINE FUNCTION
 ###################################
 
-gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot_path){
+fun_gen_exploratory_data_analysis <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot_path){
 
 
   # GET VARIABLE METADATA FOR PLOTTING
@@ -320,31 +319,63 @@ gen_eda <- function(df=NULL, outcomes.list=NULL, measure=NULL, strata=NULL, plot
 
 
       # PLOT MODEL PROBABILITIES
-      plot1 <- model_pred_probs %>%
-        ggplot(aes(
-          y = var,
-          x = response,
-          xmin = lower,
-          xmax = upper,
-          color = model
-          # shape = ref_cat_class
-        )) +
-        geom_point(size = 3,
-                   position = position_dodge(width = 0.5)) +
-        geom_errorbar(width = 0.2,
-                      position = position_dodge(width = 0.5)) +
-        geom_vline(xintercept = 0.5, linetype = "dotted") +
-        theme_bw() +
-        theme(legend.position = "bottom") +
-        scale_color_manual(values=plot.color) +
-        # scale_color_brewer(palette="Dark2") +
-        ylab("") +
-        xlab("Predicted Probabilities and 95% Confidence Intervals") +
-        # labs(shape = "Regression Reference Category") +
-        labs(color = "Strata") +
-        scale_shape_discrete(guide = if (!is.na(ref_cat)) "legend" else "none") +
-        annotate("text",  x=Inf, y=Inf, label = model_plot_text, vjust=1.5, hjust=1.1, color="darkblue")+
-        ggtitle(paste0(outcome_label, " ~ ", measure_label))
+
+      if (out.binary == TRUE | out.character == TRUE){
+
+
+        plot1 <- model_pred_probs %>%
+          ggplot(aes(
+            y = var,
+            x = response,
+            xmin = lower,
+            xmax = upper,
+            color = model
+          )) +
+          geom_point(size = 3,
+                     position = position_dodge(width = 0.5)) +
+          geom_errorbar(width = 0.2,
+                        position = position_dodge(width = 0.5)) +
+          geom_vline(xintercept = 0.5, linetype = "dotted") +
+          theme_bw() +
+          theme(legend.position = "bottom") +
+          scale_color_manual(values=plot.color) +
+          ylab("") +
+          xlab("Predicted Probabilities and 95% Confidence Intervals") +
+          labs(color = "Strata") +
+          xlim(0, 1) +
+          scale_shape_discrete(guide = if (!is.na(ref_cat)) "legend" else "none") +
+          annotate("text",  x=Inf, y=Inf, label = model_plot_text, vjust=1.5, hjust=1.1, color="darkblue")+
+          ggtitle(paste0(outcome_label, " ~ ", measure_label))
+
+
+    } else if (out.numeric == TRUE){
+
+
+        plot1 <- model_pred_probs %>%
+          ggplot(aes(
+            y = var,
+            x = response,
+            xmin = lower,
+            xmax = upper,
+            color = model
+          )) +
+          geom_point(size = 3,
+                     position = position_dodge(width = 0.5)) +
+          geom_errorbar(width = 0.2,
+                        position = position_dodge(width = 0.5)) +
+          geom_vline(xintercept = 0.5, linetype = "dotted") +
+          theme_bw() +
+          theme(legend.position = "bottom") +
+          scale_color_manual(values=plot.color) +
+          ylab("") +
+          xlab("Predicted Probabilities and 95% Confidence Intervals") +
+          labs(color = "Strata") +
+          scale_shape_discrete(guide = if (!is.na(ref_cat)) "legend" else "none") +
+          annotate("text",  x=Inf, y=Inf, label = model_plot_text, vjust=1.5, hjust=1.1, color="darkblue")+
+          ggtitle(paste0(outcome_label, " ~ ", measure_label))
+
+
+    }
 
 
       # CREATE TABLE OF MODEL OUTPUT

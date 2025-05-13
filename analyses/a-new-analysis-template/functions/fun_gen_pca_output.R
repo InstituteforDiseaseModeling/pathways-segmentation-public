@@ -19,7 +19,7 @@
 ###################################
 
 
-gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_name=NULL){
+fun_gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_name=NULL){
 
   dir.create(dirname(file_name), showWarnings = F, recursive = T)
   ###################################

@@ -2,7 +2,7 @@
 
 
 ################################################################################
-# LATENT CLASSIFICATION ANALYSIS (LCA) OUTPUT
+# LATENT CLASS ANALYSIS (LCA) OUTPUT
 ################################################################################
 
 
@@ -10,7 +10,7 @@
 # RUN SETUP
 source("1_setup.R")
 
-nreps = 100
+nreps = 20
 
 
 ###################################
@@ -50,8 +50,9 @@ vulnerability_adj <- vulnerability %>%
   dplyr::select(caseid, all_of(svy_id_var), all_of(svy_strata_var), wt, survey, strata, everything())
 
 
-###################################
-# LOOP OVER STRATA AND GENERATE LCA OUTPUT
+
+################################################################################
+# A: LOOP OVER STRATA AND GENERATE LCA ALGORITHM OUTPUTS
 
 
 for (stratum in strata_set$strata){
@@ -66,29 +67,28 @@ for (stratum in strata_set$strata){
   vulnerability_adj_input <- vulnerability_adj %>%
     dplyr::filter(strata == stratum)
 
-  gen_lca_output(df=vulnerability_adj_input, input_vars=lca_strata_input, nreps=nreps, output_path=lca_path)
+  fun_gen_lca(df=vulnerability_adj_input, input_vars=lca_strata_input, nreps=nreps, output_path=lca_path)
 
 }
 
 
 ###################################
-#
+# BIND ALGORITHM OUTPUTS TOGETHER TO CREATE outcomes_vulnerability_class.rds
 for (stratum in strata_set$strata){
 
-  path = paste0(lca_path, stratum, "_lca_input.rds")
+  path = paste0(lca_path, "nreps", nreps, "/", stratum, "_lca_input.rds")
   lca_input <- readRDS(path)
 
   for (i in 2:10){
 
     name <- paste0("LCA", i)
-    path = paste0(lca_path, stratum, "_", name, ".rds")
+    path = paste0(lca_path, "nreps", nreps, "/", stratum, "_", name, ".rds")
     data <- readRDS(path)
     assign(name, data)
 
   }
 
-  ###################################
-  # SAVE OUTPUT OF VULNERABILITY VARIABLES, OUTCOMES, AND CLASSES
+
   lca_input_class <- cbind(lca_input, LCA2_class=LCA2$predclass) %>%
     cbind(LCA3_class=LCA3$predclass) %>%
     cbind(LCA4_class=LCA4$predclass) %>%
@@ -103,7 +103,7 @@ for (stratum in strata_set$strata){
     base::merge(lca_input_class %>% dplyr::select(caseid, survey, strata, LCA2_class, LCA3_class, LCA4_class, LCA5_class, LCA6_class, LCA7_class, LCA8_class, LCA9_class, LCA10_class),
                 by=c("caseid", "survey", "strata"))
 
-  path = paste0(lca_path, stratum, "_outcomes_vulnerability_class")
+  path = paste0(lca_path, "nreps", nreps, "/", stratum, "_outcomes_vulnerability_class")
   dir.create(dirname(path), showWarnings = F, recursive = T)
   saveRDS(outcomes_vulnerability_class, file = paste0(path, ".rds"))
   write.csv(outcomes_vulnerability_class, file = paste0(path, ".csv"), row.names = FALSE)
@@ -111,19 +111,25 @@ for (stratum in strata_set$strata){
 }
 
 
-###################################
-# LOOP OVER STRATA AND GENERATE LCA OUTPUT VISUALS
+
+################################################################################
+# B: LOOP OVER STRATA AND GENERATE LCA DIAGNOSTIC OUTPUT
+
+
 for (stratum in strata_set$strata){
   print(stratum)
   set.seed(99)
 
-  gen_lca_output_viz(stratum=stratum, data_path=lca_path, plot_path=lca_plots)
+  fun_gen_lca_diagnostic_output(stratum=stratum, data_path=lca_path, nreps=nreps, plot_path=lca_plots)
 
 }
 
 
-###################################
-# LOOP OVER STRATA AND GENERATE LCA EXPLORATORY PLOTS BASED ON NUMBER OF SEGMENTS
+
+################################################################################
+# C: LOOP OVER STRATA AND GENERATE LCA EXPLORATORY OUTPUT BY MODEL
+
+
 for (stratum in strata_set$strata){
 
 
@@ -133,14 +139,19 @@ for (stratum in strata_set$strata){
     distinct()
 
 
-  #
   for (i in seq(2,10)){
     print(paste(stratum, i))
 
-    gen_lca_explore(lca_vars=lca_strata_input, stratum=stratum, n_clusters=i, data_path=lca_path, plot_path=lca_plots)
+    fun_gen_lca_exploratory_output(lca_vars=lca_strata_input, stratum=stratum, nreps=nreps, n_clusters=i, data_path=lca_path, plot_path=lca_plots)
 
   }
 }
+
+
+
+###################################
+print("6_latent_class_analysis.R script complete! Proceed to run 7_country_vulnerability_ranking.R script after updating Pathways Workbook. Refer to the README for instructions if needed.")
+
 
 
 

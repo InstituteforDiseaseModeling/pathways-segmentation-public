@@ -22,7 +22,7 @@ outcomes_sheet <- readRDS(outcomes_excel_file) %>%
   distinct()
 
 univariate_plots_file = paste0(univariate_plots, "univariate_plots_outcomes.pdf")
-gen_univariate_plots(df = outcomes, metadata = outcomes_sheet, plot_path = univariate_plots_file)
+fun_gen_univariate_output(df = outcomes, metadata = outcomes_sheet, plot_path = univariate_plots_file)
 
 
 ###################################
@@ -36,7 +36,7 @@ vulnerability_sheet <- readRDS(vulnerability_excel_file) %>%
   distinct()
 
 univariate_plots_file = paste0(univariate_plots, "univariate_plots_vulnerability.pdf")
-gen_univariate_plots(df = vulnerability, metadata = vulnerability_sheet, plot_path = univariate_plots_file)
+fun_gen_univariate_output(df = vulnerability, metadata = vulnerability_sheet, plot_path = univariate_plots_file)
 
 
 ###################################

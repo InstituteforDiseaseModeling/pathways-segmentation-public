@@ -10,11 +10,11 @@
 # DEFINE FUNCTION TO GENERATE LCA OUTPUT VISUALS
 ###################################
 
-gen_lca_output_viz <- function(stratum=NULL, data_path=NULL, plot_path=NULL){
+fun_gen_lca_diagnostic_output <- function(stratum=NULL, data_path=NULL, nreps=NULL, plot_path=NULL){
 
 
   # GET outcomes_vulnerability_class
-  path = paste0(data_path, stratum, "_outcomes_vulnerability_class.rds")
+  path = paste0(data_path, "nreps", nreps, "/", stratum, "_outcomes_vulnerability_class.rds")
   outcomes_vulnerability_class <- readRDS(path)
   nobs = nrow(outcomes_vulnerability_class)
 
@@ -23,14 +23,14 @@ gen_lca_output_viz <- function(stratum=NULL, data_path=NULL, plot_path=NULL){
   for (i in 2:10){
 
     name <- paste0("LCA", i)
-    path = paste0(data_path, stratum, "_", name, ".rds")
+    path = paste0(data_path, "nreps", nreps, "/", stratum, "_", name, ".rds")
     data <- readRDS(path)
     assign(name, data)
 
   }
 
 
-  lca_plots_file = paste0(plot_path, stratum, "_lca_output_plots.pdf")
+  lca_plots_file = paste0(plot_path, "nreps", nreps, "/", stratum, "_lca_diagnostic_output.pdf")
   dir.create(dirname(lca_plots_file), showWarnings = F, recursive = T)
   ###################################
   # GENERATE PDF OF OUTPUTS
@@ -41,7 +41,7 @@ gen_lca_output_viz <- function(stratum=NULL, data_path=NULL, plot_path=NULL){
 
 
   plot(0:10, type = "n", xaxt="n", yaxt="n", bty="n", xlab = "", ylab = "")
-  text(5, 8, paste0("LCA Output Plots for stratum: ", stratum, " N = ", nobs), cex = 2)
+  text(5, 8, paste0("LCA output plots for stratum: ", stratum, " N = ", nobs, ". Nregs = ", nreps), cex = 2)
 
 
   ###################################
@@ -101,7 +101,7 @@ gen_lca_output_viz <- function(stratum=NULL, data_path=NULL, plot_path=NULL){
     theme_bw() +
     xlab("K-Class Solution") +
     labs(fill="") +
-    ggtitle(paste0("Distibution of maximum likelihoods"))
+    ggtitle(paste0("Distribution of maximum likelihoods"))
   # print(plot4)
 
 
@@ -254,7 +254,7 @@ gen_lca_output_viz <- function(stratum=NULL, data_path=NULL, plot_path=NULL){
     labs(fill="") +
     theme(axis.text.x=element_text(angle=-45, vjust=0.5)) +
     scale_fill_brewer(palette="Paired") +
-    ggtitle(paste0("Survey weighted class proportion by number of classes for stratum: ", stratum))
+    ggtitle(paste0("Proportion of population in each segment: ", stratum))
   print(plot_prop)
 
 
@@ -329,7 +329,7 @@ gen_lca_output_viz <- function(stratum=NULL, data_path=NULL, plot_path=NULL){
   png_path = paste0(plot_path, stratum, "_lca_sankey.png")
 
   saveNetwork(sankey, html_path)
-  webshot::webshot(html_path, png_path)
+  webshot2::webshot(html_path, png_path)
 
   img <- image_read(png_path)
   plot(img)

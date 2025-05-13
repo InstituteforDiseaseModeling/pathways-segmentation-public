@@ -11,6 +11,9 @@
 # RUN SETUP
 source("1_setup.R")
 
+# DEFINE WHETHER TO RUN THE EDA IN PARALLEL
+run_in_parallel = FALSE
+
 
 ###################################
 # READ PATHWAYS WORKBOOOK SHEETS
@@ -49,20 +52,74 @@ outcomes.list <- names(outcomes)[names(outcomes) %in% outcomes_vars_eda$outcome_
 
 # VULNERABILITY FACTORS
 vulnerability.list <- names(vulnerability)[names(vulnerability) %in% vulnerability_vars_eda$vulnerability_variable]
-vulnerability.list <- sort(vulnerability.list)
+vulnerability.list <- sort(vulnerability.list)[1:5]
 
 
 ###################################
 # LOOP THROUGH LIST OF VULNERABILITY VARIABLES AND GENERATE PDF OUTPUTS
 
 
-for(m in vulnerability.list[1:10]){
+if (run_in_parallel == TRUE){
+  print("Running EDA in parallel")
 
-  # try({
 
-  output <- gen_eda(df = outcomes_vulnerability, outcomes.list = outcomes.list, measure = m, strata=strata, plot_path = exploratory_plots)
+  # IDENTIFY NUMBER OF CORES AND SPIN UP LOCAL CLUSTER
+  ncores <- parallel::detectCores()
+  cl <- makeCluster(ncores)
+  registerDoParallel(cl)
 
-  # }, silent = TRUE)
+  clusterEvalQ(cl, {
+    pacman::p_load(dplyr, forcats, reshape2, ggplot2, survey, gridExtra, stringr, config, data.table, broom)
+    TRUE
+  })
+
+  # EXPORT FUNCTION AND DATA TO EACH WORKER
+  clusterExport(cl, varlist = c(
+    "fun_gen_exploratory_data_analysis",
+    "outcomes_vulnerability",
+    "outcomes.list",
+    "strata",
+    "exploratory_plots"
+  ))
+
+  # RUN IN PARALLEL
+  results <- foreach(
+    m = vulnerability.list,
+    .packages = character(0)    # no packages needed
+  ) %dopar% {
+    tryCatch(
+      gen_exploratory_data_analysis(
+        df            = outcomes_vulnerability,
+        outcomes.list = outcomes.list,
+        measure       = m,
+        strata        = strata,
+        plot_path     = exploratory_plots
+      ),
+      error = function(e) {
+        message("exploratory data analysis failed for measure ", m, ": ", e$message)
+        NULL
+      }
+    )
+  }
+
+  # CLEAN UP
+  stopCluster(cl)
+
+
+} else {
+  print("Running EDA in for loop")
+
+
+  for(m in vulnerability.list){
+
+    try({
+
+      output <- fun_gen_exploratory_data_analysis(df = outcomes_vulnerability, outcomes.list = outcomes.list, measure = m, strata=strata, plot_path = exploratory_plots)
+
+    }, silent = TRUE)
+
+
+  }
 
 }
 

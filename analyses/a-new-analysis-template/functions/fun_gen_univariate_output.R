@@ -1,4 +1,6 @@
 
+
+
 ################################################################################
 # GENERATE UNIVARIATE PLOTS
 ################################################################################
@@ -15,7 +17,7 @@
 # DEFINE FUNCTION
 ###################################
 
-gen_univariate_plots <- function(df=NULL, metadata=NULL, plot_path=NULL){
+fun_gen_univariate_output <- function(df=NULL, metadata=NULL, plot_path=NULL){
 
 
   dir.create(dirname(plot_path), showWarnings = F, recursive = T)

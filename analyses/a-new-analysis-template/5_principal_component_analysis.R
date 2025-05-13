@@ -58,13 +58,13 @@ for (stratum in strata_set$strata){
     dplyr::filter(strata == stratum)
 
   file_name = paste0(pca_plots, "pca_plots_", stratum, ".pdf")
-  gen_pca_output(df=vulnerability_input, stratum=stratum, pca_varlist=pca_strata_input, file_name=file_name)
+  fun_gen_pca_output(df=vulnerability_input, stratum=stratum, pca_varlist=pca_strata_input, file_name=file_name)
 
 }
 
 
 ###################################
-print("5_principal_component_analysis.R script complete! Proceed to run 6_latent_classification_analysis.R script after updating Pathways Workbook. Refer to the README for instructions if needed.")
+print("5_principal_component_analysis.R script complete! Proceed to run 6_latent_class_analysis.R script after updating Pathways Workbook. Refer to the README for instructions if needed.")
 
 
 
