@@ -9,7 +9,7 @@
 ###################################
 # RUN SETUP
 source("1_setup.R")
-pacman::p_load(rpart, rpart.plot, caret, rattle, foreign, ggplot2, dplyr, tidyr, data.table, haven, ggcorrplot)
+# pacman::p_load(rpart, rpart.plot, caret, rattle, foreign, ggplot2, dplyr, tidyr, data.table, haven, ggcorrplot)
 
 
 ###################################
