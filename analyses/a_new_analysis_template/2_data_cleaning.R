@@ -41,8 +41,7 @@ MR <- readRDS(file = paste0(data_path, "MR.rds"))
 
 
 # GENERATE VULNERABILITY FACTORS
-vulnerability <- gen_vulnerability_factors_dhs_pca(IR=IR, BR=BR, HH=HH, MR=MR, dhs=7)
-# vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=MR, dhs=7)
+vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=MR, dhs=7)
 vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH), names(MR))))
 vulnerability <- subset(vulnerability, select=unique(c("caseid", "survey", all_of(svy_id_var), all_of(svy_strata_var), all_of(data_state_var), vulnerability_vars)))
 
@@ -131,6 +130,7 @@ if (create_new_pathways_workbook==TRUE){
     outcome_variable = unique(c(outcomes_vars_excel)),
     univariate_include = 1,
     eda_include = NA,
+    ranking_include = NA,
     profile_include = NA,
     notes = NA
   ) %>%

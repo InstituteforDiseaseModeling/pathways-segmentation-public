@@ -14,7 +14,7 @@
 # DEFINE FUNCTION TO GENERATE SEGMENT PROFILES
 ###################################
 
-fun_gen_segment_profile <- function(stratum=NULL, n_class=NULL, shp_file=NULL){
+fun_gen_quantitative_segment_profile <- function(stratum=NULL, n_class=NULL, shp_file=NULL){
 
   ###################################
   # GET DATA
@@ -37,6 +37,10 @@ fun_gen_segment_profile <- function(stratum=NULL, n_class=NULL, shp_file=NULL){
     setNames(c("variable", "short_name", "category")) %>%
     distinct()
 
+  if (nrow(outcome_vars_profile) == 0){
+    stop("No outcome variables selected for quantitative segment profiling. Select variables in the Pathways Workbook.")
+  }
+
 
   # GET VULNERABILITY LIST
   vulnerability_vars <- readRDS(vulnerability_excel_file)
@@ -51,19 +55,13 @@ fun_gen_segment_profile <- function(stratum=NULL, n_class=NULL, shp_file=NULL){
     setNames(c("variable", "short_name", "domain")) %>%
     distinct()
 
-  vulnerability_vars_tt <- vulnerability_vars %>%
-    dplyr::filter(typing_tool_include == 1) %>%
-    dplyr::filter(typing_tool_strata %in% c("both", "all", stratum)) %>%
-    dplyr::select(vulnerability_variable, short_name, typing_tool_strata, domain_set$domains) %>%
-    reshape2::melt(id.vars=c("vulnerability_variable", "short_name", "typing_tool_strata"), variable.name="domain", value.name="domain_include") %>%
-    dplyr::filter(domain_include == 1) %>%
-    dplyr::select(vulnerability_variable, short_name, domain) %>%
-    setNames(c("variable", "short_name", "domain")) %>%
-    distinct()
+  if (nrow(vulnerability_vars_profile) == 0){
+    stop("No vulnerability variables selected for quantitative segment profiling. Select variables in the Pathways Workbook.")
+  }
 
 
   # GET COMBINED DATASET WITH MODELED SEGMENTS
-  path = paste0(lca_path, stratum, "_outcomes_vulnerability_class.rds")
+  path = paste0(lca_path, stratum, "_outcomes_vulnerability_class_ranked.rds")
   df <- readRDS(path)
   ###################################
 
@@ -400,7 +398,7 @@ fun_gen_segment_profile <- function(stratum=NULL, n_class=NULL, shp_file=NULL){
   plot <- ggradar(plot.data = data, values.radar = c(5,3,1), grid.min = 1, grid.mid = 3, grid.max = 5) +
     theme(legend.position="bottom") +
     scale_color_brewer(palette="Dark2") +
-    ggtitle(paste0("Mean ranking by outcome category (1 = least vulnerable)"))
+    ggtitle(paste0("Mean ranking by outcome category (1 = most vulnerable)"))
   print(plot)
 
 

@@ -54,6 +54,11 @@ for (stratum in strata_set$strata){
   pca_strata_input <- vulnerability_vars_pca %>%
     dplyr::filter(tolower(pca_strata) %in% c("both", "all", stratum))
 
+  if (nrow(pca_strata_input) == 0){
+    stop("No variables selected for PCA. Select variables in the Pathways Workbook.")
+  }
+
+
   vulnerability_input <- vulnerability %>%
     dplyr::filter(strata == stratum)
 

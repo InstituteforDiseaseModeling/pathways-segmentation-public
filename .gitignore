@@ -10,7 +10,13 @@ renv/library/
 renv/cache/
 renv/staging/
 
+# Ignore generic config.yml file
+config.yml
+
 # Ignore files for a specific project
 analyses/projects/*
-config.yml
+!analyses/projects/
+!analyses/projects/eth-2016-tutorial/config.yml
+
+
 

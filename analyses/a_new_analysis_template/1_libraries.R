@@ -8,10 +8,14 @@
 
 ###################################
 # RESTORE LIBRARIES FROM RENV LOCK FILE
-if (!require("renv")) install.packages("renv")
-# renv::activate()
-renv::restore()
-# renv::deactivate()
+if (use_renv == TRUE){
+  print("Restoring libraries from renv lock.file")
+
+  if (!require("renv")) install.packages("renv")
+  # renv::activate()
+  renv::restore()
+
+}
 
 
 ###################################

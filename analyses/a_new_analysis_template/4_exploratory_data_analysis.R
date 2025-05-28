@@ -27,9 +27,19 @@ outcomes_vars_eda <- outcome_vars %>%
   dplyr::filter(eda_include == 1) %>%
   dplyr::select(outcome_variable)
 
+if (nrow(outcomes_vars_eda) == 0){
+  stop("No outcome variables selected for EDA. Select variables in the Pathways Workbook.")
+}
+
+
 vulnerability_vars_eda <- vulnerability_vars %>%
   dplyr::filter(eda_include == 1) %>%
   dplyr::select(vulnerability_variable)
+
+if (nrow(vulnerability_vars_eda) == 0){
+  stop("No vulnerability variables selected for EDA. Select variables in the Pathways Workbook.")
+}
+
 
 strata <- readRDS(params_excel_file) %>%
   dplyr::select(strata) %>%
@@ -52,7 +62,7 @@ outcomes.list <- names(outcomes)[names(outcomes) %in% outcomes_vars_eda$outcome_
 
 # VULNERABILITY FACTORS
 vulnerability.list <- names(vulnerability)[names(vulnerability) %in% vulnerability_vars_eda$vulnerability_variable]
-vulnerability.list <- sort(vulnerability.list)[1:5]
+vulnerability.list <- sort(vulnerability.list)
 
 
 ###################################

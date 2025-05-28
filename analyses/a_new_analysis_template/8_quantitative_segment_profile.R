@@ -42,7 +42,7 @@ for (stratum in strata_set){
     pull(final_model)
   print(n_class)
 
-  fun_gen_segment_profile(stratum=stratum, n_class=n_class, shp_file=shp_file)
+  fun_gen_quantitative_segment_profile(stratum=stratum, n_class=n_class, shp_file=shp_file)
 
 }
 

@@ -32,6 +32,10 @@ vulnerability_vars <- readRDS(vulnerability_excel_file)
 vulnerability_vars_lca <- vulnerability_vars %>%
   dplyr::filter(lca_include == 1)
 
+if (nrow(vulnerability_vars_lca) == 0){
+  stop("No variables selected for LCA. Select variables in the Pathways Workbook.")
+}
+
 
 outcomes <- readRDS(file = paste0(outcomes_file, ".rds"))
 vulnerability <- readRDS(file = paste0(vulnerability_file, ".rds"))
