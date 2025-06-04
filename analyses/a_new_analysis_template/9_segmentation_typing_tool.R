@@ -41,7 +41,7 @@ for (stratum in strata_set){
 
   final_seg <- final_models %>% dplyr::filter(strata == stratum) %>% pull(final_model)
 
-  path = paste0(lca_path, stratum, "_outcomes_vulnerability_class.rds")
+  path = paste0(lca_path, "nreps", nreps, "/", stratum, "_outcomes_vulnerability_class_ranked.rds")
   df_sol <- readRDS(path)
 
   df_sol$n_class <- df_sol %>% pull(eval(parse(text=final_seg)))

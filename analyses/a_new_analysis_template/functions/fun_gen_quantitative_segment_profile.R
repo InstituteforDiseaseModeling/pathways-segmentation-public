@@ -14,7 +14,7 @@
 # DEFINE FUNCTION TO GENERATE SEGMENT PROFILES
 ###################################
 
-fun_gen_quantitative_segment_profile <- function(stratum=NULL, n_class=NULL, shp_file=NULL){
+fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=NULL, shp_file=NULL){
 
   ###################################
   # GET DATA
@@ -60,9 +60,9 @@ fun_gen_quantitative_segment_profile <- function(stratum=NULL, n_class=NULL, shp
   }
 
 
-  # GET COMBINED DATASET WITH MODELED SEGMENTS
-  path = paste0(lca_path, stratum, "_outcomes_vulnerability_class_ranked.rds")
-  df <- readRDS(path)
+  # # GET COMBINED DATASET WITH MODELED SEGMENTS
+  # path = paste0(lca_path, stratum, "_outcomes_vulnerability_class_ranked.rds")
+  # df <- readRDS(path)
   ###################################
 
 
@@ -284,11 +284,6 @@ fun_gen_quantitative_segment_profile <- function(stratum=NULL, n_class=NULL, shp
   }
 
 
-  # state_prop_max <- tidyr::extract(state_prop_max, centroid, c('lat', 'long'), '\\((.*)\\s(.*)\\)') %>%
-  #   mutate(lat = str_replace_all(lat, ",", "")) %>%
-  #   mutate(long = as.numeric(long),
-  #          lat = as.numeric(lat))
-
   plot2 <- state_prop_max %>%
     dplyr::filter(max_prop == class_state_prop) %>%
     ggplot(aes(fill = segment, label=max_prop_label)) +
@@ -390,16 +385,43 @@ fun_gen_quantitative_segment_profile <- function(stratum=NULL, n_class=NULL, shp
   print(plot)
 
 
+  ###################################
   # RADAR PLOT
+  segment_count = n_distinct(outcomes_melt1$segment)
+  segment_count_mid = round(segment_count/2)
+
   data <- outcomes_melt1 %>%
     dplyr::select(segment, category_var_count, mean_rank) %>%
     reshape2::dcast(segment ~ category_var_count, value.var = "mean_rank")
 
-  plot <- ggradar(plot.data = data, values.radar = c(5,3,1), grid.min = 1, grid.mid = 3, grid.max = 5) +
+  plot1 <- ggradar(plot.data = data, values.radar = c(segment_count,segment_count_mid,1), grid.min = 1, grid.mid = segment_count_mid, grid.max = segment_count) +
     theme(legend.position="bottom") +
     scale_color_brewer(palette="Dark2") +
-    ggtitle(paste0("Mean ranking by outcome category (1 = most vulnerable)"))
-  print(plot)
+    ggtitle(paste0("Mean ranking by outcome category (1 = less desirbable)"))
+  print(plot1)
+
+
+  data <- outcomes_melt %>%
+    dplyr::select(strata, model_cat, variable, short_name, category, segment, var_class_std_mean) %>%
+    distinct() %>%
+    group_by(category) %>%
+    dplyr::mutate(var_count = n_distinct(variable),
+                  category_var_count = paste0(category, " (", var_count, ")")) %>%
+    group_by(strata, model_cat, category, category_var_count, segment) %>%
+    dplyr::summarize(mean_class_std_mean = mean(var_class_std_mean)) %>%
+    ungroup() %>%
+    dplyr::select(segment, category_var_count, mean_class_std_mean) %>%
+    distinct() %>%
+    reshape2::dcast(segment ~ category_var_count, value.var = "mean_class_std_mean")
+
+  plot2 <- ggradar(plot.data = data, values.radar = c(-1,0,1), grid.min = -1, grid.mid = 0, grid.max = 1) +
+    theme(legend.position="bottom") +
+    scale_color_brewer(palette="Dark2") +
+    ggtitle(paste0("Mean of standardized means by outcome category (1 = less desirable)"))
+  print(plot2)
+
+  # grid.arrange(plot1, plot2,
+  #              ncol=2)
 
 
   # #

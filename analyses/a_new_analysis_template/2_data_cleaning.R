@@ -18,7 +18,7 @@ create_new_pathways_workbook = config::get("create_new_pathways_workbook")
 
 ###################################
 # READ IN SURVEY | DHS
-# RUN 1_import_data.R TO IMPORT AND SAVE RAW SURVEY DATA
+# RUN 1_import_data.R TO IMPORT AND SAVE RAW SURVEY DATA (REPLACE THE FILE HERE IF NOT DHS)
 
 if (file.exists(paste0(data_path, "IR.rds")) == FALSE){
 
@@ -27,12 +27,13 @@ if (file.exists(paste0(data_path, "IR.rds")) == FALSE){
 
 }
 
-
+# COMMENT THIS CODE ACCORDINGLY IF USING DHS OR A DIFFERENT SURVEY
 IR <- readRDS(file = paste0(data_path, "IR.rds"))
 BR <- readRDS(file = paste0(data_path, "BR.rds"))
 KR <- readRDS(file = paste0(data_path, "KR.rds"))
 HH <- readRDS(file = paste0(data_path, "HH.rds"))
-MR <- readRDS(file = paste0(data_path, "MR.rds"))
+# MR <- readRDS(file = paste0(data_path, "MR.rds"))
+# survey <- readRDS(file = paste0(data_path, ""))
 
 
 ######################################################################
@@ -41,8 +42,8 @@ MR <- readRDS(file = paste0(data_path, "MR.rds"))
 
 
 # GENERATE VULNERABILITY FACTORS
-vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=MR, dhs=7)
-vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH), names(MR))))
+vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=NULL, dhs=7)
+vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH))))
 vulnerability <- subset(vulnerability, select=unique(c("caseid", "survey", all_of(svy_id_var), all_of(svy_strata_var), all_of(data_state_var), vulnerability_vars)))
 
 
@@ -75,7 +76,7 @@ vulnerability <- readRDS(file = paste0(vulnerability_file, ".rds"))
 
 
 # GENERATE HEALTH OUTCOMES
-outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=7)
+outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=8)
 outcomes_vars <- setdiff(names(outcomes), c(names(IR), names(BR), names(KR)))
 outcomes <- subset(outcomes, select=unique(c("caseid", "v001", "v002", "v003", "survey", outcomes_vars)))
 

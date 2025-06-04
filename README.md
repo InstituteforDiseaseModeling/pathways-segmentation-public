@@ -125,7 +125,7 @@ Once generated, the Pathways Workbook should be reviewed to ensure all metadata 
     * **description:** variable definition
     * **univariate_include:** include in the univariate analysis PDF plots
     * **eda_include:** include in the exploratory analysis PDF plots
-    * **ranking_include:** include in the in-country ranking step
+    * **ranking_include:** include in the in-country ranking analysis
     * **profile_include:** include in the quantitative profile PDF plots
     * **notes:** space to capture information about decisions made, observations, etc
 * **vulnerabilities:** Vulnerability variables used in the analysis; inclusion/exclusion decisions for each phase are drien from this tab.
@@ -181,6 +181,12 @@ The workflow is modularized according to the different phases of a segmentation 
 * **survey_name** name of the survey to be added as a column in the output datasets
 * **root_path:** directory path from which analysis output paths will build from; this is the location of the project
 * **user_path:** subfolder for analysis outputs (allows for multiple runs within the same project)
+
+* **dhs_ir_file:** STATA file name of the DHS individual recode file
+8 **dhs_hh_file:** STATA file name of the DHS household recode file
+* **dhs_br_file:** STATA file name of the DHS birth recode file
+* **dhs_kr_file:** STATA file name of the DHS child recode file
+* **survey_file:** file name of a non-DHS survey
 
 * **create_new_pathways_workbook:** TRUE/FALSE, determines whether to import an existing Pathways Workbook or create a new one as part of the data cleaning and variable generation phase
 * **pathways_workbook_is_excel:** TRUE/FALSE, use the Pathways Workbook in Excel or CSV format
@@ -437,7 +443,7 @@ This tutorial assumes the Pathways Workbook is generated as xlsx file but if gen
     * define the strata for which the variable should be included in the lca_strata column
     * set the lca_include column to 1 to include in the LCA output PDF
 2. save and close the Workbook
-3. open the 6_latent_class_analysis.R script and run the entire script to generate the two sets of LCA PDF outputs
+3. open the 6_latent_class_analysis.R script, set the nreps parameter (number of algorithm repititions) and run the entire script to generate the two sets of LCA PDF outputs
 4. review both the lca_output PDF and the LCA_exploratory PDF to assess the statistical and socio-epidemiological outputs of the classification algorithm
 5. repeat any previos steps as needed and iterate with the LCA phase until an acceptable segmentation solution exists
 
@@ -446,7 +452,7 @@ This tutorial assumes the Pathways Workbook is generated as xlsx file but if gen
 1. open the Pathways Workbook and edit the 'outcomes' tab
     * set the ranking_include column to 1 to include in the in-country analysis
 2. save and close the Workbook
-3. open the 7_country_vulnerability_ranking.R script and run the entire script to generate the {strata}_outcomes_vulnerability_class_ranked.rds outputs which contain an additional vulnerability ranked labelling for the segments
+3. open the 7_country_vulnerability_ranking.R script, set the nreps parameter to an existing LCA output, and run the entire script to generate the {strata}_outcomes_vulnerability_class_ranked.rds outputs which contain an additional vulnerability ranked labelling for the segments
 
 ### Quantitative segment profiling
 
@@ -454,7 +460,7 @@ This tutorial assumes the Pathways Workbook is generated as xlsx file but if gen
     * define the strata for which the variable should be included in the profile_strata column
     * set the profile_include column to 1 to include in the segment profile PDF
 2. save and close the Workbook
-3. open the 8_quantitative_segment_profile.R script and run the entire script to generate the quantitative segment profile PDF outputs
+3. open the 8_quantitative_segment_profile.R script, set the nreps parameter to an existing LCA output, and run the entire script to generate the quantitative segment profile PDF outputs
 
 ### Segment typing tool
 
@@ -463,7 +469,7 @@ This tutorial assumes the Pathways Workbook is generated as xlsx file but if gen
     * set the typing_tool_include column to 1 to include in the typing tool PDF
 2. edit the final_model column in the 'params' tab to identify the final models for each strata (e.g., LCA5_class for a 5 class solution)
 2. save and close the Workbook
-3. open the 8_typing_tool.R script and run the entire script to generate the typing tool PDF outputs
+3. open the 8_typing_tool.R script, set the nreps parameter to an existing LCA output, and run the entire script to generate the typing tool PDF outputs
 
 ## Common actions throughout the analysis
 

@@ -330,6 +330,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, DHS=7){
 
   if (DHS == 7){
 
+
     # STUNTING
     IR <- IR %>%
       dplyr::mutate(haz.last = case_when(as.numeric(hw5_1)/100 > 90 ~ NA,
@@ -344,7 +345,17 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, DHS=7){
                                          TRUE ~ as.numeric(hw11_1)/100)) %>%
       dplyr::mutate(waste.cat2.last = ifelse(whz.last < -2, 1, 0))
 
+    # UNDERWEIGHT/OVERWEIGHT
+    IR <- IR %>%
+      dplyr::mutate(waz.last = case_when(as.numeric(hw8_1)/100 > 90 ~ NA,
+                                         is.na(hw8_1) ~ NA,
+                                         TRUE ~ as.numeric(hw8_1)/100)) %>%
+      dplyr::mutate(undwgt.last = ifelse(waz.last < -2, 1, 0),
+                    ovrwgt.last = ifelse(waz.last > 2, 1, 0))
+
+
   } else if (DHS == 8){
+
 
     # STUNTING
     IR <- IR %>%
@@ -360,21 +371,22 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, DHS=7){
                                          TRUE ~ as.numeric(hw72_1)/100)) %>%
       dplyr::mutate(waste.cat2.last = ifelse(whz.last < -2, 1, 0))
 
+    # UNDERWEIGHT/OVERWEIGHT
+    IR <- IR %>%
+      dplyr::mutate(waz.last = case_when(as.numeric(hw71_1)/100 > 90 ~ NA,
+                                         is.na(hw71_1) ~ NA,
+                                         TRUE ~ as.numeric(hw71_1)/100)) %>%
+      dplyr::mutate(undwgt.last = ifelse(waz.last < -2, 1, 0),
+                    ovrwgt.last = ifelse(waz.last > 2, 1, 0))
+
+
   }
-
-
-  # UNDERWEIGHT/OVERWEIGHT
-  IR <- IR %>%
-    dplyr::mutate(waz.last = case_when(as.numeric(hw8_1)/100 > 90 ~ NA,
-                                       is.na(hw8_1) ~ NA,
-                                       TRUE ~ as.numeric(hw8_1)/100)) %>%
-    dplyr::mutate(undwgt.last = ifelse(waz.last < -2, 1, 0),
-                  ovrwgt.last = ifelse(waz.last > 2, 1, 0))
 
 
   # STANDARD MALNOURISHMENT VARIABLES IN KR FILE
 
   if (DHS == 7){
+
 
     # STUNTING
     KR <- KR %>%
@@ -390,7 +402,17 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, DHS=7){
                                     TRUE ~ as.numeric(hw11)/100)) %>%
       dplyr::mutate(waste.cat2 = ifelse(whz < -2, 1, 0))
 
+    # UNDERWEIGHT/OVERWEIGHT
+    KR <- KR %>%
+      dplyr::mutate(waz = case_when(as.numeric(hw8)/100 > 90 ~ NA,
+                                    is.na(hw8) ~ NA,
+                                    TRUE ~ as.numeric(hw8)/100)) %>%
+      dplyr::mutate(undwgt = ifelse(waz < -2, 1, 0),
+                    ovrwgt = ifelse(waz > 2, 1, 0))
+
+
   } else if (DHS == 8){
+
 
     # STUNTING
     KR <- KR %>%
@@ -406,16 +428,16 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, DHS=7){
                                     TRUE ~ as.numeric(hw72)/100)) %>%
       dplyr::mutate(waste.cat2 = ifelse(whz < -2, 1, 0))
 
+    # UNDERWEIGHT/OVERWEIGHT
+    KR <- KR %>%
+      dplyr::mutate(waz = case_when(as.numeric(hw71)/100 > 90 ~ NA,
+                                    is.na(hw71) ~ NA,
+                                    TRUE ~ as.numeric(hw71)/100)) %>%
+      dplyr::mutate(undwgt = ifelse(waz < -2, 1, 0),
+                    ovrwgt = ifelse(waz > 2, 1, 0))
+
+
   }
-
-
-  # UNDERWEIGHT/OVERWEIGHT
-  KR <- KR %>%
-    dplyr::mutate(waz = case_when(as.numeric(hw8)/100 > 90 ~ NA,
-                                  is.na(hw8) ~ NA,
-                                  TRUE ~ as.numeric(hw8)/100)) %>%
-    dplyr::mutate(undwgt = ifelse(waz < -2, 1, 0),
-                  ovrwgt = ifelse(waz > 2, 1, 0))
 
 
 

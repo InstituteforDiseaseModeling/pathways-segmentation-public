@@ -9,6 +9,8 @@
 # RUN SETUP
 source("1_setup.R")
 
+nreps = 20
+
 
 ###################################
 # SET PARAMETERS
@@ -42,7 +44,11 @@ for (stratum in strata_set){
     pull(final_model)
   print(n_class)
 
-  fun_gen_quantitative_segment_profile(stratum=stratum, n_class=n_class, shp_file=shp_file)
+  # GET COMBINED DATASET WITH MODELED SEGMENTS
+  path = paste0(lca_path, "nreps", nreps, "/", stratum, "_outcomes_vulnerability_class_ranked.rds")
+  df <- readRDS(path)
+
+  fun_gen_quantitative_segment_profile(df=df, stratum=stratum, n_class=n_class, shp_file=shp_file)
 
 }
 

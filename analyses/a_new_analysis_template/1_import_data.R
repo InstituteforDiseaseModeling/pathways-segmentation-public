@@ -7,13 +7,14 @@
 
 
 ###################################
-# READ IN SURVEY | DHS
+# READ IN SURVEY | DHS | PATHWAYS
 
-IR <- data.table(read.dta13(file = paste0(data_path, "ETIR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
-BR <- data.table(read.dta13(file = paste0(data_path, "ETBR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
-KR <- data.table(read.dta13(file = paste0(data_path, "ETKR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
-HH <- data.table(read.dta13(file = paste0(data_path, "ETHR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
-MR <- data.table(read.dta13(file = paste0(data_path, "ETMR71FL.DTA"), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
+IR <- data.table(read.dta13(file = paste0(data_path, config::get("dhs_ir_file")), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
+BR <- data.table(read.dta13(file = paste0(data_path, config::get("dhs_br_file")), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
+KR <- data.table(read.dta13(file = paste0(data_path, config::get("dhs_kr_file")), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
+HH <- data.table(read.dta13(file = paste0(data_path, config::get("dhs_hh_file")), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
+# MR <- data.table(read.dta13(file = paste0(data_path, config::get("dhs_mr_file")), fromEncoding="utf-8")) %>% dplyr::mutate(survey = config::get("survey_name"))
+# survey <-
 
 
 ###################################
@@ -23,7 +24,8 @@ saveRDS(IR, file = paste0(data_path, "IR.rds"))
 saveRDS(BR, file = paste0(data_path, "BR.rds"))
 saveRDS(KR, file = paste0(data_path, "KR.rds"))
 saveRDS(HH, file = paste0(data_path, "HH.rds"))
-saveRDS(MR, file = paste0(data_path, "MR.rds"))
+# saveRDS(MR, file = paste0(data_path, "MR.rds"))
+# saveRDS(survey, file = )
 
 
 ###################################
