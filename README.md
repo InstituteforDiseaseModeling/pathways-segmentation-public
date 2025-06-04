@@ -1,8 +1,10 @@
-# Pathways Segmentation overview
+# Pathways Segmentation repo
 
-The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population grouping framework used for understanding social, cultural, economic, and environmental vulnerability to improve women's health and well-being.
+The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population grouping analysis framework used for understanding social, cultural, economic, and environmental vulnerability to improve women's health and well-being.
 
-This analysis is intended for researchers familiar with R and requires custom variable coding for each analysis.
+This analysis is intended for researche scientists familiar with R and requires custom variable coding for each analysis.
+
+The workflow is designed to use survey datasets from the Demographic and Health Surveys (DHS) program, however any survey dataset will work with adjustments to the 2_data_cleaning.R script and associated functions.
 
 # Table of contents
 
@@ -20,22 +22,33 @@ This analysis is intended for researchers familiar with R and requires custom va
     - [Analysis setup](#analysis-setup)
     - [Data cleaning and variable generation](#data-cleaning-and-variable-generation)
     - [Univariate analysis](#univariate-analysis)
-    - [Exploratory analysis](#exploratory-analysis)
+    - [Exploratory data analysis](#exploratory-data-analysis)
     - [Principal component analysis (PCA)](#principal-component-analysis-pca)
-    - [Latent classification analysis (LCA)](#latent-classification-analysis-lca)
+    - [Latent class analysis (LCA)](#latent-class-analysis-lca)
+    - [Country segment ranking](#country-segment-ranking)
     - [Quantitative segment profiling](#quantitative-segment-profiling)
     - [Segment typing tool](#segment-typing-tool)
-- [Pathways Segmentation analysis tutorial walkthrough](#pathways-segmentation-analysis-tutorial-walkthrough)
+- [Pathways Segmentation analysis quickstart tutorial](#pathways-segmentation-analysis-quickstart-tutorial)
 
 ## Abstract
 
 ### Pathways Segmentation methodology
 
-#### 
+#### Terminology
 
-* **Cluster analysis:** A statistical method used to organize observations into meantinful groups - or clusters - that share common characteristics.  The standardized Pathways methodology uses latent class analysis (LCA).
+* **Vulnerability:** The quality or state of potentially being harmed, either physically, socially, cognitively, or emotionally, related to reproductive, newborn, maternal and child health and nutrition
+
+* **Segment:** A mutually exclusive grouping of individuals based on shared characteristics.
+
+* **Segmentation:** The process of dividing a population into smaller sub-groups (known as segments) based on shared characteristics.
+
+* **Segmentation strata:** Driven by the survey design; how the survey data should be initially divided for the segmentation analysis i.e., how many independent segmentation solutions will be produced?  Often times this is represented by separate urban/rural solutions.
 
 * **Health Outcome:** A health-related event (e.g., number of ANC visits, U5 mortality).
+
+* **Vulnerability factor:** A specific fact, situation, or construct that helps define how women experience vulnerability.
+
+* **Vulnerability variable (measure):** A standardized way of quantifying factors so they can be used in statistical analysis.
 
 * **Pathways Domain:** A characteristic grouping of Vulnerability factors.  A Vulnerability Factor can be associated with multiple Domains. There are 6 Domains total:
     * Woman and her past experiences
@@ -45,21 +58,11 @@ This analysis is intended for researchers familiar with R and requires custom va
     * Household economics and living conditions
     * Social Support
 
-* **Quantitative segmentation profile:** Health Outcomes and Vulnerability variables viewed from the perspective of the segmentation solution highlighting differences across the segments.
-
-* **Segment:** A mutually exclusive grouping of individuals based on shared characteristics.
-
-* **Segmentation:** The process of dividing a population into smaller sub-groups (known as segments) based on shared characteristics.
-
 * **Segmentation solution:** The final set of segments resulting from completing the Pathways Segmentation methodology.
 
-* **Segmentation strata:** Driven by the survey design; how the survey data should be initially divided for the segmentation analysis i.e., how many independent segmentation solutions will be produced?  Often times this is represented by separate urban/rural solutions.
+* **Cluster analysis:** A statistical method used to organize observations into meantinful groups - or clusters - that share common characteristics.  The standardized Pathways methodology uses latent class analysis (LCA).
 
-* **Vulnerability:** The quality or state of potentially being harmed, either physically, socially, cognitively, or emotionally, related to reproductive, newborn, maternal and child health and nutrition
-
-* **Vulnerability factor:** A specific fact, situation, or construct that helps define how women experience vulnerability.
-
-* **Vulnerability variable (measure):** A standardized way of quantifying factors so they can be used in statistical analysis.
+* **Quantitative segmentation profile:** Health Outcomes and Vulnerability variables viewed from the perspective of the segmentation solution highlighting differences across the segments.
 
 ## Prerequisites
 
@@ -70,9 +73,10 @@ This analysis is intended for researchers familiar with R and requires custom va
 An advanced understanding of applied statistics is expected in order to conduct a Pathways Segmentation analysis.  This includes the following statistical topics:
 
 * variable distribution parameters (mean, median, standard deviation)
-* bivariate regression interpretation (linear, logistic, predicted probabilities, odds ratios, statistical significance)
+* bivariate regression interpretation (linear, logistic, predicted probabilities/values, odds ratios, statistical significance)
 * principal component analysis (PCA) and interpretation of PCA visuals
 * latent class analysis (LCA) algorithm and model fit statistics
+* classification and regression tree fitting and evaluation
 
 #### R experience
 
@@ -80,38 +84,40 @@ An intermediate level of coding in R and using RStudio Desktop is expected in or
 
 #### Software requirements
 
-* [R (recommended 4.4.2) & RStudio Desktop](https://posit.co/download/rstudio-desktop/)
-* Microsoft Excel
+* [R (recommended >= 4.4.2, renv implementation assumes 4.4.2) & RStudio Desktop](https://posit.co/download/rstudio-desktop/)
+* Microsoft Excel (recommended)
 * [GitHub Desktop](https://desktop.github.com/download/) (suggested for managing code from GitHub repository)
 
-Software will run on Windows or MAC operating system.
+Software will run on Windows or MAC operating system (although on a MAC OS the RENV framework may require some technical hurdles.)
 
 #### Hardware requirements
 
-* There are no specific hardware requirements (although compute needs for running the LCA algorithm increase in the number of repititions specified).
+There are no specific hardware requirements (although compute needs for running the LCA algorithm increase in the number of repititions specified).
 
 ### Environment setup
 
-The R environment is defined via the [renv library](https://rstudio.github.io/renv/articles/renv.html).  This library is installed and initialized at the beginning in the 1_setup.R script.  Once initialized, the renv framework will install all libraries and their appropriate versions used in the analysis as per the specifications in the lock.file.
+There are two options for setting up the initial R environment:
+1. Use the default configuration and the [renv library](https://rstudio.github.io/renv/articles/renv.html).  This library is installed and initialized at the beginning in the 1_libraries.R script which is called as part of the 1_setup.R script.  Once initialized, the renv framework will install all libraries and their appropriate versions used in the analysis as specified in the lock.file.
+2. Edit the 1_libraries.R to only call the renv::deactivate() line of code which will ignore the renv files and intall all libraries and their latest versions in the global R library location.
 
-This project also uses the R "config" library and methods for defining file paths and variables used throughout the project. Using a config file creates a layer of abstraction for managing the codebase between users/projects.  This can be edited directly in RStudio and should be included in the .gitignore.
+This project also uses the R [config](https://rstudio.github.io/config/articles/introduction.html) library and methods for defining file paths and variables used throughout the project. Using a config file creates a layer of abstraction for managing the codebase across multiple projects.  This can be edited directly in RStudio and is included in the .gitignore.
 
 ## The Pathways Workbook
 
-The Pathways Segmentation workflow is anchored by an Excel workbook that drives and captures decisions made throughout each phase of the analysis.  The workflow is designed so that, outside of generating the initial datasets for Health Outcomes and Vulnerability variables in the data cleaning and variable generation phase, very little code needs to be edited directly.
+The Pathways Segmentation workflow is anchored by the Pathways Workbook (either in Excel or CSV format) that drives and captures decisions made throughout each phase of the analysis.  The workflow is designed so that, outside of generating the initial datasets for Health Outcomes and Vulnerability variables in the data cleaning and variable generation phase, very little code needs to be edited directly.
 
 ### Generating the Pathways Workbook
 
-While possible to create this workbook manually; there is a process in the data_cleaning.R script to generate this workbook directly using the variables coded in fun_gen_outcomes.R and fun_gen_vulnerabilities.R scripts.  These variable lists will join with the "pathways data dictioary.xlsx" in the top repo folder to get additional metadata about these variables (if they exist) before creating the tab in the Excel workbook.  There may need to be some review and editing of this metadata if the variable is new or named differently.
+The Pathways Workbook (in either format) is created in the 2_data_cleaning.R script. The config.yml parameter "create_new_pathways_workbook" (TRUE/FALSE) will generate the workbook from the Outcome and Vulnerability variables defined.  The parameter "pathways_workbook_is_excel" (TRUE/FALSE) determines whether the user intends to use the XLSX (TRUE) or CSV (FALSE) version of the Pathways Workbook.
 
-There are separate parameters in the config file for the "existing" and "new" Pathways Workbook to allow for both to exist for comparison.  The "new" file should be renamed to match the "existing" file once created.
+Once generated, the Pathways Workbook should be reviewed to ensure all metadata for variables is defined and the vulnerability - domain mapping is accurate for the analysis.
 
 ### Workbook tabs (and columns)
 
 * **params:** This tab serves as a catch-all for some project-specific variables used in the analysis.
     * **domains:** 6 Pathways domains
     * **strata:** Segmentation strata of the survey
-    * **final_model:** the finalized Segmentation solution
+    * **final_model:** the final Segmentation solution
 * **outcomes:** Health Outcomes used in the analysis; inclusion/exclusion decisions for each phase are driven from this tab.
     * **category:** the grouping of the Health Outcome variable
     * **outcome_variable:** the name of the outcome variable as defined in the coding scripts and datasets
@@ -119,6 +125,7 @@ There are separate parameters in the config file for the "existing" and "new" Pa
     * **description:** variable definition
     * **univariate_include:** include in the univariate analysis PDF plots
     * **eda_include:** include in the exploratory analysis PDF plots
+    * **ranking_include:** include in the in-country ranking analysis
     * **profile_include:** include in the quantitative profile PDF plots
     * **notes:** space to capture information about decisions made, observations, etc
 * **vulnerabilities:** Vulnerability variables used in the analysis; inclusion/exclusion decisions for each phase are drien from this tab.
@@ -131,6 +138,7 @@ There are separate parameters in the config file for the "existing" and "new" Pa
     * **pca_include:** include in the next run of PCA phase
     * **lca_strata:** strata to include this variable in for LCA (both/all/urban/rural)
     * **lca_include:** include in the next run of LCA phase
+    * **profile_strata:** which strata to include this variable in for the quantitative segment profiling (both/all/urban/rural)
     * **profile_include:** include in the quantitative segment profiling
     * **typing_tool_strata:** which strata to include this variable in for developing the segmentation typing tool (both/all/urban/rural)
     * **typing_tool_include:** include in the typing tool phase
@@ -139,13 +147,15 @@ There are separate parameters in the config file for the "existing" and "new" Pa
 
 ## Repo structure
 
-The current repo is structured in the following:
+At the top level of the repository exists the project README and the global .gitignore file.
 
-At the top level exists the "pathways data dictionary" (.xlsx), readme, and other repo level artifacts.
+Within the "analyses" folder exists the following:
 
-Within the "analyses" folder exists the templated file set for a new analysis (a-new-analysis-template) along with archived segmentation analysis projects for reference.
+* a_new_analysis_template: templated set of files needed for a new analysis
+* data_cleaning_scripts: includes coding from previous analyses for reference
+* projects: contains a tutorial project and is a recommended location for future projects
 
-### New project files (analyses/a-new-analysis-template/)
+### New project files (analyses/a_new_analysis_template/)
 
 The workflow is modularized according to the different phases of a segmentation analysis.  Each module has a parent script which calls a function to generate the corresponding outputs (e.g., data.frame, PDF visualization file).
 
@@ -157,19 +167,29 @@ The workflow is modularized according to the different phases of a segmentation 
 * 3_univariate_analysis.R: generate a PDF output of univariate visualizations for each Outcome and Vulnerability Factor
 * 4_exploratory_analysis.R: generate a PDF output of exploratory plots to capture the relationship between each Vulnerability Factor and all health Outcomes
 * 5_principal_component_output.R: generate a PDF output of Principal Component Analysis for all Vulnerability variables within a Pathways Domain
-* 6_latent_classification_output.R: generate a population segmentation output using a set of Vulnerability variables
-* 7_segment_profiles.R: generate the quantitative profile segmentation plots for a segmentation solution
-* 8_typing_tool.R: generate the outputs to help define which variables should be used in developing a Pathways typing tool.
-* 9_analysis_helper_script.R: a script to run some ad-hoc analyses throughout the workflow
+* 6_latent_class_anlaysis.R: generate a population segmentation output using a set of Vulnerability variables
+* 7_country_vulnerability_ranking.R: generate the in-country segment vulnerability rankings
+* 8_quantitative_segment_profile.R: generate the quantitative profile segmentation plots for a segmentation solution
+* 9_typing_tool.R: generate the outputs to help define which variables should be used in developing a Pathways typing tool.
+* 11_analysis_helper_script.R: a script to run some ad-hoc analyses throughout the workflow
 * functions/*: functions called throughout each module of the workflow.
+* 'pathways data dictionary.xlxs': data dictionary for variables used in the pathways segmentation analysis
 
-#### Config.yml file variables
+#### Config - template.yml file variables
 
 * **project_name:** project title to be placed on PDF outputs
+* **survey_name** name of the survey to be added as a column in the output datasets
 * **root_path:** directory path from which analysis output paths will build from; this is the location of the project
-* **user_path:** option to run different versions of the analysis
+* **user_path:** subfolder for analysis outputs (allows for multiple runs within the same project)
 
-* **create_new_pathways_workbook:** TRUE/FALSE (determines whether to import an existing Pathways Workbook or create a new one as part of the data cleaning and variable generation phase)
+* **dhs_ir_file:** STATA file name of the DHS individual recode file
+8 **dhs_hh_file:** STATA file name of the DHS household recode file
+* **dhs_br_file:** STATA file name of the DHS birth recode file
+* **dhs_kr_file:** STATA file name of the DHS child recode file
+* **survey_file:** file name of a non-DHS survey
+
+* **create_new_pathways_workbook:** TRUE/FALSE, determines whether to import an existing Pathways Workbook or create a new one as part of the data cleaning and variable generation phase
+* **pathways_workbook_is_excel:** TRUE/FALSE, use the Pathways Workbook in Excel or CSV format
 * **pathways_workbook_path:** name of Pathways Workbook to import from
 * **new_pathways_workbook_path:** name of Pathways Workbook to generate
 
@@ -180,13 +200,6 @@ The workflow is modularized according to the different phases of a segmentation 
 * **svy_id_var:** survey id var (e.g., survey cluster no)
 * **svy_strata_var:** survey stratification variable
 
-## Quickstart
-
-1. Navigate to the [GitHub repository](https://github.com/InstituteforDiseaseModeling/pathways-segmentation-public) and Git Clone the repository using GitHub Desktop or any other Git method
-2. Open the pathways-segmentation.rproj in the analyses/a-new-analysis-template folder and run renv::restore() in the console to install project libraries
-2. Edit the parameters in the config.yml file
-3. Run the 1_setup.R script to set up the environment (which will run 1_libraries.R if needed)
-
 ## Pathways Segmentation workflow phases
 
 There are 8 iterative phases in a Pathways Segmentation workflow:
@@ -196,7 +209,8 @@ There are 8 iterative phases in a Pathways Segmentation workflow:
 - Univariate analysis
 - Exploratory analysis
 - Principal component analysis (PCA)
-- Latent classification analysis (LCA)
+- Latent class analysis (LCA)
+- In-country vulnerability ranking
 - Quantitative segment profiling
 - Segmentation typing tool 
 
@@ -206,10 +220,10 @@ Each phase is iterative in the sense that information obtained from a given phas
 
 In this phase we set up the R environment for the analysis, including:
 
-* Install/load all required R libraries using the renv framework
+* Install/load all required R libraries using the renv framework (optional)
 * Read in variables defined in the config.yml file
 * Create folder structure for the analysis and define file paths
-* Import data dictionary and Pathways Workbook (if applicable)
+* Import data dictionary and Pathways Workbook (if exists)
 
 ### Data cleaning and variable generation
 
@@ -217,19 +231,19 @@ In this phase we import the survey data, clean the data, and code the Health Out
 
 The following guidance applies to coding variables:
 
-* **Health Outcomes:** Health Outcomes should be defined as binary 0/1 variables with 1 representing the less disirable health/behavioral state.  For example, the variable anc.less4.last should = 1 when the individual had 3 or less ANC visits during the most recent pregnancy and = 0 when there were 4 or more ANC visits.  Continuous variables may also be created for Health Outcomes but they will not fit into the quantitative segment profiling phase well.  Multi-level categorical variables should not be used as Health Outcomes as their complex interpretation as a dependent variable does not fit into the exploratory data analysis regression analysis.
+* **Health Outcomes:** Health Outcomes should be defined as binary 0/1 variables with 1 representing the less disirable health/behavioral state.  For example, the variable anc.less4.last should = 1 when the individual had 3 or less ANC visits during the most recent pregnancy and = 0 when there were 4 or more ANC visits.  Continuous variables may also be created for Health Outcomes but they will not fit into the quantitative segment profiling phase well.  Multi-level categorical variables should not be created as Health Outcomes as their complex interpretation as a dependent variable does not fit into the exploratory data analysis regression analysis.
 
-* **Vulnerability variables:** Vulnerability variables have more freedom in how they are defined relative to Health Outcomes as multi-level categorical variables are expected and it's often less clear what which is the more "positive" or "negative" state.  For example, type of work (Agricultural, Professional, etc.).  Variables should be coded as binary/categorical data type, or have an additional categorical version of the variable, as all phases beyond Exploratory Analysis are effectively treated as categorical. Continuous Vulnerability variables can be created to be used in the Univariate and Exploratory Analysis phases in order to help identify thresholds and gradients across variable states.
+* **Vulnerability variables:** Vulnerability variables have more freedom in how they are defined relative to Health Outcomes as multi-level categorical variables are expected and it's often less clear what which is the more "positive" or "negative" state.  For example, type of work (Agricultural, Professional, etc.).  Variables should be coded as binary/categorical data type, or have an additional categorical version of the variable to use, as in all phases beyond the Exploratory Data Analysis variables should be categorical. Continuous Vulnerability variables can be created to be used in the Univariate and Exploratory Analysis phases in order to help identify thresholds, relationships, and gradients across variable states.
 
 **Scripts used:** The parent script 2_data_cleaning.R calls the function defined in:
-* functions/fun_gen_vulnerabilities.R
-* functions/fun_gen_outcomes.R
+* functions/fun_gen_vulnerabilities_dhs.R
+* functions/fun_gen_outcomes_dhs.R
 
  * Inputs:
     * A survey dataset(s)
  * Outputs:
     * Dataframes for Health Outcomes (outcomes), Vulnerability variables (vulnerability), and combination (outcomes_vulnerability) saved as rds and csv files.
-    * Pathways Workbook (xlsx) with all Outcomes, Vulnerabilities, and available metadata populated.
+    * Pathways Workbook with all Outcomes, Vulnerabilities, and available metadata populated.
 
 ### Univariate analysis
 
@@ -241,17 +255,19 @@ In this phase we generate univariate distribution plots (in PDF) for each of the
 * If we coded a variable as numeric, is there a clear shift in the distribution where we can make it binary/categorical?
 * Are data types correct?
 
-**Scripts used:** The parent script 3_univariate_analysis.R calls the function defined in functions/fun_univariate_visuals.R
+**Scripts used:** The parent script 3_univariate_analysis.R calls the function defined in functions/fun_univariate_output.R
 
 * Inputs:
     * Pathways Workbook
+        * outcomes.univariate_include
+        * vulnerabilities.univariate_include
     * outcomes dataframe
     * vulnerability dataframe
 * Outputs:
     * univariate_plots_outcomes.pdf
     * univariate_plots_vulnerability.pdf
 
-### Exploratory analysis
+### Exploratory data analysis
 
 In this phase we generate exploratory plots (in PDF) that identify the relationship between Vulnerability variables and Health Outcomes. We want to create a segmentation solution using Vulnerability variables that have a statistically significant relationship with relevant Health Outcomes. The PDF output contains bivariate regression results by Vulnerability Factor and the full set of Health Outcome (regress Outcome on Vulnerability Factor); these outputs help us determine the following:
 
@@ -260,10 +276,12 @@ In this phase we generate exploratory plots (in PDF) that identify the relations
 * Do some relationships exist that are contrary to what we believe?  This could be motivation to check the variable coding.
 * Are data types correct?
 
-**Scripts used:** The parent script 4_exploratory_data_analysis.R calls the function defined in functions/fun_eda.R
+**Scripts used:** The parent script 4_exploratory_data_analysis.R calls the function defined in functions/fun_gen_exploratory_data_analysis.R
 
 * Inputs:
-    * Pathways Workbook 
+    * Pathways Workbook
+        * outcomes.eda_include
+        * vulnerabilities.eda_include
     * outcomes dataframe
     * vulnerability dataframe
     * outcomes_vulnerability dataframe
@@ -278,10 +296,12 @@ In this phase we are looking to reduce dimensionality of Vulnerability variables
 * Do we have Vulnerability variables from each Domain included before we move to the LCA phase?
 * Are the data types correct?
 
-**Scripts used:** The parent script 5_principal_component_analysis.R calls the function defined in functions/fun_pca_output.R
+**Scripts used:** The parent script 5_principal_component_analysis.R calls the function defined in functions/fun_gen_pca_output.R
 
 * Inputs:
     * Pathways Workbook
+        * vulnerabilities.pca_strata
+        * vulnerabilities.pca_include
     * vulnerability dataframe
 * Outputs:
     * pca_plots_{x}.pdf (where x is the Segmentation strata)
@@ -290,14 +310,16 @@ In this phase we are looking to reduce dimensionality of Vulnerability variables
 
 In this critical phase we input a set of Vulnerability variables into the LCA algorithm to generate a series of n-class solutions (n = [2,10]). This phase is conducted separately for each segmentation strata. There are two types of PDF outputs generated at this phase: diagnostic plots, which focus on the statistical properties of the classification solution, and exploratory plots which focus on the differences across the input variables based on the classes of the output. This approach balances statistical and socio-epidemiological criteria in deciding upon the correct n-class solution.
 
-**Scripts used:** The parent script 6_latent_classification_algorithm.R calls the functions defined in:
+**Scripts used:** The parent script 6_latent_class_analysis.R calls the functions defined in:
 
-* functions/fun_lca_output.R
-* functions/fun_lca_output_visuals.R
-* functions/fun_lca_exploratory.R
+* functions/fun_gen_lca.R
+* functions/fun_gen_lca_diagnostic_output.R
+* functions/fun_gen_lca_exploratory_output.R
 
 * Inputs:
     * Pathways Workbook
+        * vulnerabilities.lca_strata
+        * vulnerabilities.lca_include
     * outcomes dataframe
     * vulnerability dataframe
     * outcomes_vulnerability dataframe
@@ -306,16 +328,33 @@ In this critical phase we input a set of Vulnerability variables into the LCA al
     * {x}_lca_output_plots.pdf
     * {x}_lca_exploratory_plots.pdf
 
+### In-country vulnerability ranking
+
+In this phase we use a set of outcome variables to rank the segments by vulnerability.
+
+**Scripts used:** The parent script 7_country_vulnerability_ranking.R calls the function defined in functions/fun_gen_country_vulnerability_rankings.R
+
+* Inputs:
+    * Pathways Workbook
+        * params.final_model column
+        * outcomes.ranking_include column
+    * outcomes_vulnerability_class dataframe
+* Outputs:
+    * outcomes_vulnerability_class_ranked dataframe
+
 ### Quantitative segment profiling
 
 In this phase we have chosen our n-class solution and want to view how the larger scope of Health Outcomes and Vulnerability variables differ across the segments. 
 
 These visual outputs help us to create a quantitative narrative for each segment. 
 
-**Scripts used:** The parent script 7_segment_profiles.R calls the function defined in functions/fun_segment_profiles.R
+**Scripts used:** The parent script 8_quantitative_segment_profile.R calls the function defined in functions/fun_gen_quantitative_segment_profile.R
 
 * Inputs:
     * Pathways Workbook
+        * outcomes.profile_include
+        * vulnerabilities.profile_strata
+        * vulnerabilities.profile_include
     * Country shp file
     * outcomes_vulnerability_class dataframe
 * Outputs:
@@ -325,46 +364,65 @@ These visual outputs help us to create a quantitative narrative for each segment
 
 In this phase we use statistical methods to identify a parsimonious set of Vulnerability variables that determine segment membership.  The overarching goal for this phase is to develop the inputs for a questionnaire tool that can be used to classify out-of-sample women.
 
+**Scripts used:** The parent script 9_segmentation_typing_tool.R calls the function defined in functions/fun_gen_segmentation_typing_tool.R
+
 * Inputs:
     * Pathways Workbook
+        * vulnerabilities.typing_tool_strata
+        * vulnerabilities.typing_tool_include
     * outcomes_vulnerability_class dataframe
 * Outputs:
     * typing_tool_outputs_{x}.pdf (where x is Segmentation strata)
 
-## Pathways Segmentation analysis tutorial walkthrough
+## Pathways Segmentation analysis quickstart tutorial
 
-The following is a step-by-step walkthrough of the 8 phases of a Pathways Segmentation analysis using a sample of the Ethiopia 2016 DHS survey data.
+The following is a step-by-step walkthrough using a sample of the Ethiopia 2016 DHS data (500 women).  
+
+This tutorial assumes the Pathways Workbook is generated as xlsx file but if generating as a csv then each Excel tab will be treated as a standalone CSV.  The workflow itself is the same.
 
 ### Analysis setup
 
-1. copy all the files from the analyses/a-new-analysis-template folder into a new project folder inside the projects folder (e.g., analyses/projects/eth-2016-tutorial)
-2. rename the config - template.yml to config.yml (this file name will automatically be picked up when config:: functions are called)
-3. open the pathways-segmentation.Rpoj file to automatically set the working directory
-4. from within RStudio, open and edit the config.yml parameters directly.  For this tutorial use the following parameters:
-    -  
-5. open the 1_setup.R script and run the entire script to install libraries, define input variables, and set file paths.
-6. import the Pathways Workbook if config.create_new_pathways_workbook == FALSE, if starting a new analysis set this parameter to TRUE
+1. verify the 'analyses\projects\eth-2016-tutorial' folder exists.  This folder contains the data and config file needed for this tutorial.
+3. copy all the files from the analyses\a-new-analysis-template folder into the 'analyses\projects\eth-2016-tutorial\' folder
+5. inside this folder open the pathways-segmentation.Rpoj file to automatically set the working directory
+6. If using renv run renv::restore() in the console to install libraries into the project specific library folder (you may need to install the renv library).  Once complete, run renv::status() to confirm project is up to date.
+7. from within RStudio, open and confirm the config.yml parameters are set for this tutorial:
+    - project_name: "Ethiopia DHS 2016 - Tutorial"
+    - survey_name: "ET71FL"
+    - root_path: "path-to-repository/analyses/projects/eth-2016-tutorial/"
+    - user_path: "output/"
+    - create_new_pathways_workbook: TRUE
+    - pathways_workbook_is_excel: TRUE for xlsx, FALSE for csv
+    - pathways_workbook_path: "pathways workbook - ethiopia dhs 2016 tutorial"
+    - new_pathways_workbook_path: "pathways workbook - ethiopia dhs 2016 tutorial (new)"
+    - shp_file: "gadm41_ETH_shp/gadm41_ETH_1.shp"
+    - data_state_var: "v024"
+    - use_svy_design: TRUE
+    - svy_id_var: "v021"
+    - svy_strata_var: "v023"
+8. open the 1_setup.R script and run the entire script to install/load libraries, define input variables, and set file paths.
 
 ### Data cleaning and variable generation 
 
-1. open the 2_data_cleaning.R script and ensure the code to read in the survey data is correct
-2. edit functions/fun_gen_vulnerabilities.R to define the initial coding for Vulnerability variables
-3. edit functions/fun_get_outcomes.R to define the initial coding for Health Outcomes
-4. create a new Pathways Workbook if config.create_new_pathways_workbook == FALSE
-5. review the contents of this workbook and fill in any missing values
+1. edit functions/fun_gen_vulnerabilities.R to define the initial coding for Vulnerability variables (for this tutorial it is not necessary to change anything but recommended to review since any new project will require coding variables.)
+2. edit functions/fun_get_outcomes.R to define the initial coding for Health Outcomes (for this tutorial it is not necessary to change anything but recommended to review)
+3. open the 2_data_cleaning.R script and run the entire script to create the vulnerability.rds and outcomes.rds outputs along with the project Pathways Workbook (pathways workbook - ethiopia dhs 2016 tutorial (new)). Note that if using the CSV formatted Pathways Workbook, there will be three separate output files (params, outcomes, vulnerabilities)
+4. rename the Pathways Workbook from (pathways workbook - ethiopia dhs 2016 tutorial (new)) to (pathways workbook - ethiopia dhs 2016 tutorial.xlsx) to match the values in the config.yml file.  This renaming step is to avoid unintentionally overwriting an existing Pathways Workbook.
+5. review the contents of this workbook and fill in any missing values for short_name and desciption.
+6. open the config.yml file and set the create_new_pathways_workbook = FALSE (we will be using the newly created workbook going forward)
 
 ### Univariate analysis
 
-1. edit the univariate_include columns in the 'outcomes' and 'vulnerabilities' tabs in the Pathways Workbook, set to 1 to include variable in the Univariate PDFs
+1. open the Pathways Workbook and edit the univariate_include columns in the 'outcomes' and 'vulnerabilities' tabs, set to 1 to include variable in the Univariate PDFs. By default all variables created in the data cleaning phase are set to be included in the univariate analysis step.
 2. save and close the workbook
 3. open the 3_univariate_analysis.R script and run the entire script to generate the PDF outputs
-4. review the PDF outputs and make any changes to the function scripts in the Variable Generation step
+4. review the PDF outputs.  In this step we are looking at the variable distributions, specifically we want to identify where some categorical variable levels can be collapsed due to small sample size.
 
 ### Exploratory analysis
 
-1. edit the eda_include columns in the 'outcomes' and 'vulnerabilities' tabs in the Pathways Workbook, set to 1 to include variable in the Exploratory Analysis PDFs.  By default all variables created in the data cleaning phase are set to be included.
+1. Open the Pathways Workbook and edit the eda_include columns in the 'outcomes' and 'vulnerabilities' tabs in the Pathways Workbook, set to 1 to include variable in the Exploratory Analysis PDFs.  
 2. save and close the Workbook
-3. open the 4_exploratory_analysis.R script and run the entire script to generate the PDF outputs
+3. open the 4_exploratory_data_analysis.R script and run the entire script to generate the PDF outputs.  At the beginninf of the script is the option to parallelize the generation of these outputs.  When running this initially it's recommended to set this to TRUE 
 4. review the PDF outputs and make any changes to to the function scripts in the Variable Generation step
 5. run the Univariate Analysis step to generate new PDF outputs
 
@@ -379,15 +437,22 @@ The following is a step-by-step walkthrough of the 8 phases of a Pathways Segmen
 4. review the PDF outputs to reduce the number of vulnerabilities included in each domain
 5. repeat any previous steps as needed and iterate with the PCA phase until ready to proceed to the next phase
 
-### Latent classification analysis (LCA)
+### Latent class analysis (LCA)
 
 1. open the Pathways Workbook and edit the 'vulnerabilities' tab
     * define the strata for which the variable should be included in the lca_strata column
     * set the lca_include column to 1 to include in the LCA output PDF
 2. save and close the Workbook
-3. open the 6_latent_classification_analysis.R script and run the entire script to generate the two sets of LCA PDF outputs
+3. open the 6_latent_class_analysis.R script, set the nreps parameter (number of algorithm repititions) and run the entire script to generate the two sets of LCA PDF outputs
 4. review both the lca_output PDF and the LCA_exploratory PDF to assess the statistical and socio-epidemiological outputs of the classification algorithm
 5. repeat any previos steps as needed and iterate with the LCA phase until an acceptable segmentation solution exists
+
+### Country segment ranking
+
+1. open the Pathways Workbook and edit the 'outcomes' tab
+    * set the ranking_include column to 1 to include in the in-country analysis
+2. save and close the Workbook
+3. open the 7_country_vulnerability_ranking.R script, set the nreps parameter to an existing LCA output, and run the entire script to generate the {strata}_outcomes_vulnerability_class_ranked.rds outputs which contain an additional vulnerability ranked labelling for the segments
 
 ### Quantitative segment profiling
 
@@ -395,7 +460,7 @@ The following is a step-by-step walkthrough of the 8 phases of a Pathways Segmen
     * define the strata for which the variable should be included in the profile_strata column
     * set the profile_include column to 1 to include in the segment profile PDF
 2. save and close the Workbook
-3. open the 7_segment_profiles.R script and run the entire script to generate the quantitative segment profile PDF outputs
+3. open the 8_quantitative_segment_profile.R script, set the nreps parameter to an existing LCA output, and run the entire script to generate the quantitative segment profile PDF outputs
 
 ### Segment typing tool
 
@@ -404,7 +469,7 @@ The following is a step-by-step walkthrough of the 8 phases of a Pathways Segmen
     * set the typing_tool_include column to 1 to include in the typing tool PDF
 2. edit the final_model column in the 'params' tab to identify the final models for each strata (e.g., LCA5_class for a 5 class solution)
 2. save and close the Workbook
-3. open the 8_typing_tool.R script and run the entire script to generate the typing tool PDF outputs
+3. open the 8_typing_tool.R script, set the nreps parameter to an existing LCA output, and run the entire script to generate the typing tool PDF outputs
 
 ## Common actions throughout the analysis
 
