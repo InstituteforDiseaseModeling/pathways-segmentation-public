@@ -21,7 +21,7 @@ if (!"pacman" %in% names(sessionInfo()$otherPkgs)){
 
 ###################################
 # SET CONFIG AND GET CONFIG VALUES
-Sys.setenv(R_CONFIG_ACTIVE = "nga_dhs_2018")
+Sys.setenv(R_CONFIG_ACTIVE = "bgd_dhs_2022")
 
 project_name = config::get("project_name")
 create_new_pathways_workbook = config::get("create_new_pathways_workbook")
