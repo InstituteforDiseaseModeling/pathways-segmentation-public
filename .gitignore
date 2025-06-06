@@ -13,10 +13,16 @@ renv/staging/
 # Ignore generic config.yml file
 config.yml
 
-# Ignore files for a specific project
+# Ignore all contents of analyses/projects
 analyses/projects/*
-!analyses/projects/
+
+# Unignore eth-2016-tutorial directory itself so nested rules can apply
+!analyses/projects/eth-2016-tutorial/
+
+# Ignore everything inside eth-2016-tutorial by default
+analyses/projects/eth-2016-tutorial/**
+
+# But don't ignore the data directory and config.yml
+!analyses/projects/eth-2016-tutorial/data/
+!analyses/projects/eth-2016-tutorial/data/**
 !analyses/projects/eth-2016-tutorial/config.yml
-
-
-
