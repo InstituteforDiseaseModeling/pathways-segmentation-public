@@ -4,7 +4,7 @@ The pathways-segmentation repo contains the workflow for conducting a Pathways S
 
 This analysis is intended for researche scientists familiar with R and requires custom variable coding for each analysis.
 
-The workflow is designed to use survey datasets from the Demographic and Health Surveys (DHS) program, however any survey dataset will work with adjustments to the 2_data_cleaning.R script and associated functions.
+The workflow is designed to use STATA (.DTA) survey datasets from the Demographic and Health Surveys (DHS) program, however any survey dataset will work with adjustments to the 2_data_cleaning.R script and associated functions.
 
 # Table of contents
 
@@ -16,7 +16,8 @@ The workflow is designed to use survey datasets from the Demographic and Health 
     - [Environment setup](#environment-setup)
 - [The Pathways Workbook](#the-pathways-workbook)
 - [Repo structure](#repo-structure)
-    - [New project files](#new-project-files-analysesa-new-analysis-template)
+    - [New project template](#new-project-template)
+
 - [Quickstart](#quickstart)
 - [Pathways Segmentation workflow phases](#pathways-segmentation-workflow-phases)
     - [Analysis setup](#analysis-setup)
@@ -155,7 +156,7 @@ Within the "analyses" folder exists the following:
 * data_cleaning_scripts: includes coding from previous analyses for reference
 * projects: contains a tutorial project and is a recommended location for future projects
 
-### New project files (analyses/a_new_analysis_template/)
+### New project template
 
 The workflow is modularized according to the different phases of a segmentation analysis.  Each module has a parent script which calls a function to generate the corresponding outputs (e.g., data.frame, PDF visualization file).
 
@@ -391,6 +392,12 @@ This tutorial assumes the Pathways Workbook is generated as xlsx file but if gen
     - survey_name: "ET71FL"
     - root_path: "path-to-repository/analyses/projects/eth-2016-tutorial/"
     - user_path: "output/"
+    - dhs_ir_file: ""
+    - dhs_hh_file: ""
+    - dhs_br_file: ""
+    - dhs_kr_file: ""
+    - dhs_mr_file: ""
+    - survey_file: ""
     - create_new_pathways_workbook: TRUE
     - pathways_workbook_is_excel: TRUE for xlsx, FALSE for csv
     - pathways_workbook_path: "pathways workbook - ethiopia dhs 2016 tutorial"
