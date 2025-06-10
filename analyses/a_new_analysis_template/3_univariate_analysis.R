@@ -10,6 +10,11 @@
 # RUN SETUP
 source("1_setup.R")
 
+# CHECK IF PATHWAYS WORKBOOK FILES EXIST
+if (!all(file.exists(c(outcomes_excel_file, vulnerability_excel_file)))) {
+  stop("Pathways Workbook snapshots do not exist. Ensure the Pathways Workbook exists and the config parameter 'create_new_pathways_workbook' is set to FALSE.")
+}
+
 
 ###################################
 # OUTCOMES

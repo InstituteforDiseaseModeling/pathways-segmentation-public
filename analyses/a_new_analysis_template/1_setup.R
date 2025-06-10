@@ -8,7 +8,7 @@
 
 ###################################
 # RUN 1_libraries.R TO INSTALL LIBRARIES AT THE START OF EACH SESSION
-use_renv = FALSE
+use_renv = TRUE
 
 
 if (!"pacman" %in% names(sessionInfo()$otherPkgs)){

@@ -11,9 +11,22 @@
 if (use_renv == TRUE){
   print("Restoring libraries from renv lock.file")
 
-  if (!require("renv")) install.packages("renv")
-  # renv::activate()
-  renv::restore()
+  tryCatch({
+
+    if (!require("renv")) install.packages("renv")
+    renv::restore(prompt = FALSE)
+    message("renv environment successfully restored.")
+
+  }, error = function(e) {
+
+    message("renv restore failed: ", e$message)
+    message("Continuing with global library.")
+
+  })
+
+} else {
+
+  message("Using global R library (renv not used).")
 
 }
 
