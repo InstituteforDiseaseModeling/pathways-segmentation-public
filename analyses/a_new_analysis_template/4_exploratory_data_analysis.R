@@ -12,7 +12,7 @@
 source("1_setup.R")
 
 # DEFINE WHETHER TO RUN THE EDA IN PARALLEL
-run_in_parallel = FALSE
+run_in_parallel = TRUE
 
 
 ###################################
@@ -75,30 +75,39 @@ if (run_in_parallel == TRUE){
 
   # IDENTIFY NUMBER OF CORES AND SPIN UP LOCAL CLUSTER
   ncores <- parallel::detectCores()
-  cl <- makeCluster(ncores)
-  registerDoParallel(cl)
+  cl <- parallel::makeCluster(ncores)
+  # registerDoParallel(cl)
+  doSNOW::registerDoSNOW(cl)
 
-  clusterEvalQ(cl, {
+  n_tasks <- length(vulnerability.list)
+  pb <- utils::txtProgressBar(min = 0, max = n_tasks, style = 3)
+  progress <- function(n) utils::setTxtProgressBar(pb, n)
+  opts <- list(progress = progress)
+
+  parallel::clusterEvalQ(cl, {
     pacman::p_load(dplyr, forcats, reshape2, ggplot2, survey, gridExtra, stringr, config, data.table, broom)
     TRUE
   })
 
   # EXPORT FUNCTION AND DATA TO EACH WORKER
-  clusterExport(cl, varlist = c(
+  parallel::clusterExport(cl, varlist = c(
     "fun_gen_exploratory_data_analysis",
     "outcomes_vulnerability",
     "outcomes.list",
     "strata",
-    "exploratory_plots"
+    "exploratory_plots",
+    "vulnerability.list"
   ))
 
   # RUN IN PARALLEL
-  results <- foreach(
+  results <- foreach::foreach(
     m = vulnerability.list,
-    .packages = character(0)    # no packages needed
+    .packages = c("dplyr", "forcats", "reshape2", "ggplot2", "survey",
+                  "gridExtra", "stringr", "config", "data.table", "broom"),
+    .options.snow = opts
   ) %dopar% {
     tryCatch(
-      gen_exploratory_data_analysis(
+      fun_gen_exploratory_data_analysis(
         df            = outcomes_vulnerability,
         outcomes.list = outcomes.list,
         measure       = m,
@@ -113,7 +122,8 @@ if (run_in_parallel == TRUE){
   }
 
   # CLEAN UP
-  stopCluster(cl)
+  base::close(pb)
+  parallel::stopCluster(cl)
 
 
 } else {

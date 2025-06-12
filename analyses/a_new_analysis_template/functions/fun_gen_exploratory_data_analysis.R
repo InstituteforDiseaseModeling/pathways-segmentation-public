@@ -8,9 +8,9 @@
 
 ###################################
 # RUN SETUP
-# outcomes.list <- c("zerodose.yn")
-# out <- "zerodose.yn"
-# measure = "part.working1"
+# outcomes.list <- c("u5mort.yn")
+# out <- "u5mort.yn"
+# measure = "slum.sum"
 # df = outcomes_vulnerability
 # plot_path = exploratory_plots
 # stratum = "rural"
