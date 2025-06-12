@@ -67,10 +67,10 @@ strata <- readRDS(params_excel_file) %>%
 
 
 # DEFINE THE VULNERABILITY FACTOR AND RUN FOR ALL OUTCOMES
-m = "num.under5.cat"
+m = "slum.sum"
 
 
-output <- gen_eda(df = outcomes_vulnerability, outcomes.list = outcomes.list, measure = m, strata=strata, plot_path = exploratory_plots)
+output <- fun_gen_exploratory_data_analysis(df = outcomes_vulnerability, outcomes.list = outcomes.list, measure = m, strata=strata, plot_path = exploratory_plots)
 
 
 ###################################
