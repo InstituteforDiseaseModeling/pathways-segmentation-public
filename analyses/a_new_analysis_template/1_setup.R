@@ -188,11 +188,11 @@ if (file.exists(paste0(pathways_workbook_path, ".xlsx")) == TRUE | file.exists(p
 
       saveRDS(vulnerability_sheet, file = vulnerability_excel_file)
 
-      print("Pathways Workbook Excel imported!")
+      print("Pathways Workbook XLSX imported!")
 
     }, error = function(e) {
 
-      stop("Unable to read Pathways Workbook xlsx. Ensure the workbook file is not open and is in the correct file location.")
+      stop("Unable to read Pathways Workbook XLSX. Ensure the workbook file is not open and is in the correct file location.")
 
     })
 
@@ -225,11 +225,15 @@ if (file.exists(paste0(pathways_workbook_path, ".xlsx")) == TRUE | file.exists(p
 
     }, error = function(e) {
 
-      stop("Unable to read Pathways Workbook csv. Ensure the workbook file is not open and is in the correct file location.")
+      stop("Unable to read Pathways Workbook CSVs. Ensure the workbook file is not open and is in the correct file location.")
 
     })
 
   }
+
+} else {
+
+  print("Pathways Workbook does not exist and therefore not imported.")
 
 }
 
