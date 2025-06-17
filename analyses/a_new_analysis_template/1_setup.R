@@ -59,8 +59,8 @@ dir.create(file.path(paste0(root_path, user_path)), showWarnings = F, recursive 
 # ADDITIONAL FILE PATHS
 
 # PATHWAYS WORKBOOK PATH
-pathways_workbook_path = paste0(root_path, user_path, config::get("pathways_workbook_path"))
-new_pathways_workbook_path = paste0(root_path, user_path, config::get("new_pathways_workbook_path"))
+pathways_workbook_path = paste0(root_path, user_path, config::get("pathways_workbook_name"))
+new_pathways_workbook_path = paste0(root_path, user_path, config::get("new_pathways_workbook_name"))
 
 # DHS DATA
 data_path = paste0(root_path, "data/")
@@ -161,7 +161,7 @@ saveRDS(dd_vulnerabilities, file = dd_vulnerabilities_excel_file)
 
 
 # READ IN PATHWAYS WORKBOOK
-if (create_new_pathways_workbook == FALSE){
+if (file.exists(paste0(pathways_workbook_path, ".xlsx")) == TRUE | file.exists(paste0(pathways_workbook_path, " - vulnerabilities.csv")) == TRUE){
 
   if (pathways_workbook_is_excel == TRUE){
 
@@ -192,7 +192,7 @@ if (create_new_pathways_workbook == FALSE){
 
     }, error = function(e) {
 
-      stop("Unable to read Pathways Workbook. Ensure the workbook is not open and is in the correct file location.")
+      stop("Unable to read Pathways Workbook xlsx. Ensure the workbook file is not open and is in the correct file location.")
 
     })
 
@@ -225,7 +225,7 @@ if (create_new_pathways_workbook == FALSE){
 
     }, error = function(e) {
 
-      stop("Unable to read Pathways Workbook. Ensure the workbook is not open and is in the correct file location.")
+      stop("Unable to read Pathways Workbook csv. Ensure the workbook file is not open and is in the correct file location.")
 
     })
 

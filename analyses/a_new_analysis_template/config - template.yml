@@ -31,8 +31,8 @@ default:
 
   # DEFINE NAME FOR EXISTING PATHWAYS WORKBOOK
   # DEFINE NAME FOR NEW PATHWAYS WORKBOOK
-  pathways_workbook_path: "pathways workbook - ethiopia 2016 tutorial"
-  new_pathways_workbook_path: "pathways workbook - ethiopia 2016 tutorial (new)"
+  pathways_workbook_name: "pathways workbook - ethiopia 2016 tutorial"
+  new_pathways_workbook_name: "pathways workbook - ethiopia 2016 tutorial (new)"
 
 
   ## MAPPING VARIABLES
