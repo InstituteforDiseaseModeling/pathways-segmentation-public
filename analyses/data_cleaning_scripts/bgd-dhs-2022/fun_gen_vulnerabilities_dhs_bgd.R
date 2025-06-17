@@ -1382,8 +1382,7 @@ IR<- IR %>% mutate(pship.cat = case_when
 
   ## PARTNERSHIP
   IR <- IR %>%
-    dplyr::mutate(age.1stcohab = case_when(v501 == "never partnered" ~ "never partnered",
-                                           TRUE ~ as.character(v511)))
+    dplyr::mutate(age.1stcohab = as.numeric(v511))
 
 
   #CATEGORICAL FACTOR FOR AGE AT FIRST MARRIAGE/COHABITATION
@@ -1402,13 +1401,13 @@ IR<- IR %>% mutate(pship.cat = case_when
                                          TRUE ~ as.numeric(v531)))
 
 
-  ###################################
-  # CATEGORICAL FACTOR FOR AGE AT FIRST SEX
-  # PRESERVING NA AS NA
-  IR<- IR %>%
-    dplyr::mutate(age.1stsex.cat.1 = case_when((age.1stsex > 0 & age.1stsex < 15) ~ "5-14",
-                                               (age.1stsex >= 15 & age.1stsex < 20) ~ "15-19",
-                                               (age.1stsex >= 20 & age.1stsex < 50) ~ "20+"))
+  # ###################################
+  # # CATEGORICAL FACTOR FOR AGE AT FIRST SEX
+  # # PRESERVING NA AS NA
+  # IR<- IR %>%
+  #   dplyr::mutate(age.1stsex.cat.1 = case_when((age.1stsex > 0 & age.1stsex < 15) ~ "5-14",
+  #                                              (age.1stsex >= 15 & age.1stsex < 20) ~ "15-19",
+  #                                              (age.1stsex >= 20 & age.1stsex < 50) ~ "20+"))
 
 
   ###################################
@@ -1435,28 +1434,28 @@ IR<- IR %>% mutate(pship.cat = case_when
                                                age.1stbrth < 19 ~ "<19"))
 
 
-  # AGE AT FIRST BIRTH CATEGORY 2
-  IR <- IR %>%
-    dplyr::mutate(age.1stbrth.cat2 = case_when(v212 < 20 ~ "<20",
-                                               v212 >= 20 & v212 < 30 ~ "20-29",
-                                               v212 >= 30  ~ "30+"))
+  # # AGE AT FIRST BIRTH CATEGORY 2
+  # IR <- IR %>%
+  #   dplyr::mutate(age.1stbrth.cat2 = case_when(v212 < 20 ~ "<20",
+  #                                              v212 >= 20 & v212 < 30 ~ "20-29",
+  #                                              v212 >= 30  ~ "30+"))
 
-  # AGE AT FIRST BIRTH CATEGORY 3
-  IR <- IR %>%
-    dplyr::mutate(age.1stbrth.cat3 = case_when(v212 < 15 ~ "<15",
-                                               v212 >= 15 & v212 < 20 ~ "15-19",
-                                               v212 >= 20 & v212 < 25 ~ "20-24",
-                                               v212 >= 25 & v212 < 40 ~ "25-39",
-                                               v212 >= 40 ~ "40+"))
+  # # AGE AT FIRST BIRTH CATEGORY 3
+  # IR <- IR %>%
+  #   dplyr::mutate(age.1stbrth.cat3 = case_when(v212 < 15 ~ "<15",
+  #                                              v212 >= 15 & v212 < 20 ~ "15-19",
+  #                                              v212 >= 20 & v212 < 25 ~ "20-24",
+  #                                              v212 >= 25 & v212 < 40 ~ "25-39",
+  #                                              v212 >= 40 ~ "40+"))
 
 
-  # AGE AT FIRST BIRTH CATEGORY 4
-  IR <- IR %>%
-    dplyr::mutate(age.1stbrth.cat4 = case_when(v212 < 15 ~ "<15",
-                                               v212 >= 15 & v212 < 20 ~ "15-19",
-                                               v212 >= 20 & v212 < 25 ~ "20-24",
-                                               v212 >= 25 & v212 < 30 ~ "25-29",
-                                               v212 >= 30 ~ "30+"))
+  # # AGE AT FIRST BIRTH CATEGORY 4
+  # IR <- IR %>%
+  #   dplyr::mutate(age.1stbrth.cat4 = case_when(v212 < 15 ~ "<15",
+  #                                              v212 >= 15 & v212 < 20 ~ "15-19",
+  #                                              v212 >= 20 & v212 < 25 ~ "20-24",
+  #                                              v212 >= 25 & v212 < 30 ~ "25-29",
+  #                                              v212 >= 30 ~ "30+"))
 
 
   # NUMBER OF PREGNANCIES

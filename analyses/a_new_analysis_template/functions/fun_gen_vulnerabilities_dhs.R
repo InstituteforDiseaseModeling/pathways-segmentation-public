@@ -243,6 +243,8 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
                                                 hh.kidwom.rat >= 2 & hh.kidwom.rat < 3 ~ 3,
                                                 TRUE ~ 4))
 
+  HH$hh.kidwom.rat.cat <- as.character(HH$hh.kidwom.rat.cat)
+
 
 
   ## LARGER ENVIRONMENT
@@ -287,8 +289,12 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # BINARY FACTOR FOR TOILET TYPE: LATRINE
-  HH$latrine <- ifelse(HH$hv205 %in% c("pit latrine without slab/ open pit", "no facility/bush/field",
-                                       "bucket toilet", "hanging toilet/latrine", "other"), 1, 0)
+  HH$latrine <- ifelse(HH$hv205 %in% c("pit latrine without slab/ open pit",
+                                       "pit latrine without slab/open pit",
+                                       "no facility/bush/field",
+                                       "bucket toilet",
+                                       "hanging toilet/latrine",
+                                       "other"), 1, 0)
 
 
   # TOILET FACILITY DOES NOT EXIST
@@ -296,11 +302,12 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # LOCATION OF TOILET FACILITY
-  HH <- HH %>% dplyr::mutate(latrine.loc = case_when(
-    hv205 =="no facility/bush/field" ~ "No facility",
-    hv238a == "in own dwelling" ~ "In own dwelling",
-    hv238a == "in own yard/plot" ~ "In own yard/plot",
-    hv238a == "elsewhere" ~ "Elsewhere"))
+  HH <- HH %>%
+    dplyr::mutate(latrine.loc = case_when(
+      hv205 =="no facility/bush/field" ~ "No facility",
+      hv238a == "in own dwelling" ~ "In own dwelling",
+      hv238a == "in own yard/plot" ~ "In own yard/plot",
+      hv238a == "elsewhere" ~ "Elsewhere"))
 
 
   # HOUSEHOLD HAS SHARED TOILET
@@ -308,34 +315,46 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # NUMBER OF HOUSEHOLDS SHARING TOILET
-  HH <- HH %>% dplyr::mutate(hh.num.sharelatrine = case_when(
-    as.numeric(hv238) > 1 & as.numeric(hv238) < 10 ~ as.numeric(hv238),
-    as.numeric(hv238) == 95 | hv238 == "10 or more households" ~ 10,
-    hv225 == "no" ~ 1,
-    hv225 == "don't know" ~ 1))
+  HH <- HH %>%
+    dplyr::mutate(hh.num.sharelatrine = case_when(
+      as.numeric(hv238) > 1 & as.numeric(hv238) < 10 ~ as.numeric(hv238),
+      as.numeric(hv238) == 95 | hv238 == "10 or more households" ~ 10,
+      hv225 == "no" ~ 1,
+      hv225 == "don't know" ~ 1))
 
 
   # WHO DEFNITION IMPROVED NOT SHARED LATRINE
-  HH$hh.noimp.latrine<-ifelse(HH$latrine==1 | (HH$latrine==1 & HH$hh.shared.latrine==1), 1, 0)
+  HH$hh.noimp.latrine <- ifelse(HH$latrine==1 | (HH$latrine==1 & HH$hh.shared.latrine.yn==1), 1, 0)
 
 
   # SOURCE OF DRINKING WATER
-  HH$water <- ifelse(HH$hv201 %in% c("unprotected well", "unprotected spring", "river/dam/lake/ponds/ stream/canal/irrigation channel",
-                                     "rainwater", "other"), 1, 0)
+  HH$water <- ifelse(HH$hv201 %in% c("unprotected well",
+                                     "unprotected spring",
+                                     "river/dam/lake/ponds/ stream/canal/irrigation channel",
+                                     "river/dam/lake/ponds/stream/canal/irrigation channel",
+                                     "rainwater",
+                                     "other"), 1, 0)
 
 
   # WATER SOURCE LOCATION
   HH <- HH %>%
-    dplyr::mutate(hh.water.loc = case_when(hv201 %in% c("public tap/standpipe", "tube well or borehole", "protected well", "unprotected well", "unprotected spring",
-                                                        "protected spring", "river/dam/lake/ponds/ stream/canal/irrigation channel", "rainwater", "tanker truck", "cart with small tank", "bottled water", "other") ~ hv235,
+    dplyr::mutate(hh.water.loc = case_when(hv201 %in% c("public tap/standpipe",
+                                                        "tube well or borehole",
+                                                        "protected well",
+                                                        "unprotected well",
+                                                        "unprotected spring",
+                                                        "protected spring",
+                                                        "river/dam/lake/ponds/ stream/canal/irrigation channel",
+                                                        "river/dam/lake/ponds/stream/canal/irrigation channel",
+                                                        "rainwater", "tanker truck", "cart with small tank",
+                                                        "bottled water", "other") ~ hv235,
                                            hv201 == "piped into dwelling" ~ "in own dwelling",
                                            hv201 == "piped to yard/plot" ~ "in own yard/plot",
                                            hv201 == "piped to neighbor" ~ "elsewhere"))
 
 
   # PIPED WATER TYPE
-  HH$hh.water.notpiped <- ifelse(HH$hv201== "piped into dwelling" | HH$hv201== "piped to yard/plot" | HH$hv201 == "piped to neighbor" |
-                                 HH$hv201== "public tap/standpipe", 0, 1)
+  HH$hh.water.notpiped <- ifelse(HH$hv201 %in% c("piped into dwelling", "piped to yard/plot", "piped to neighbor", "public tap/standpipe"), 0, 1)
 
 
   # WATER TREATMENT: ANYTHING DONE TO MAKE WATER SAFE TO DRINK
@@ -366,12 +385,12 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # NATURAL/RUDIMENTARY FLOOR MATERIAL
-  HH$hh.noimp.floor <- ifelse(HH$hv213 == "earth, sand" | HH$hv213== "dung" | HH$hv213== "wood planks" | HH$hv213== "palm, bamboo", 1, 0)
+  HH$hh.noimp.floor <- ifelse(HH$hv213 %in% c("earth, sand", "earth/sand", "dung", "wood planks", "palm, bamboo", "palm/bamboo"), 1, 0)
 
 
   ###################################
   # Urban slum - UN definition
-  HH$floor <- ifelse(HH$hv213 == "earth, sand" | HH$hv213== "dung" | HH$hv213== "wood planks" | HH$hv213== "palm, bamboo", 1, 0)
+  HH$floor <- ifelse(HH$hv213 %in% c("earth, sand", "earth/sand", "dung", "wood planks", "palm, bamboo", "palm/bamboo"), 1, 0)
 
   HH$wall <- ifelse(HH$hv214 == "no walls" | HH$hv214== "cane / palm / trunks" | HH$hv214== "dung / mud / sod" | HH$hv214== "grass" |
                     HH$hv214 == "bamboo with mud" | HH$hv214 == "stone with mud" | HH$hv214 == "uncovered adobe" |
@@ -391,6 +410,9 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     hv025=="rural" ~ "rural",
     (hv025 == "urban" & slum.sum >= 2) ~ "urban slum",
     (hv025 == "urban" & slum.sum < 2) ~ "urban non-slum"))
+
+  #CONVERT BACK TO CHARACTER
+  HH$slum.sum <- as.character(HH$slum.sum)
 
   # Urban slum 2 - Zulu et al, 2002
   HH$piped <- ifelse(HH$hv201 == "piped water" | HH$hv201== "piped into dwelling" | HH$hv201== "piped to yard/plot" | HH$hv201== "public tap/standpipe", 0, 1)
@@ -426,7 +448,8 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
   # WEATLH SUM INDEX
   HH <- HH %>%
-    dplyr::mutate(wealth.sum = rowSums(across(c(hh.electricity, hh.tv, hh.refrig, hh.bank.acct, hh.computer, hh.car, hh.noimp.latrine))))
+    dplyr::mutate(wealth.sum = rowSums(across(c(hh.electricity, hh.tv, hh.refrig, hh.bank.acct, hh.computer, hh.car, hh.noimp.latrine)))) %>%
+    dplyr::mutate(wealth.sum = as.character(wealth.sum))
 
 
   # USE U/R WEALTH INDEX SINCE TO ALIGN WITH SEGMENTATION STRATIFICATION
@@ -739,7 +762,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
   # PARTNER DOES NOT LIVE IN THE HOUSEHOLD (AMONG MARRIED OR IN UNION)
   IR <- IR %>% dplyr::mutate(partner.absent = case_when(
     v504 == "living with her" ~ "No",
-    v504 == "staying elsewhere" ~ "Yes",
+    str_detect(v504, "staying elsewhere") == TRUE  ~ "Yes",
     !(v501 %in% c("married", "living with partner")) ~ "not partnered"))
 
 
@@ -1048,23 +1071,23 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     dplyr::mutate(desc.fp = case_when(
     v213 == "yes" ~ "currently pregnant",
     (v632 %in% c("joint decision") | v632a %in% c("joint decision")) ~ "respondent and husband/ partner",
-    (v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent")) ~ "respondent alone",
-    (v632 %in% c("mainly husband, partner") | v632a %in% c("mainly husband, partner")) ~ "husband/ partner alone",
+    (v632 %in% c("mainly respondent", "respondent") | v632a %in% c("mainly respondent")) ~ "respondent alone",
+    (v632 %in% c("mainly husband, partner", "husband/partner") | v632a %in% c("mainly husband, partner")) ~ "husband/ partner alone",
     (v632 %in% c("other") | v632a %in% c("other")) ~ "other",
     (marr.cohab %in% 0) ~ "not partnered"))
+
 
   # OWN DECISION: FAMILY PLANNING
   IR <- IR %>%
     dplyr::mutate(wd.fp = case_when(
-    (v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent")) ~ "Yes",
-    ((!is.na(v632) & !(v632 == "mainly respondent")) | (!is.na(v632a) & !(v632a == "mainly respondent"))) ~ "No"))
-  IR$wd.fp <- ifelse(IR$wd.fp=="Yes", 1, 0)
+    (v632 %in% c("mainly respondent", "respondent") | v632a %in% c("mainly respondent")) ~ 1,
+    ((!is.na(v632) & !(v632 %in% c("mainly respondent", "respondent"))) | (!is.na(v632a) & !(v632a == "mainly respondent"))) ~ 0))
 
 
   # CATEGORICAL FACTOR FOR OWN DECISION: FAMILY PLANNING
   IR <- IR %>% dplyr::mutate(wd.fp.cat = case_when(
-    (v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent")) ~ "Yes",
-    ((!is.na(v632) & !(v632 == "mainly respondent")) | (!is.na(v632a) & !(v632a == "mainly respondent"))) ~ "No",
+    (v632 %in% c("mainly respondent", "respondent") | v632a %in% c("mainly respondent")) ~ "Yes",
+    ((!is.na(v632) & !(v632 %in% c("mainly respondent", "respondent"))) | (!is.na(v632a) & !(v632a == "mainly respondent"))) ~ "No",
     !(v501 %in% c("married", "living with partner")) ~ "Not in union",
     v213 == 1 ~ "Pregnant"))
 
@@ -1282,18 +1305,19 @@ IR<- IR %>% mutate(pship.cat = case_when
 
 
   # MUSLIM RELIGION
-  IR$muslim <- ifelse(IR$religion %in% c("muslim", "islam"), 1, 0)
+  IR$muslim <- ifelse(IR$religion %in% c("muslim", "muslin", "islam"), 1, 0)
 
 
-  #re-categorizing traditional, other and protestant together given extremely small sample sizes
+  # RELIGION CAT
   IR$religionrecode.cat <- IR$religion
   IR<- IR %>% mutate(religionrecode.cat =case_when(
-    (religion=="traditional") ~ "other",
-    (religion=="catholic") ~ "other",
-    (religion=="other") ~ "other",
-    (religion=="protestant") ~ "protestant",
-    (religion=="orthodox") ~ "orthodox",
-    (religion=="muslin") ~ "muslim"))
+    religion=="traditional" ~ "traditional",
+    religion=="catholic" ~ "catholic",
+    religion=="other" ~ "other",
+    religion=="protestant" ~ "protestant",
+    religion=="orthodox" ~ "orthodox",
+    religion %in% c("muslin", "muslim", "islam") ~ "muslim",
+    TRUE ~ religion))
 
   IR$orthodox <- ifelse(IR$v130 =="orthodox", 1, 0)
 
@@ -1372,10 +1396,11 @@ IR<- IR %>% mutate(pship.cat = case_when
   # ACCOUNTING FOR SKIP PATTERNS WHICH CREATE NA
   IR<- IR %>%
     dplyr::mutate(age.1stsex.cat = case_when(v531 %in% c(0, "not had sex") ~ "never",
+                                             v531 %in% c(97, 98, "inconsistent", "don't know") ~ "Inconsistent or don't know",
+                                             age.1stsex > 50 ~ "Inconsistent or don't know",
                                              (age.1stsex > 0 & age.1stsex < 15) ~ "5-14",
                                              (age.1stsex >= 15 & age.1stsex < 20) ~ "15-19",
-                                             (age.1stsex >= 20 & age.1stsex < 50) ~ "20+",
-                                             v531 %in% c(97, 98, "inconsistent", "don't know") ~ "Inconsistent or don't know"))
+                                             (age.1stsex >= 20 & age.1stsex <= 50) ~ "20+"))
 
 
   IR$early.sex.15 <- ifelse(IR$v531 >0 & IR$v531 <15, 1, 0)
