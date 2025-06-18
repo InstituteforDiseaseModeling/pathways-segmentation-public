@@ -273,7 +273,8 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
 
   # CLEAN COOKING FUEL
-  HH$hh.clean.fuel <- ifelse(HH$hv226 %in% c("electricity","lpg","natural gas","biogas"), 1, 0)
+  HH$hh.clean.fuel <- ifelse(HH$hv226 %in% c("electricity", "lpg", "liquefied petroleum gas (lpg)/cooking gas",
+                                             "natural gas", "piped natural gas", "biogas"), 1, 0)
 
 
   # NUMBER OF HOUSEHOLD ROOMS FOR SLEEPING
@@ -346,8 +347,11 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
                                                         "protected spring",
                                                         "river/dam/lake/ponds/ stream/canal/irrigation channel",
                                                         "river/dam/lake/ponds/stream/canal/irrigation channel",
-                                                        "rainwater", "tanker truck", "cart with small tank",
-                                                        "bottled water", "other") ~ hv235,
+                                                        "rainwater",
+                                                        "tanker truck",
+                                                        "cart with small tank",
+                                                        "bottled water",
+                                                        "other") ~ hv235,
                                            hv201 == "piped into dwelling" ~ "in own dwelling",
                                            hv201 == "piped to yard/plot" ~ "in own yard/plot",
                                            hv201 == "piped to neighbor" ~ "elsewhere"))
@@ -1025,7 +1029,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
   IR$wd.ownincome <- ifelse(IR$v739== "respondent alone", 1, 0)
 
   # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: FINANCIAL
-  IR$jdwd.ownincome <- ifelse(IR$v739== "respondent alone" | IR$v739=="respondent and husband/partner", 1, 0)
+  IR$jdwd.ownincome <- ifelse(IR$v739 %in% c("respondent alone", "respondent and husband/partner"), 1, 0)
 
 
   # JOINT DECISION: LARGE HOUSEHOLD PURCHASES
@@ -1039,7 +1043,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
   IR$wd.lrgpur <- ifelse(IR$v743b== "respondent alone", 1, 0)
 
   # # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: LARGE HOUSEHOLD PURCHASES
-  IR$jdwd.lrgpur <- ifelse(IR$v743b== "respondent alone" | IR$v743b=="respondent and husband/partner", 1, 0)
+  IR$jdwd.lrgpur <- ifelse(IR$v743b %in% c("respondent alone", "respondent and husband/partner"), 1, 0)
 
 
   # JOINT DECISION: HUSBAND'S INCOME
@@ -1051,7 +1055,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
   IR$wd.money <- ifelse(IR$v743f== "respondent alone", 1, 0)
 
   # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: HUSBAND'S INCOME
-  IR$jdwd.money <- ifelse(IR$v743f== "respondent alone" | IR$v743f=="respondent and husband/partner", 1, 0)
+  IR$jdwd.money <- ifelse(IR$v743f %in% c("respondent alone", "respondent and husband/partner"), 1, 0)
 
 
   # JOINT DECISION: HEALTH
@@ -1063,7 +1067,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
   IR$wd.hlth <- ifelse(IR$v743a== "respondent alone", 1, 0)
 
   # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: HEALTH
-  IR$jdwd.hlth <- ifelse(IR$v743a== "respondent alone" | IR$v743a=="respondent and husband/partner", 1, 0)
+  IR$jdwd.hlth <- ifelse(IR$v743a %in% c("respondent alone", "respondent and husband/partner"), 1, 0)
 
 
   # JOINT DECISION: FAMILY PLANNING
@@ -1094,7 +1098,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
 
   # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: FAMILY PLANNING
   IR <- IR %>% dplyr::mutate(jdwd.fp = case_when(
-    v632 %in% c("joint decision") | v632a %in% c("joint decision") | v632 %in% c("mainly respondent") | v632a %in% c("mainly respondent") ~ "Yes",
+    v632 %in% c("joint decision") | v632a %in% c("joint decision") | v632 %in% c("mainly respondent", "respondent") | v632a %in% c("mainly respondent") ~ "Yes",
     v632 %in% c("mainly husband, partner") | v632 %in% c("other") ~ "No",
     v632a %in% c("mainly husband, partner") | v632a %in% c("other") ~ "No"))
   IR$jdwd.fp <- ifelse(IR$jdwd.fp=='Yes', 1, 0)
@@ -1105,11 +1109,13 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL, dh
     dplyr::mutate(desc.visit = case_when(marr.cohab == 0 ~ "not partnered",
                                          TRUE ~ as.character(v743d)))
 
+
   # OWN DECISION: EVERYDAY DECISIONS
   IR$wd.visit <- ifelse(IR$v743d== "respondent alone", 1, 0)
 
+
   # BINARY FACTOR FOR EITHER JOINT OR OWN DECISION: EVERYDAY DECISIONS
-  IR$jdwd.visit <- ifelse(IR$v743d== "respondent alone" | IR$v743d=="respondent and husband/partner", 1, 0)
+  IR$jdwd.visit <- ifelse(IR$v743d %in% c("respondent alone", "respondent and husband/partner"), 1, 0)
 
 
   # JOINT DECISON-MAKING INDEX
