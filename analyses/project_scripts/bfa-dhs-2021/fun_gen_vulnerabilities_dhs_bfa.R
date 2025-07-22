@@ -315,7 +315,7 @@ gen_vulnerability_factors_dhs_bfa <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
 
 
   # BINARY FACTOR FOR TOILET TYPE: LATRINE
-  HH$latrine <- ifelse(HH$hv205 %in% c("pit latrine without slab/ open pit", "no facility/bush/field",
+  HH$latrine <- ifelse(HH$hv205 %in% c("pit latrine without slab/ open pit", "pit latrine without slab/open pit", "no facility/bush/field",
                                        "bucket toilet", "hanging toilet/latrine", "other"), 1, 0)
 
 
@@ -409,6 +409,7 @@ gen_vulnerability_factors_dhs_bfa <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
 
   HH$memsleep <- ifelse(HH$hh.rooms.num == 0, HH$members, HH$members/HH$hh.rooms.num)
 
+  # FORMERLY LIVING
   HH$memsleep.4plus <- ifelse(HH$memsleep >= 4, 1, 0)
 
   # HH <- HH %>%
