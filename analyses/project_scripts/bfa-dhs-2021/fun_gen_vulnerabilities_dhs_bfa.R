@@ -325,7 +325,7 @@ gen_vulnerability_factors_dhs_bfa <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
 
   # LOCATION OF TOILET FACILITY
   HH <- HH %>% dplyr::mutate(latrine.loc = case_when(
-    hv205 =="no facility/bush/field" ~ "No facility",
+    hv205 == "no facility/bush/field" ~ "No facility",
     hv238a == "in own dwelling" ~ "In own dwelling",
     hv238a == "in own yard/plot" ~ "In own yard/plot",
     hv238a == "elsewhere" ~ "Elsewhere"))
@@ -630,6 +630,14 @@ gen_vulnerability_factors_dhs_bfa <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
       TRUE ~ rowSums(across(all_of(cols)), na.rm = TRUE)))
 
   IR$med.index <- as.character(IR$med.sum)
+
+
+  # MED INDEX CAT
+  IR <- IR %>%
+    dplyr::mutate(med.index.cat = case_when(med.index == 0 ~ "0",
+                                            med.index == 1 ~ "1",
+                                            med.index == 2 ~ "2",
+                                            med.index %in% c(3:4) ~ "3+"))
 
   # BINARY INDICATOR FROM INDEX
   IR$med.index.3plus <- ifelse(IR$med.index >= 3, 1, 0)
@@ -2001,7 +2009,7 @@ IR<- IR %>% mutate(pship.cat = case_when
 
 
   # SEE OR READ FP INFORMATION FROM POSTERS OR PANELS
-  MR$m.fp.posters <- MR$sm302e
+  # MR$m.fp.posters <- MR$sm302e
   # MR$m.fp.posters <- MR$sm302e
 
 
@@ -2095,6 +2103,7 @@ IR<- IR %>% mutate(pship.cat = case_when
   # CREATE SEGMENTATION STRATA
   vulnerability <- vulnerability %>%
     dplyr::mutate(strata = hv025)
+
 
   return(vulnerability)
 

@@ -41,7 +41,7 @@ fun_gen_lca_diagnostic_output <- function(stratum=NULL, data_path=NULL, nreps=NU
 
 
   plot(0:10, type = "n", xaxt="n", yaxt="n", bty="n", xlab = "", ylab = "")
-  text(5, 8, paste0("LCA output plots for stratum: ", stratum, " N = ", nobs, ". Nregs = ", nreps), cex = 2)
+  text(5, 8, paste0("LCA output plots for stratum: ", stratum, " N = ", nobs, ". Nreps = ", nreps), cex = 2)
 
 
   ###################################
@@ -325,8 +325,8 @@ fun_gen_lca_diagnostic_output <- function(stratum=NULL, data_path=NULL, nreps=NU
   sankey <- htmlwidgets::prependContent(sankey, htmltools::tags$h1(sankey_title))
   sankey
 
-  html_path = paste0(plot_path, stratum, "_lca_sankey.html")
-  png_path = paste0(plot_path, stratum, "_lca_sankey.png")
+  html_path = paste0(plot_path, "nreps", nreps, "/", stratum, "_lca_sankey.html")
+  png_path = paste0(plot_path, "nreps", nreps, "/", stratum, "_lca_sankey.png")
 
   saveNetwork(sankey, html_path)
   webshot2::webshot(html_path, png_path)
