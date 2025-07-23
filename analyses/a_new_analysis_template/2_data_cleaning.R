@@ -28,12 +28,13 @@ if (file.exists(paste0(data_path, "IR.rds")) == FALSE){
 }
 
 # COMMENT THIS CODE ACCORDINGLY IF USING DHS OR A DIFFERENT SURVEY
-IR <- readRDS(file = paste0(data_path, "IR.rds"))
-BR <- readRDS(file = paste0(data_path, "BR.rds"))
-KR <- readRDS(file = paste0(data_path, "KR.rds"))
-HH <- readRDS(file = paste0(data_path, "HH.rds"))
-# MR <- readRDS(file = paste0(data_path, "MR.rds"))
-# survey <- readRDS(file = paste0(data_path, ""))
+IR <- if (file.exists(paste0(data_path, "IR.rds"))) {readRDS(file = paste0(data_path, "IR.rds"))} else {IR <- data.frame()}
+BR <- if (file.exists(paste0(data_path, "BR.rds"))) {readRDS(file = paste0(data_path, "BR.rds"))} else {BR <- data.frame()}
+KR <- if (file.exists(paste0(data_path, "KR.rds"))) {readRDS(file = paste0(data_path, "KR.rds"))} else {KR <- data.frame()}
+HH <- if (file.exists(paste0(data_path, "HH.rds"))) {readRDS(file = paste0(data_path, "HH.rds"))} else {HH <- data.frame()}
+MR <- if (file.exists(paste0(data_path, "MR.rds"))) {readRDS(file = paste0(data_path, "MR.rds"))} else {MR <- data.frame()}
+
+# survey <- if (file.exists(paste0(data_path, ""))) {readRDS(file = paste0(data_path, ""))}
 
 
 ######################################################################
@@ -41,9 +42,16 @@ HH <- readRDS(file = paste0(data_path, "HH.rds"))
 ######################################################################
 
 
-# GENERATE VULNERABILITY FACTORS
-vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=NULL, dhs=7)
-vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH))))
+# GENERATE VULNERABILITY FACTORS USING STARTER DHS SCRIPT
+# vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=NULL, dhs=8)
+
+# OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/
+vulnerability <- gen_vulnerability_factors_dhs_bfa(IR=IR, BR=BR, HH=HH, MR=MR, DHS=8)
+# vulnerability <- gen_vulnerability_factors_dhs_bgd(IR=IR, BR=BR, HH=HH, MR=NULL, DHS=8)
+
+# vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH))))
+vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH), names(MR))))
+
 vulnerability <- subset(vulnerability, select=unique(c("caseid", "survey", all_of(svy_id_var), all_of(svy_strata_var), all_of(data_state_var), vulnerability_vars)))
 
 
@@ -75,8 +83,13 @@ vulnerability <- readRDS(file = paste0(vulnerability_file, ".rds"))
 ######################################################################
 
 
-# GENERATE HEALTH OUTCOMES
+# GENERATE HEALTH OUTCOMES USING STARTER DHS SCRIPT
 outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=8)
+
+# OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/
+# outcomes <- gen_outcome_variables_dhs_bfa(IR=IR, KR=KR, BR=BR, DHS=8)
+# outcomes <- gen_outcome_variables_dhs_bgd(IR=IR, KR=KR, BR=BR, DHS=8)
+
 outcomes_vars <- setdiff(names(outcomes), c(names(IR), names(BR), names(KR)))
 outcomes <- subset(outcomes, select=unique(c("caseid", "v001", "v002", "v003", "survey", outcomes_vars)))
 
@@ -136,7 +149,7 @@ if (create_new_pathways_workbook==TRUE){
     notes = NA
   ) %>%
     base::merge(dd_outcomes, by=c("outcome_variable"), all.x=TRUE) %>%
-    dplyr::select(category, outcome_variable, short_name, description, univariate_include, eda_include, profile_include, notes) %>%
+    dplyr::select(category, outcome_variable, short_name, description, univariate_include, eda_include, ranking_include, profile_include, notes) %>%
     arrange(category, outcome_variable)
 
   # CREATE VULNERABILITY SHEET
@@ -191,7 +204,7 @@ if (create_new_pathways_workbook==TRUE){
 
 
 ###################################
-print("2_data_cleaning.R script complete! Proceed to run 3_univariate_analysis.R script. Refer to the README for instructions if needed.")
+print("2_data_cleaning.R script complete! Proceed to run 3_univariate_analysis.R script. If you've created a new Pathways Workbook to be used going forward, be sure to change the create_new_pathways_workbook parameter in the config.yml file to FALSE and rename the Pathways Workbook to that defined in the pathways_workbook_path parameter. Refer to the README for instructions if needed.")
 
 
 
