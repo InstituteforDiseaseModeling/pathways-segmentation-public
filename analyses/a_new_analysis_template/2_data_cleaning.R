@@ -43,10 +43,10 @@ MR <- if (file.exists(paste0(data_path, "MR.rds"))) {readRDS(file = paste0(data_
 
 
 # GENERATE VULNERABILITY FACTORS USING STARTER DHS SCRIPT
-# vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=NULL, dhs=8)
+vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=NULL, dhs=8)
 
 # OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/
-vulnerability <- gen_vulnerability_factors_dhs_bfa(IR=IR, BR=BR, HH=HH, MR=MR, DHS=8)
+# vulnerability <- gen_vulnerability_factors_dhs_bfa(IR=IR, BR=BR, HH=HH, MR=MR, DHS=8)
 # vulnerability <- gen_vulnerability_factors_dhs_bgd(IR=IR, BR=BR, HH=HH, MR=NULL, DHS=8)
 
 # vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH))))
