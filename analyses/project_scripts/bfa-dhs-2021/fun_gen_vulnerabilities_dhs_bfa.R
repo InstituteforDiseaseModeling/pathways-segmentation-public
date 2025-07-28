@@ -176,12 +176,28 @@ gen_vulnerability_factors_dhs_bfa <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
   # ASSET INDEX FOR NUMBER OF LIVESTOCK TYPES
   # HH <- HH %>%
   #   rowwise() %>%
-  #   mutate(asset.livestock.types = sum(hh.cattle, hh.cows, hh.horses, hh.goats, hh.sheep, hh.chickens, na.rm=TRUE))
+  #   mutate(asset.livestock.types = sum(hh.cattle, hh.cows, hh.horses, hh.goats, hh.sheep, hh.chickens, na.rm=TRUE)
+
+  # hh.cows = 0.7
+  # hh.goats / sheep = 0.1
+  # hh.horses = 0.8
+  # hh.chickens = 0.01
+
   cols <- c("hh.cows", "hh.horses", "hh.goats", "hh.sheep", "hh.chickens")
+
+  weights <- c(
+    hh.cows = 0.7,
+    hh.horses = 0.8,
+    hh.goats = 0.1,
+    hh.sheep = 0.1,
+    hh.chickens = 0.01
+  )
+
   HH <- HH %>%
     dplyr::mutate(asset.livestock.types = case_when(
       if_all(all_of(cols), is.na) ~ NA_real_,
-      TRUE ~ rowSums(across(all_of(cols)), na.rm = TRUE)))
+      TRUE ~ rowSums(across(all_of(cols), ~ .x * weights[cur_column()]),
+                     na.rm = TRUE)))
 
   HH$asset.livestock.types.index = as.character(HH$asset.livestock.types)
 
@@ -636,8 +652,8 @@ gen_vulnerability_factors_dhs_bfa <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
   IR <- IR %>%
     dplyr::mutate(med.index.cat = case_when(med.index == 0 ~ "0",
                                             med.index == 1 ~ "1",
-                                            med.index == 2 ~ "2",
-                                            med.index %in% c(3:4) ~ "3+"))
+                                            # med.index == 2 ~ "2",
+                                            med.index %in% c(2:4) ~ "2+"))
 
   # BINARY INDICATOR FROM INDEX
   IR$med.index.3plus <- ifelse(IR$med.index >= 3, 1, 0)
@@ -1869,8 +1885,8 @@ IR<- IR %>% mutate(pship.cat = case_when
   IR <- IR %>%
     dplyr::mutate(dv.index.cat = case_when(
       dv.index == 0 ~ "None",
-      dv.index %in% c(1:2) ~ "1-2",
-      dv.index %in% c(3:5) ~ "3-5"))
+      dv.index %in% c(1:5) ~ "1+"))
+      # dv.index %in% c(3:5) ~ "3-5"))
 
 
   ## FEMALE GENITAL MUTILATION
@@ -1945,10 +1961,11 @@ IR<- IR %>% mutate(pship.cat = case_when
 
 
   # IN THE LAST 12 MONTHS GIVEN: LOCAL NAME FOR MULTIPLE MICRONUTRIENT POWDERS
-  BR<-BR %>%
+  BR <- BR %>%
     dplyr::mutate(micronutrient.12m = case_when(
       h80a %in% c("no","don't know") ~ 0,
-      h80a== "yes" ~ 1))
+      h80a== "yes" ~ 1,
+      is.na(h80a) ~ 0))
 
 
   # NUMBER OF TIMES ATE SOLID, SEMI-SOLID OR SOFT FOOD
