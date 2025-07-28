@@ -6,7 +6,7 @@
 
 
 # stratum = "urban"
-# n_class = "LCA6_class"
+# n_class = "LCA5_class"
 # shp_file = shp_file
 
 
@@ -232,7 +232,7 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
   # MAP
   df <- df %>%
     mutate(state = as.character(eval(parse(text = data_state_var))),
-           state = stringr::str_to_title(trimws(gsub(pattern = "rurale|urbain|rural|urban|nc|ne|nw","", state))),
+           state = stringr::str_to_title(trimws(gsub(pattern = "rurale|urbain|rural|urban|nc|ne|nw|,","", state))),
            state = case_when(state == "Thi<E8>S" ~ "Thies",
                              state == "Kolda Urban" ~ "Kolda",
                              state == "Ziquinchor" ~ "Ziguinchor",
@@ -242,6 +242,13 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
                              state == "Harari" ~ "Harari People",
                              state == "Addis Adaba" ~ "Addis Abeba",
                              state == "Fct Abuja" ~ "Federal Capital Territory",
+                             state == "Boucle Du Mouhoun" ~ "Boucle du Mouhoun",
+                             state == "Centre Est" ~ "Centre-Est",
+                             state == "Centre Nord" ~ "Centre-Nord",
+                             state == "Centre Ouest" ~ "Centre-Ouest",
+                             state == "Centre Sud" ~ "Centre-Sud",
+                             state == "Hauts-Bassins" ~ "Haut-Bassins",
+                             state == "Plateau Central" ~ "Plateau-Central",
                              TRUE ~ state))
 
   state_prop <- df %>%
@@ -272,6 +279,11 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
     dplyr::filter(!state %in% shp_file$NAME_1) %>%
     dplyr::select(state) %>%
     distinct()
+
+  # SAMPLE CODE TO MAP GOES
+  print(unique(df$state))
+  print(unique(shp_file$NAME_1))
+
 
   if (length(missing_admin1 > 0)){
 
