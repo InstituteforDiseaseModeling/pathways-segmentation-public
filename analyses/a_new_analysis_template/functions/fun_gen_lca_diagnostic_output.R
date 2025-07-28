@@ -322,7 +322,7 @@ fun_gen_lca_diagnostic_output <- function(stratum=NULL, data_path=NULL, nreps=NU
                      Source = "IDsource", Target = "IDtarget",
                      Value = "value", NodeID = "name",
                      sinksRight=FALSE)
-  sankey <- htmlwidgets::prependContent(sankey, htmltools::tags$h1(sankey_title))
+  # sankey <- htmlwidgets::prependContent(sankey, htmltools::tags$h1(sankey_title))
   sankey
 
   html_path = paste0(plot_path, "nreps", nreps, "/", stratum, "_lca_sankey.html")
