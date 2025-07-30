@@ -201,6 +201,12 @@ gen_vulnerability_factors_dhs_bfa <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
 
   HH$asset.livestock.types.index = as.character(HH$asset.livestock.types)
 
+  # CATEGORICAL VARIABLE FOR ASSET LIVESTOCK INDEX
+  HH <- HH %>%
+    dplyr::mutate(asset.livestock.types.index.cat = case_when(as.numeric(asset.livestock.types.index) == 0 ~ "None",
+                                                              as.numeric(asset.livestock.types.index) > 0 & as.numeric(asset.livestock.types.index) < 0.5 ~ "Low",
+                                                              as.numeric(asset.livestock.types.index) >= 0.5 ~ "High"))
+
 
   # HOUSEHOLD COMBINED WEALTH INDEX
   # HH$wealth.index <- factor(HH$hv270)
@@ -208,6 +214,12 @@ gen_vulnerability_factors_dhs_bfa <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
 
   # URBAN/RURAL WEALTH INDEX
   HH$wealth.index.ur <- factor(HH$hv270a)
+
+
+  # CATEGORICAL VARIABLE FOR WEALTH INDEX
+  HH <- HH %>%
+    dplyr::mutate(wealth.index.ur.cat = case_when(wealth.index.ur %in% c("poorest", "poorer") ~ "Poor",
+                                                  wealth.index.ur %in% c("middle", "richer", "richest") ~ "Not Poor"))
 
 
   ## HOUSEHOLD MEMBERS

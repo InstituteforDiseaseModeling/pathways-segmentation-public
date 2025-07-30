@@ -127,7 +127,7 @@ if (run_in_parallel == TRUE){
 
 
 } else {
-  print("Running EDA in for loop")
+  print("Running EDA serially")
 
 
   for(m in vulnerability.list){
@@ -140,6 +140,19 @@ if (run_in_parallel == TRUE){
 
 
   }
+
+}
+
+
+###################################
+# RUN EDA FOR A SINGLE VULNERABILITY VARIABLE - THIS WILL SKIP OVER WHEN RUNNING THE ENTIRE SCRIPT
+
+
+if (FALSE){
+
+  # DEFINE VULNERABILITY VARIABLE AS "M"
+  m = "wealth.index.ur.cat"
+  output <- fun_gen_exploratory_data_analysis(df = outcomes_vulnerability, outcomes.list = outcomes.list, measure = m, strata=strata, plot_path = exploratory_plots)
 
 }
 
