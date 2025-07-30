@@ -5,8 +5,8 @@
 ################################################################################
 
 
-# stratum = "urban"
-# n_class = "LCA5_class"
+# stratum = "rural"
+# n_class = "LCA4_class"
 # shp_file = shp_file
 
 
@@ -206,15 +206,34 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
   }
 
 
+  # DYNAMICALLY ASSIGN COLORS BASED ON NUMBER OF SEGMENTS TO PIE CHART AND MAP WITH LARGEST SEGMENT HAVE SAME COLORS
+  get_segment_colors <- function(segment_list=NULL, palette = "Dark2") {
+    n_segments <- length(segment_list)
+    max_colors <- RColorBrewer::brewer.pal.info[palette, "maxcolors"]
+
+    if (n_segments > max_colors) {
+      stop(paste("Palette", palette, "only supports up to", max_colors, "colors."))
+    }
+
+    segment_colors <- brewer.pal(n_segments, palette)
+    names(segment_colors) <- segment_list
+    return(segment_colors)
+  }
+
+  segment_list <- unique(paste0("Segment ", df$segment))
+
+  segment_colors <- get_segment_colors(segment_list = segment_list)
+
+
   # PIE CHART
   seg.prop <- df %>%
-    mutate(total_sample = sum(wt)) %>%
+    dplyr::mutate(total_sample = sum(wt)) %>%
     group_by(segment) %>%
-    mutate(segment_sample = sum(wt),
+    dplyr::mutate(segment_sample = sum(wt),
            prop = segment_sample/total_sample) %>%
     dplyr::select(strata, segment, segment_sample, total_sample, prop) %>%
     distinct() %>%
-    mutate(Segment = paste0("Segment ", segment))
+    dplyr::mutate(Segment = paste0("Segment ", segment))
 
   plot1 <- seg.prop %>%
     ggplot(aes(x="", y=prop, fill=Segment)) +
@@ -225,7 +244,8 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
     theme(legend.position = "bottom") +
     geom_text(aes(x = 1.7, label = scales::percent(prop, accuracy = .1)), position = position_stack(vjust = .5)) +
     labs(title = paste0("Segmentation Proportion: ", stratum)) +
-    scale_fill_brewer(palette="Dark2")
+    scale_fill_manual(values = segment_colors)
+    # scale_fill_brewer(palette="Dark2")
   # print(plot1)
 
 
@@ -274,15 +294,16 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
     mutate(centroid = sf::st_centroid(geometry))
 
 
+  # SAMPLE CODE TO MAP GOES
+  print(unique(df$state))
+  print(unique(shp_file$NAME_1))
+
+
   # PRINT OUT STATES THAT DON'T JOIN
   missing_admin1 <- df %>%
     dplyr::filter(!state %in% shp_file$NAME_1) %>%
     dplyr::select(state) %>%
     distinct()
-
-  # SAMPLE CODE TO MAP GOES
-  print(unique(df$state))
-  print(unique(shp_file$NAME_1))
 
 
   if (length(missing_admin1 > 0)){
@@ -305,8 +326,9 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
     theme_void() +
     theme(legend.title=element_blank()) +
     theme(legend.position = "bottom") +
-    labs(title = paste0("Largest Segment Represented: ", stratum)) +
-    scale_fill_brewer(palette="Dark2")
+    labs(title = paste0("Largest segment represented: ", stratum)) +
+    scale_fill_manual(values = segment_colors)
+    # scale_fill_brewer(palette="Dark2")
   # print(plot2)
 
   grid.arrange(plot1, plot2,
@@ -466,7 +488,7 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
 
 
     plot(0:10, type = "n", xaxt="n", yaxt="n", bty="n", xlab = "", ylab = "")
-    text(5, 8, paste0("Vulnerability Factors for Domain: ", dom_label), cex = 2)
+    text(5, 8, paste0("Vulnerability variables: ", dom_label), cex = 2)
 
     domain_vars <- vulnerability_vars_profile %>%
       dplyr::filter(domain == dom)
@@ -527,7 +549,7 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
     dom_label <- gsub("\\.", " ", dom)
 
     plot(0:10, type = "n", xaxt="n", yaxt="n", bty="n", xlab = "", ylab = "")
-    text(5, 8, paste0("Vulnerability Factors for Domain: ", dom_label), cex = 2)
+    text(5, 8, paste0("Vulnerability variables: ", dom_label), cex = 2)
 
     domain_vars <- vulnerability_vars_profile %>%
       dplyr::filter(domain == dom)

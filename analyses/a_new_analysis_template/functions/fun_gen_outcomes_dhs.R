@@ -178,7 +178,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, DHS=7){
 
 
   # CHILD UNDER 5 DIED
-  BR$u5mort<-ifelse(BR$b5=="no", 1, 0)
+  BR$u5mort <- ifelse(BR$b5=="no", 1, 0)
 
 
   # STILLBIRTHS
