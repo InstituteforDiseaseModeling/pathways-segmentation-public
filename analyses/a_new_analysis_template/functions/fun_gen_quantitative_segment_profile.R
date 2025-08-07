@@ -5,8 +5,8 @@
 ################################################################################
 
 
-# stratum = "rural"
-# n_class = "LCA4_class"
+# stratum = "urban"
+# n_class = "LCA5_class"
 # shp_file = shp_file
 
 
@@ -14,7 +14,7 @@
 # DEFINE FUNCTION TO GENERATE SEGMENT PROFILES
 ###################################
 
-fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=NULL, shp_file=NULL){
+fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=NULL, nreps=NULL, shp_file=NULL){
 
   ###################################
   # GET DATA
@@ -175,7 +175,7 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
 
 
   ###################################
-  profile_plots_file = paste0(profile_plots, stratum, "_segment_profile_plots.pdf")
+  profile_plots_file = paste0(profile_plots, "nreps", nreps, "/", stratum, "_segment_profile_plots.pdf")
   dir.create(dirname(profile_plots_file), showWarnings = F, recursive = T)
 
   ###################################
@@ -187,7 +187,7 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
 
 
   plot(0:10, type = "n", xaxt="n", yaxt="n", bty="n", xlab = "", ylab = "")
-  text(5, 8, paste0(project_name, " | Segment profile plots | ", stratum), cex = 2)
+  text(5, 8, paste0(project_name, " | Segment profile plots\n", stratum, " | ", n_class, " | nreps", nreps), cex = 2)
 
 
   ###################################
@@ -506,12 +506,14 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
         distinct() %>%
         dplyr::filter(variable == var_list[i])
 
+      plot_label = paste0(df_plot$short_name[[1]], " (", var_list[i], ")")
+
       plot <- df_plot %>%
         ggplot(aes(x=segment, y=prop, fill=value)) +
         geom_bar(position="stack", stat="identity") +
         theme_bw() +
         labs(fill="") +
-        ggtitle(paste0(df_plot$short_name[[1]])) +
+        ggtitle(plot_label) +
         theme(plot.title = element_text(size=10)) +
         theme(legend.text=element_text(size=6), legend.title=element_text(size=8)) +
         # theme(axis.title.y = element_text(size=8)) +

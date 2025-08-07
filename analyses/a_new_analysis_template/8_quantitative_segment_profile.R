@@ -48,7 +48,7 @@ for (stratum in strata_set){
   path = paste0(lca_path, "nreps", nreps, "/", stratum, "_outcomes_vulnerability_class_ranked.rds")
   df <- readRDS(path)
 
-  fun_gen_quantitative_segment_profile(df=df, stratum=stratum, n_class=n_class, shp_file=shp_file)
+  fun_gen_quantitative_segment_profile(df=df, stratum=stratum, n_class=n_class, nreps=nreps, shp_file=shp_file)
 
 }
 
