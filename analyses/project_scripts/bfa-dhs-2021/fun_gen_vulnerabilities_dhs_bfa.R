@@ -1535,15 +1535,15 @@ IR<- IR %>% mutate(pship.cat = case_when
 
 
   #re-categorizing traditional, other and protestant together given extremely small sample sizes
-  IR$religionrecode.cat <- IR$religion
-  IR<- IR %>% mutate(religionrecode.cat =case_when(
-    (religion=="traditional") ~ "other",
-    (religion=="traditional/animist") ~ 'other',
-    (religion=="catholic") ~ "other",
-    (religion=="other") ~ "other",
-    (religion=="protestant") ~ "protestant",
-    (religion=="orthodox") ~ "orthodox",
-    (religion=="muslin") ~ "muslim"))
+  IR <- IR %>%
+    dplyr::mutate(religionrecode.cat =case_when(
+      religion == "traditional" ~ "other",
+      religion == "traditional/animist" ~ 'other',
+      religion == "catholic" ~ "christian",
+      religion == "other" ~ "other",
+      religion == "protestant" ~ "christian",
+      religion == "orthodox" ~ "christian",
+      religion == "muslim" ~ "muslim"))
 
   IR$orthodox <- ifelse(IR$v130 =="orthodox", "Yes", "No")
 
@@ -1976,8 +1976,7 @@ IR<- IR %>% mutate(pship.cat = case_when
   BR <- BR %>%
     dplyr::mutate(micronutrient.12m = case_when(
       h80a %in% c("no","don't know") ~ 0,
-      h80a== "yes" ~ 1,
-      is.na(h80a) ~ 0))
+      h80a== "yes" ~ 1))
 
 
   # NUMBER OF TIMES ATE SOLID, SEMI-SOLID OR SOFT FOOD
@@ -2071,7 +2070,12 @@ IR<- IR %>% mutate(pship.cat = case_when
     dplyr::mutate(lives.away = ifelse(lives.away.cnt > 0, 1, 0),
                   micronutrient.12m = ifelse(micronutrient.12m.cnt > 0, 1, 0),
                   num.solidfood = ifelse(num.solidfood.cnt > 0, 1, 0)) %>%
-    dplyr::select(survey, caseid, lives.away, micronutrient.12m, num.solidfood)
+    dplyr::select(survey, caseid, lives.away, micronutrient.12m, num.solidfood) %>%
+    dplyr::mutate(micronutrient.12m = case_when(
+      micronutrient.12m == 1 ~ "Yes",
+      micronutrient.12m == 0 ~ "No",
+      is.na(micronutrient.12m) ~ "No response"
+    ))
 
 
   ##################################
