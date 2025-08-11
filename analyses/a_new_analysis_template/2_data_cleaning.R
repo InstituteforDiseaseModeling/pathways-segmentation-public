@@ -20,7 +20,7 @@ create_new_pathways_workbook = config::get("create_new_pathways_workbook")
 # READ IN SURVEY | DHS
 # RUN 1_import_data.R TO IMPORT AND SAVE RAW SURVEY DATA (REPLACE THE FILE HERE IF NOT DHS)
 
-if (file.exists(paste0(data_path, "IR.rds")) == FALSE){
+if (length(list.files(path = data_path, pattern = "\\.rds$", full.names = TRUE)) == 0){
 
   print("Running 1_import_data.R to load survey data and save as .rds objects for quicker load.")
   source("1_import_data.R")
@@ -149,6 +149,7 @@ if (create_new_pathways_workbook==TRUE){
     notes = NA
   ) %>%
     base::merge(dd_outcomes, by=c("outcome_variable"), all.x=TRUE) %>%
+    dplyr::mutate(ranking_include = case_when(outcome_variable %in% c("anc.less4.last", "home.birth.last", "nofp.mod.ever", "u5mort.yn", "waste.cat2.yn") ~ 1)) %>%
     dplyr::select(category, outcome_variable, short_name, description, univariate_include, eda_include, ranking_include, profile_include, notes) %>%
     arrange(category, outcome_variable)
 
