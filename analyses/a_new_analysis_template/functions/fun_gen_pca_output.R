@@ -9,7 +9,6 @@
 # RUN SETUP
 # df <- vulnerability_input
 # pca_varlist <- pca_strata_input
-# #
 # stratum = "urban"
 # dom = "Health.and.mental.models"
 
@@ -33,7 +32,8 @@ fun_gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_nam
   plot(0:10, type = "n", xaxt="n", yaxt="n", bty="n", xlab = "", ylab = "")
   text(5, 8, paste0(project_name, " | Principal component analysis | ", stratum), cex = 2)
 
-  for (dom in unique(pca_varlist$domain)){
+
+  for (dom in unique(c(as.character(pca_varlist$domain), "All"))){
     print(paste(stratum, dom))
 
 
@@ -47,9 +47,15 @@ fun_gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_nam
 
     ###################################
     # SET UP DATASETS
-    pca_varlist1 <- pca_varlist %>%
-      dplyr::filter(domain==dom) %>%
-      distinct()
+    if (dom == "All"){
+      pca_varlist1 <- pca_varlist %>%
+        distinct()
+    } else {
+      pca_varlist1 <- pca_varlist %>%
+        dplyr::filter(domain==dom) %>%
+        distinct()
+    }
+
 
     vulnerability_vars <- names(df)[(names(df) %in% pca_varlist1$vulnerability_variable)]
 
@@ -311,6 +317,7 @@ fun_gen_pca_output <- function(df=NULL, stratum=NULL, pca_varlist=NULL, file_nam
         })
 
   }
+
 
   ###################################
   dev.off()
