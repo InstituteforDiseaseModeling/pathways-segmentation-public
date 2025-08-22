@@ -148,7 +148,7 @@ Once generated, the Pathways Workbook should be reviewed to ensure all metadata 
 
 ## Repo structure
 
-At the top level of the repository exists the project README and the global .gitignore file.
+At the top level of the repository exists a folder with previous training workshop materials, the project README, and the global .gitignore file.
 
 Within the "analyses" folder exists the following:
 
