@@ -9,7 +9,7 @@
 ###################################
 # DEFINE FUNCTION
 
-gen_outcome_variables_pathways <- function(survey=NULL){
+gen_outcome_variables_pathways_bihar <- function(survey=NULL){
 
   pacman::p_load(RODBC, dplyr, tidyverse, openxlsx, tidyselect, zscorer)
 

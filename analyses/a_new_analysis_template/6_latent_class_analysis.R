@@ -10,7 +10,9 @@
 # RUN SETUP
 source("1_setup.R")
 
-nreps = 20
+# DEFINE THE NUMBER OF RANDOM STARTING VALUES FOR THE LCA ALGORITHM
+# THE SOLUTION GENERATED WITH THIS VALUE SHOULD BE CARRIED THROUGH SUBSEQUENT STEPS
+nreps = 101
 
 
 ###################################
@@ -24,6 +26,7 @@ params_sheet <- readRDS(params_excel_file)
 strata_set <- params_sheet %>%
   dplyr::select(strata) %>%
   dplyr::filter(!is.na(strata)) %>%
+  # dplyr::filter(strata == "urban") %>%
   distinct()
 
 
@@ -52,7 +55,6 @@ vulnerability_adj <- vulnerability %>%
   data.frame() %>%
   dplyr::mutate(across(-c(caseid, all_of(svy_id_var), all_of(svy_strata_var), wt, survey, strata), ~ as.integer(factor(.)))) %>%
   dplyr::select(caseid, all_of(svy_id_var), all_of(svy_strata_var), wt, survey, strata, everything())
-
 
 
 ################################################################################

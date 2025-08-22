@@ -46,12 +46,14 @@ fun_gen_lca <- function(df=NULL, input_vars=NULL, nreps=NULL, output_path=NULL){
 
 
   # %dorng% ensures reproducible RNG streams in parallel
-  # set.seed(99)  # your master seed
+  set.seed(99)  # your master seed
   res <- foreach::foreach(
+
     i = classes,
     .packages = c("poLCA"),
     .combine  = combiner,
     .init     = list()
+
   ) %dorng% {
 
     name <- paste0(stratum, "_LCA", i)

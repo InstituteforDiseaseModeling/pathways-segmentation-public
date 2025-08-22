@@ -8,7 +8,7 @@
 
 ###################################
 # DEFINE FUNCTION
-gen_vulnerability_factors_pathways <- function(survey=NULL){
+gen_vulnerability_factors_pathways_bihar <- function(survey=NULL){
 
   pacman::p_load(RODBC, dplyr, tidyverse, openxlsx, tidyselect, zscorer)
 

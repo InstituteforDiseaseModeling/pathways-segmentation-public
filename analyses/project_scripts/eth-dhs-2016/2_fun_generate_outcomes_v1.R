@@ -14,7 +14,7 @@
 # DEFINE FUNCTION
 ###################################
 
-gen_outcome_variables <- function(IR, KR, BR){
+gen_outcome_variables_dhs_eth <- function(IR, KR, BR){
 
   IR[,str:=substr(vcal_1, v018, v018+59)]
   IR[,STL:=ifelse(grepl('TPPPPPP',str),1,NA)]

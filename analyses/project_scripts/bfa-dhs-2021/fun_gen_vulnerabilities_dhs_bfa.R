@@ -352,10 +352,15 @@ gen_vulnerability_factors_dhs_bfa <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
 
 
   # LOCATION OF TOILET FACILITY
+  # HH <- HH %>% dplyr::mutate(latrine.loc = case_when(
+  #   hv205 == "no facility/bush/field" ~ "No facility",
+  #   hv238a == "in own dwelling" ~ "In own dwelling",
+  #   hv238a == "in own yard/plot" ~ "In own yard/plot",
+  #   hv238a == "elsewhere" ~ "Elsewhere"))
   HH <- HH %>% dplyr::mutate(latrine.loc = case_when(
     hv205 == "no facility/bush/field" ~ "No facility",
-    hv238a == "in own dwelling" ~ "In own dwelling",
-    hv238a == "in own yard/plot" ~ "In own yard/plot",
+    hv238a == "in own dwelling" ~ "In own yard/plot/dwelling",
+    hv238a == "in own yard/plot" ~ "In own yard/plot/dwelling",
     hv238a == "elsewhere" ~ "Elsewhere"))
 
 
