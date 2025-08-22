@@ -85,11 +85,11 @@ An intermediate level of coding in R and using RStudio Desktop is expected in or
 
 #### Software requirements
 
-* [R (recommended >= 4.4.2, renv implementation assumes 4.4.2) & RStudio Desktop](https://posit.co/download/rstudio-desktop/)
+* [R (recommended >= 4.4.2, current renv implementation assumes 4.4.2) & RStudio Desktop](https://posit.co/download/rstudio-desktop/)
 * Microsoft Excel (recommended)
 * [GitHub Desktop](https://desktop.github.com/download/) (suggested for managing code from GitHub repository)
 
-Software will run on Windows or MAC operating system (although on a MAC OS the RENV framework may require some technical hurdles.)
+Software will run on Windows or MAC operating system (although on a MAC OS the RENV framework may require involve additional technical hurdles.)
 
 #### Hardware requirements
 
@@ -111,7 +111,7 @@ The Pathways Segmentation workflow is anchored by the Pathways Workbook (either 
 
 The Pathways Workbook (in either format) is created in the 2_data_cleaning.R script. The config.yml parameter "create_new_pathways_workbook" (TRUE/FALSE) will generate the workbook from the Outcome and Vulnerability variables defined.  The parameter "pathways_workbook_is_excel" (TRUE/FALSE) determines whether the user intends to use the XLSX (TRUE) or CSV (FALSE) version of the Pathways Workbook.
 
-Once generated, the Pathways Workbook should be reviewed to ensure all metadata for variables is defined and the vulnerability - domain mapping is accurate for the analysis.
+Once generated, the Pathways Workbook should be reviewed to ensure all metadata for variables is defined and the vulnerability-to-domain mapping is accurate for the given analysis.
 
 ### Workbook tabs (and columns)
 
@@ -153,8 +153,9 @@ At the top level of the repository exists the project README and the global .git
 Within the "analyses" folder exists the following:
 
 * a_new_analysis_template: templated set of files needed for a new analysis
-* data_cleaning_scripts: includes coding from previous analyses for reference
+* project_files: includes coding from additional analyses for reference
 * projects: contains a tutorial project and is a recommended location for future projects
+* samples: contains sample plots generated throughout the analysis framework
 
 ### New project template
 
@@ -407,7 +408,7 @@ This tutorial assumes the Pathways Workbook is generated as xlsx file but if gen
     - use_svy_design: TRUE
     - svy_id_var: "v021"
     - svy_strata_var: "v023"
-8. open the 1_setup.R script and run the entire script to install/load libraries, define input variables, and set file paths.
+8. open the 1_setup.R script and define whether or not to use the RENV framework to install libraries. Then run the entire script to install/load libraries, define input variables, and set file paths.
 
 ### Data cleaning and variable generation 
 
