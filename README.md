@@ -4,7 +4,7 @@ The pathways-segmentation repo contains the workflow for conducting a Pathways S
 
 This analysis is intended for researche scientists familiar with R and requires custom variable coding for each analysis.
 
-The workflow is designed to use STATA (.DTA) survey datasets from the Demographic and Health Surveys (DHS) program, however any survey dataset will work with adjustments to the 2_data_cleaning.R script and associated functions.
+The workflow is designed to use STATA (.DTA) survey datasets from the Demographic and Health Surveys (DHS) program, however any survey dataset will work with adjustments to the 2_data_cleaning.R module.
 
 # Table of contents
 
@@ -93,7 +93,7 @@ Software will run on Windows or MAC operating system (although on a MAC OS the R
 
 #### Hardware requirements
 
-There are no specific hardware requirements (although compute needs for running the LCA algorithm increase in the number of repititions specified).
+There are no specific hardware requirements (although compute needs for running the LCA algorithm increase in the number of variables used and number of repititions specified).
 
 ### Environment setup
 
@@ -184,15 +184,16 @@ The workflow is modularized according to the different phases of a segmentation 
 * **root_path:** directory path from which analysis output paths will build from; this is the location of the project
 * **user_path:** subfolder for analysis outputs (allows for multiple runs within the same project)
 
-* **dhs_ir_file:** STATA file name of the DHS individual recode file
+* **dhs_ir_file:** STATA file name of the DHS woman's recode file
 8 **dhs_hh_file:** STATA file name of the DHS household recode file
 * **dhs_br_file:** STATA file name of the DHS birth recode file
 * **dhs_kr_file:** STATA file name of the DHS child recode file
+* **dhs_mr_file:** STATA file name of the DHS man's recode file
 * **survey_file:** file name of a non-DHS survey
 
 * **create_new_pathways_workbook:** TRUE/FALSE, determines whether to import an existing Pathways Workbook or create a new one as part of the data cleaning and variable generation phase
 * **pathways_workbook_is_excel:** TRUE/FALSE, use the Pathways Workbook in Excel or CSV format
-* **pathways_workbook_path:** name of Pathways Workbook to import from
+* **pathways_workbook_path:** name of existing Pathways Workbook to import from
 * **new_pathways_workbook_path:** name of Pathways Workbook to generate
 
 * **shp_file:** name of shp file to use when generating maps in quantitative profiling phase
@@ -201,6 +202,9 @@ The workflow is modularized according to the different phases of a segmentation 
 * **use_svy_design:** TRUE/FALSE (determines whether to use survey weights and design throughout the analysis)
 * **svy_id_var:** survey id var (e.g., survey cluster no)
 * **svy_strata_var:** survey stratification variable
+
+* **vulnerability_script:** path to a custom or project specific vulnerability factor generating script
+* **outcomes_script:** path to a custom or project specific health outcomes generating script
 
 ## Pathways Segmentation workflow phases
 
@@ -238,8 +242,8 @@ The following guidance applies to coding variables:
 * **Vulnerability variables:** Vulnerability variables have more freedom in how they are defined relative to Health Outcomes as multi-level categorical variables are expected and it's often less clear what which is the more "positive" or "negative" state.  For example, type of work (Agricultural, Professional, etc.).  Variables should be coded as binary/categorical data type, or have an additional categorical version of the variable to use, as in all phases beyond the Exploratory Data Analysis variables should be categorical. Continuous Vulnerability variables can be created to be used in the Univariate and Exploratory Analysis phases in order to help identify thresholds, relationships, and gradients across variable states.
 
 **Scripts used:** The parent script 2_data_cleaning.R calls the function defined in:
-* functions/fun_gen_vulnerabilities_dhs.R
-* functions/fun_gen_outcomes_dhs.R
+* functions/fun_gen_vulnerabilities_dhs.R (or a custom script defined in the config file)
+* functions/fun_gen_outcomes_dhs.R (or a custom script defined in the config file)
 
  * Inputs:
     * A survey dataset(s)
@@ -430,7 +434,7 @@ This tutorial assumes the Pathways Workbook is generated as xlsx file but if gen
 
 1. Open the Pathways Workbook and edit the eda_include columns in the 'outcomes' and 'vulnerabilities' tabs in the Pathways Workbook, set to 1 to include variable in the Exploratory Analysis PDFs.  
 2. save and close the Workbook
-3. open the 4_exploratory_data_analysis.R script and run the entire script to generate the PDF outputs.  At the beginninf of the script is the option to parallelize the generation of these outputs.  When running this initially it's recommended to set this to TRUE 
+3. open the 4_exploratory_data_analysis.R script and run the entire script to generate the PDF outputs.  At the beginning of the script is the option to parallelize the generation of these outputs.  When running this initially it's recommended to set this to TRUE 
 4. review the PDF outputs and make any changes to to the function scripts in the Variable Generation step
 5. run the Univariate Analysis step to generate new PDF outputs
 

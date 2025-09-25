@@ -21,7 +21,9 @@ if (!"pacman" %in% names(sessionInfo()$otherPkgs)){
 
 ###################################
 # SET CONFIG AND GET CONFIG VALUES
-Sys.setenv(R_CONFIG_ACTIVE = "default")
+
+# THIS SHOULD BE SET TO "default" UNLESS MULTIPLE PROJECTS ARE BEING MANAGED FROM THE SAME CONFIG FILE
+Sys.setenv(R_CONFIG_ACTIVE = "pak_dhs_2017")
 
 project_name = config::get("project_name")
 print(paste0("Loading config for project: ", project_name))
@@ -148,6 +150,15 @@ functions = list.files("functions")
 for (f in functions){
   source(paste0("functions/",f))
 }
+
+# LOAD PROJECT SPECIFIC VULNERABILITY AND OUTCOMES SCRIPT IF NEEDED
+tryCatch(
+  if (file.exists(config::get("vulnerability_script"))) {source(config::get("vulnerability_script"))},
+  error = function(e) {warning("project specific vulnerability_script config parameter does not exist")})
+
+tryCatch(
+  if (file.exists(config::get("outcomes_script"))) {source(config::get("outcomes_script"))},
+  error = function(e) {warning("project specific outcomes_script config parameter does not exist")})
 
 
 ###################################

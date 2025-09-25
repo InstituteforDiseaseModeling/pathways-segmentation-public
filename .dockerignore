@@ -1,0 +1,2 @@
+# drop any host renv libraries so we only restore in Linux
+# analyses/a_new_analysis_template/renv/library/**

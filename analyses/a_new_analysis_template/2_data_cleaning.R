@@ -28,11 +28,25 @@ if (length(list.files(path = data_path, pattern = "\\.rds$", full.names = TRUE))
 }
 
 # COMMENT THIS CODE ACCORDINGLY IF USING DHS OR A DIFFERENT SURVEY
-IR <- if (file.exists(paste0(data_path, "IR.rds"))) {readRDS(file = paste0(data_path, "IR.rds"))} else {IR <- data.frame()}
-BR <- if (file.exists(paste0(data_path, "BR.rds"))) {readRDS(file = paste0(data_path, "BR.rds"))} else {BR <- data.frame()}
-KR <- if (file.exists(paste0(data_path, "KR.rds"))) {readRDS(file = paste0(data_path, "KR.rds"))} else {KR <- data.frame()}
-HH <- if (file.exists(paste0(data_path, "HH.rds"))) {readRDS(file = paste0(data_path, "HH.rds"))} else {HH <- data.frame()}
-MR <- if (file.exists(paste0(data_path, "MR.rds"))) {readRDS(file = paste0(data_path, "MR.rds"))} else {MR <- data.frame()}
+if (file.exists(paste0(data_path, "IR.rds"))) {
+  IR <- readRDS(file = paste0(data_path, "IR.rds"))
+  message("IR file imported.")}
+
+if (file.exists(paste0(data_path, "BR.rds"))) {
+  BR <- readRDS(file = paste0(data_path, "BR.rds"))
+  message("BR file imported.")}
+
+if (file.exists(paste0(data_path, "KR.rds"))) {
+  KR <- readRDS(file = paste0(data_path, "KR.rds"))
+  message("KR file imported.")}
+
+if (file.exists(paste0(data_path, "HH.rds"))) {
+  HH <- readRDS(file = paste0(data_path, "HH.rds"))
+  message("HH file imported.")}
+
+if (file.exists(paste0(data_path, "MR.rds"))) {
+  MR <- readRDS(file = paste0(data_path, "MR.rds"))
+  message("MR file imported.")}
 
 # survey <- if (file.exists(paste0(data_path, ""))) {readRDS(file = paste0(data_path, ""))}
 
@@ -43,14 +57,22 @@ MR <- if (file.exists(paste0(data_path, "MR.rds"))) {readRDS(file = paste0(data_
 
 
 # GENERATE VULNERABILITY FACTORS USING STARTER DHS SCRIPT
-vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=NULL, dhs=8)
+# vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=NULL, dhs=8)
 
-# OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/
+# OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/ AND DEFINED IN CONFIG FILE
 # vulnerability <- gen_vulnerability_factors_dhs_bfa(IR=IR, BR=BR, HH=HH, MR=MR, DHS=8)
 # vulnerability <- gen_vulnerability_factors_dhs_bgd(IR=IR, BR=BR, HH=HH, MR=NULL, DHS=8)
+vulnerability <- gen_vulnerability_factors_dhs_pak(IR=IR, BR=BR, HH=HH, MR=MR, DHS=8)
 
-# vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH))))
-vulnerability_vars <- setdiff(names(vulnerability), unique(c(names(IR), names(BR), names(HH), names(MR))))
+vulnerability_vars <- setdiff(
+  names(vulnerability),
+  unique(c(
+    if (exists("IR")==TRUE) names(IR) else character(),
+    if (exists("BR")==TRUE) names(BR) else character(),
+    if (exists("HH")==TRUE) names(HH) else character(),
+    if (exists("MR")==TRUE) names(MR) else character()
+  ))
+)
 
 vulnerability <- subset(vulnerability, select=unique(c("caseid", "survey", all_of(svy_id_var), all_of(svy_strata_var), all_of(data_state_var), vulnerability_vars)))
 
@@ -86,11 +108,20 @@ vulnerability <- readRDS(file = paste0(vulnerability_file, ".rds"))
 # GENERATE HEALTH OUTCOMES USING STARTER DHS SCRIPT
 outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=8)
 
-# OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/
+# OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/ AND DEFINED IN CONFIG
 # outcomes <- gen_outcome_variables_dhs_bfa(IR=IR, KR=KR, BR=BR, DHS=8)
 # outcomes <- gen_outcome_variables_dhs_bgd(IR=IR, KR=KR, BR=BR, DHS=8)
 
-outcomes_vars <- setdiff(names(outcomes), c(names(IR), names(BR), names(KR)))
+
+outcomes_vars <- setdiff(
+  names(outcomes),
+  unique(c(
+    if (exists("IR")) names(IR) else character(),
+    if (exists("BR")) names(BR) else character(),
+    if (exists("KR")) names(KR) else character()
+  ))
+)
+
 outcomes <- subset(outcomes, select=unique(c("caseid", "v001", "v002", "v003", "survey", outcomes_vars)))
 
 

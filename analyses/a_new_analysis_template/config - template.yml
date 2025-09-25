@@ -53,6 +53,12 @@ default:
   svy_strata_var: "v023"
 
 
+  # CUSTOM VULNERABILITY AND OUTCOME GENERATION SCRIPTS
+
+  vulnerability_script: ""
+  outcomes_script: ""
+
+
 
 
 
