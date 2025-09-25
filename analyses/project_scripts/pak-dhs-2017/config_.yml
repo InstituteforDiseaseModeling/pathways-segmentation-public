@@ -1,0 +1,94 @@
+
+
+########################
+## DEFINE CONFIG SCHEMA
+default:
+
+  ## PROJECT DETAILS AND FILE PATH ROOTS
+  project_name: "Ethiopia DHS 2016 - Tutorial"
+  survey_name: "ET71FL"
+  root_path: "./"
+  user_path: "output/"
+
+
+  ## SURVEY PARAMETERS
+  dhs_ir_file: "ETIR71FL.DTA"
+  dhs_hh_file: "ETHR71FL.DTA"
+  dhs_br_file: "ETBR71FL.DTA"
+  dhs_kr_file: "ETKR71FL.DTA"
+  dhs_mr_file: "ETMR71FL.DTA"
+  survey_file: ""
+
+
+  ## PATHWAYS WORKBOOK PARAMETERS
+
+  # WHEN = FALSE, EXISTING WORKBOOOK WILL BE IMPORTED IN 1_setup.R SCRIPT
+  # WHEN = TRUE, A NEW PATHWAYS WORKBOOK WILL BE CREATED IN THE 2_data_cleaning.R SCRIPT
+  create_new_pathways_workbook: TRUE
+  # WHEN = FALSE, PATHWAYS WORKBOOK WILL BE CREATED IN CSV FORMAT
+  # WHEN = TRUE, PATHWAYS WORKBOOK WILL BE CREATED IN XLSX FORMAT
+  pathways_workbook_is_excel: TRUE
+
+  # DEFINE NAME FOR EXISTING PATHWAYS WORKBOOK
+  # DEFINE NAME FOR NEW PATHWAYS WORKBOOK
+  pathways_workbook_name: "pathways workbook - ethiopia 2016 tutorial"
+  new_pathways_workbook_name: "pathways workbook - ethiopia 2016 tutorial (new)"
+
+
+  ## MAPPING VARIABLES
+
+  # NAME OF SHP FILE
+  # NAME OF STATE VARIABLE IN SURVEY DATASET
+  shp_file: "gadm41_ETH_shp/gadm41_ETH_1.shp"
+  data_state_var: "v024"
+
+
+  # SURVEY DESIGN VARIABLES
+
+  # USE SURVEY WEIGHTS IN ANALYSIS
+  # SURVEY DESIGN ID
+  # SURVEY DESIGN STRATA
+  use_svy_design: TRUE
+  svy_id_var: "v021"
+  svy_strata_var: "v023"
+
+
+  # CUSTOM VULNERABILITY AND OUTCOME GENERATION SCRIPTS
+
+  vulnerability_script: ""
+  outcomes_script: ""
+
+
+########################
+pak_dhs_2017:
+  project_name: "Pakistan DHS 2017"
+  survey_name: "PK71FL"
+  root_path: "C:/Users/jeremyco/OneDrive - Bill & Melinda Gates Foundation/scenario_dhs_pakistan_2017/"
+  user_path: "v1/"
+
+  dhs_ir_file: "PKIR71FL.DTA"
+  dhs_hh_file: "PKHR71FL.DTA"
+  dhs_br_file: "PKBR71FL.DTA"
+  dhs_kr_file: "PKKR71FL.DTA"
+  dhs_mr_file: "PKMR71FL.DTA"
+  survey_file: ""
+
+  create_new_pathways_workbook: TRUE
+  pathways_workbook_is_excel: TRUE
+  pathways_workbook_name: "pathways workbook - pakistan 2017"
+  new_pathways_workbook_name: "pathways workbook - pakistan 2017 (new)"
+
+  shp_file: "gadm41_PAK_shp/gadm41_PAK_1.shp"
+  data_state_var: "v023"
+
+  use_svy_design: TRUE
+  svy_id_var: "v021"
+  svy_strata_var: "v023"
+
+  vulnerability_script: "../project_scripts/pak-dhs-2017/fun_gen_vulnerabilities_dhs_pak.R"
+  outcomes_script: ""
+
+
+
+
+
