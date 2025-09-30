@@ -62,7 +62,7 @@ if (file.exists(paste0(data_path, "MR.rds"))) {
 # OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/ AND DEFINED IN CONFIG FILE
 # vulnerability <- gen_vulnerability_factors_dhs_bfa(IR=IR, BR=BR, HH=HH, MR=MR, DHS=8)
 # vulnerability <- gen_vulnerability_factors_dhs_bgd(IR=IR, BR=BR, HH=HH, MR=NULL, DHS=8)
-vulnerability <- gen_vulnerability_factors_dhs_pak(IR=IR, BR=BR, HH=HH, MR=MR, DHS=8)
+vulnerability <- gen_vulnerability_factors_dhs_pak(IR=IR, BR=BR, HH=HH, MR=MR, DHS=7)
 
 vulnerability_vars <- setdiff(
   names(vulnerability),
@@ -106,7 +106,7 @@ vulnerability <- readRDS(file = paste0(vulnerability_file, ".rds"))
 
 
 # GENERATE HEALTH OUTCOMES USING STARTER DHS SCRIPT
-outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=8)
+outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=7)
 
 # OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/ AND DEFINED IN CONFIG
 # outcomes <- gen_outcome_variables_dhs_bfa(IR=IR, KR=KR, BR=BR, DHS=8)

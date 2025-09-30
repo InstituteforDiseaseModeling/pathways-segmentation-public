@@ -1872,7 +1872,8 @@ gen_vulnerability_factors_dhs_pak <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
 
 
   # CALCULATE WT FOR INDIVIDUAL
-  IR$wt <- IR$v005/1000000
+  # IR$wt <- IR$v005/1000000
+  IR$wt <- ifelse(IR$v024 %in% c("ajk","gb"),IR$sv005/1000000,IR$v005/1000000)
 
 
   # IR
