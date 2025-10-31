@@ -291,8 +291,9 @@ gen_vulnerability_factors_dhs_pak <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
   # AIR QUALITY IN THE HOUSE / VENTILATION
   HH <- HH %>%
     dplyr::mutate(hh.where.cook = case_when(
-      hv226 == "no food cooked in house" ~ NA,
-      hv241 %in% c("in a separate building", "outdoors") ~ "Food cooked in a separate building / Food cooked outdoors",
+      hv226 == "no food cooked in house" ~ "No food cooked in house",
+      hv241 == "outdoors" ~ "Food cooked outdoors",
+      hv241 == "in a separate building" ~ "Food cooked in a separate building",
       hv241 == "other" ~ "Other",
       hv241 == "in the house" & hv242 == "yes" ~ "Food cooked inside in a separate kitchen",
       hv241 == "in the house" & (is.na(hv242) | hv242 == "no") ~ "Food cooked inside"))
@@ -335,7 +336,9 @@ gen_vulnerability_factors_dhs_pak <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
   # LOCATION OF TOILET FACILITY
   HH <- HH %>% dplyr::mutate(toilet.loc = case_when(
     hv205 == "no facility/bush/field" ~ "No facility",
-    hv238a %in% c("in own dwelling","in own yard/plot","elsewhere") ~ "In own dwelling/In own yard/plot/Elsewhere"))
+    hv238a == "in own dwelling" ~ "In own dwelling",
+    hv238a == "in own yard/plot" ~ "In own yard/plot",
+    hv238a == "elsewhere" ~ "Elsewhere"))
 
 
   # HOUSEHOLD HAS SHARED TOILET
@@ -794,7 +797,8 @@ gen_vulnerability_factors_dhs_pak <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
   # CATEGORICAL FACTOR FOR NUMBER OF CHILDREN THAT HAVE DIED
   IR <- IR %>% dplyr::mutate(num.child.die.cat = case_when(
     num.child.die %in% c(0) ~ "0",
-    num.child.die >=1 ~ "1 or more"))
+    num.child.die %in% c(1) ~ "1",
+    num.child.die >=2 ~ "2 or more"))
 
 
   # NUMBER OF BIOLOGICAL CHILDREN IN THE HOUSEHOLD
@@ -1260,7 +1264,8 @@ gen_vulnerability_factors_dhs_pak <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
   # CATEGORICAL FACTOR FOR PARTNER'S AGE
   IR <- IR %>% dplyr::mutate(partner.age.cat = case_when(
     v730 %in% c(15:29) ~ "under 30",
-    v730 %in% c(30:96) ~ "30+",
+    v730 %in% c(30:59) ~ "30-59",
+    v730 %in% c(60:96) ~ "60+",
     v730 == 98 ~ "Don't know",
     v730 == 99 ~ "Missing",
     !(v501 %in% c("married", "living with partner")) ~ "not partnered"))
@@ -1517,7 +1522,9 @@ gen_vulnerability_factors_dhs_pak <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
   # WHO CHECKED RESPONDENT HEALTH AFTER DISCHARGE
   IR <- IR %>%
     dplyr::mutate(discharge.checkedhealth = case_when(v201 == 0 ~ "no births",
-                                                      m68_1 %in% c("midwife","auxiliary midwife (matrone)","other","traditional birth attendant","doctor","nurse") ~ "midwife/aux midwife/other/TBA/doctor/nurse",
+                                                      m68_1 %in% c("midwife",'auxiliary midwife (matrone)') ~ 'midwife/aux midwife',
+                                                      m68_1 %in% c("doctor",'nurse') ~ 'doctor/nurse',
+                                                      m68_1 %in% c("other",'traditional birth attendant') ~ 'other/TBA',
                                                       m68_1 == 'no births' ~ 'no births',
                                                       is.na(IR$m68_1) ~ 'no one'))
 
@@ -1544,7 +1551,8 @@ gen_vulnerability_factors_dhs_pak <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
   IR <- IR %>%
     dplyr::mutate(fertility.pref.cat = case_when(v604 == "non-numeric" ~ NA,
                                                  v604 %in% c("<12 months", "1 year") ~ "<2 years",
-                                                 v604 %in% c("2 years", "3 years","4 years","5 years", "6+ years") ~ "2+ years",
+                                                 v604 %in% c("2 years", "3 years","4 years") ~ "2-4 years",
+                                                 v604 %in% c("5 years", "6+ years") ~ "5+ years",
                                                  v604 %in% c("don't know") ~ "No more",
                                                  v602 != "have another" ~ "No more"))
 
@@ -1628,7 +1636,7 @@ gen_vulnerability_factors_dhs_pak <- function(IR=NULL, BR=NULL, HH=NULL, MR=NULL
     (v3a08q == "yes" | v3a08r == "yes") ~ "yes",
     (v3a08q == "no" & v3a08r == "no" & fp.all.na==1) ~ "no",
     v361 != "currently using" ~ "not currently using",
-    v361 == "currently using" ~ "currently usiaring"))
+    v361 == "currently using" ~ "currently using"))
 
   IR <- IR %>% dplyr::mutate(no.fp.oppose = case_when(
     (v3a08i == "yes" | v3a08j == "yes" | v3a08k == "yes" | v3a08l == "yes") ~ "yes",

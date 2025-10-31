@@ -6,7 +6,7 @@
 
 
 # stratum = "urban"
-# n_class = "LCA5_class"
+# n_class = "LCA4_class"
 # shp_file = shp_file
 
 
@@ -269,6 +269,11 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
                              state == "Centre Sud" ~ "Centre-Sud",
                              state == "Hauts-Bassins" ~ "Haut-Bassins",
                              state == "Plateau Central" ~ "Plateau-Central",
+                             state == "Kpk" ~ "Khyber-Pakhtunkhwa",
+                             state == "Fata" ~ "Federally Administered Tribal Ar",
+                             state == "Ict" ~ "Islamabad",
+                             state == "Gb" ~ "Gilgit-Baltistan",
+                             state == "Ajk" ~ "Azad Kashmir",
                              TRUE ~ state))
 
   state_prop <- df %>%
