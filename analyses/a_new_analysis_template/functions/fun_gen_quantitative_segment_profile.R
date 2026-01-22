@@ -251,9 +251,9 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
 
   # MAP
   df <- df %>%
-    mutate(state = as.character(eval(parse(text = data_state_var))),
-           state = stringr::str_to_title(trimws(gsub(pattern = "rurale|urbain|rural|urban|nc|ne|nw|,","", state))),
-           state = case_when(state == "Thi<E8>S" ~ "Thies",
+    dplyr::mutate(state = as.character(eval(parse(text = data_state_var))),
+                  state = stringr::str_to_title(trimws(gsub(pattern = "rurale|urbain|rural|urban|nc|ne|nw|,","", state))),
+                  state = case_when(state == "Thi<E8>S" ~ "Thies",
                              state == "Kolda Urban" ~ "Kolda",
                              state == "Ziquinchor" ~ "Ziguinchor",
                              state == "Benishangul" ~ "Benshangul-Gumaz",

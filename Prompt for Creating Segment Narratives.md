@@ -36,7 +36,10 @@ Your task is to reproduce the analytical output for **Burkina Faso 2021**, gener
   - Infrastructure  
   - Wealth  
   - Empowerment  
-  - Health access  
+  - Health access
+
+What really differentiates these segments from one another. How do I quickly see that one segment is different from another? And of course this will be a group of factors.
+Instead of description, give bullet points on the 5 domains and maybe 1-2 sentences on the overall segment description.  
 
 ---
 

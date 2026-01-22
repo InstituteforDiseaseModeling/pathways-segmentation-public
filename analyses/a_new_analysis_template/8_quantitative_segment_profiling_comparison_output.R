@@ -43,7 +43,8 @@ for (stratum in strata_set){
 
   df$segment <- df %>% pull(eval(parse(text=n_class)))
   df$model_cat <- n_class
-  df$segment = paste0("segment_", df$segment)
+  # df$segment = paste0("segment_", df$segment)
+  df$segment = paste0("segment_", df$segment_rank)
 
 
   # GET DOMAINS
@@ -68,11 +69,11 @@ for (stratum in strata_set){
     distinct()
 
   vulnerability_names <- names(df)[(names(df) %in% c("caseid", "wt", "survey", "strata", "model_cat", "segment", vulnerability_vars_profile$variable))]
-  df <- subset(df, select=c(vulnerability_names))
+  df_vulnerability <- subset(df, select=c(vulnerability_names))
 
 
   # VULNERABILITY RESPONSE PROPORTIONS
-  df <- df %>%
+  df_vulnerability <- df_vulnerability %>%
     reshape2::melt(id.vars=c("caseid", "wt", "survey", "strata", "model_cat", "segment"), variable.name = "variable", value.name = "value") %>%
     dplyr::mutate(value = ifelse(is.na(value), "*NA", value)) %>%
     group_by(segment, variable) %>%
@@ -83,15 +84,49 @@ for (stratum in strata_set){
 
 
   # VULNERABILITY RESPONSE PROPORTIONS + DOMAINS
-  df <- df %>%
+  df_vulnerability <- df_vulnerability %>%
     base::merge(vulnerability_vars_profile, by=c("variable")) %>%
     dplyr::select(survey, strata, model_cat, domain, variable, short_name, value, prop, segment) %>%
     distinct() %>%
     reshape2::dcast(survey + strata + model_cat + domain + variable + short_name + value ~ segment, value.var = "prop")
 
-  assign(paste0("df_", stratum), df)
+  assign(paste0("df_vulnerability_", stratum), df_vulnerability)
 
-  write.csv(base::get(paste0("df_", stratum)), file = paste0(root_path, user_path, "df_", stratum, ".csv"), row.names = FALSE)
+  write.csv(base::get(paste0("df_vulnerability_", stratum)), file = paste0(root_path, user_path, "df_vulnerability_", stratum, ".csv"), row.names = FALSE)
+
+
+  # GET OUTCOMES LIST
+  outcome_vars <- readRDS(outcomes_excel_file)
+
+  outcome_vars_profile <- outcome_vars %>%
+    dplyr::filter(profile_include == 1) %>%
+    dplyr::select(outcome_variable, short_name, category) %>%
+    setNames(c("variable", "short_name", "category")) %>%
+    distinct()
+
+  outcome_names <- names(df)[(names(df) %in% c("caseid", "wt", "survey", "strata", "model_cat", "segment", outcome_vars_profile$variable))]
+  df_outcomes <- subset(df, select=c(outcome_names))
+
+  # OUTCOMES RESPONSE PROPORTIONS
+  df_outcomes <- df_outcomes %>%
+    reshape2::melt(id.vars=c("caseid", "wt", "survey", "strata", "model_cat", "segment"), variable.name = "variable", value.name = "value") %>%
+    dplyr::filter(!is.na(value)) %>%
+    group_by(segment, variable) %>%
+    dplyr::mutate(total = sum(wt)) %>%
+    group_by(segment, variable, value) %>%
+    dplyr::mutate(count = sum(wt),
+                  prop=round(count/total, 3))
+
+  df_outcomes <- df_outcomes %>%
+    base::merge(outcome_vars_profile, by=c("variable")) %>%
+    dplyr::select(survey, strata, model_cat, variable, short_name, value, prop, segment) %>%
+    distinct() %>%
+    reshape2::dcast(survey + strata + model_cat + variable + short_name + value ~ segment, value.var = "prop") %>%
+    dplyr::filter(value == 1)
+
+  assign(paste0("df_outcomes_", stratum), df_outcomes)
+
+  write.csv(base::get(paste0("df_outcomes_", stratum)), file = paste0(root_path, user_path, "df_outcomes_", stratum, ".csv"), row.names = FALSE)
 
 
 }
