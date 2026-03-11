@@ -60,9 +60,9 @@ if (file.exists(paste0(data_path, "MR.rds"))) {
 # vulnerability <- gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=NULL, dhs=8)
 
 # OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/ AND DEFINED IN CONFIG FILE
-# vulnerability <- gen_vulnerability_factors_dhs_bfa(IR=IR, BR=BR, HH=HH, MR=MR, DHS=8)
+vulnerability <- gen_vulnerability_factors_dhs_bfa(IR=IR, BR=BR, HH=HH, MR=MR, DHS=8)
 # vulnerability <- gen_vulnerability_factors_dhs_bgd(IR=IR, BR=BR, HH=HH, MR=NULL, DHS=8)
-vulnerability <- gen_vulnerability_factors_dhs_pak(IR=IR, BR=BR, HH=HH, MR=MR, DHS=7)
+# vulnerability <- gen_vulnerability_factors_dhs_pak(IR=IR, BR=BR, HH=HH, MR=MR, DHS=7)
 
 vulnerability_vars <- setdiff(
   names(vulnerability),
@@ -106,7 +106,7 @@ vulnerability <- readRDS(file = paste0(vulnerability_file, ".rds"))
 
 
 # GENERATE HEALTH OUTCOMES USING STARTER DHS SCRIPT
-outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=7)
+outcomes <- gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, DHS=8)
 
 # OR GENERATE USING A PROJECT SPECIFIC FUNCTION FOUND IN analyses/project_scripts/ AND DEFINED IN CONFIG
 # outcomes <- gen_outcome_variables_dhs_bfa(IR=IR, KR=KR, BR=BR, DHS=8)
@@ -159,15 +159,10 @@ if (create_new_pathways_workbook==TRUE){
   outcomes_vars_excel <- outcomes_vars[!outcomes_vars %in% c("survey", "strata", "LB", "STL", "str")]
 
   # CREATE PARAMS SHEET
-  df_params <- data.frame(domains = c("Woman and her past experiences",
-                                      "Health and mental models",
-                                      "Natural and human systems",
-                                      "Household relationships",
-                                      "Household economics and living conditions",
-                                      "Social support"),
+  df_params <- data.frame(domains = unique(dd_vulnerabilities$domain),
                           strata = c("urban",
                                      "rural",
-                                     NA, NA, NA, NA),
+                                     NA, NA, NA, NA, NA),
                           final_model = NA)
 
   # CREATE OUTCOMES SHEET
@@ -179,10 +174,10 @@ if (create_new_pathways_workbook==TRUE){
     profile_include = NA,
     notes = NA
   ) %>%
-    base::merge(dd_outcomes, by=c("outcome_variable"), all.x=TRUE) %>%
+    base::merge(dd_outcomes, by.x=c("outcome_variable"), by.y=c("metric_id"), all.x=TRUE) %>%
     dplyr::mutate(ranking_include = case_when(outcome_variable %in% c("anc.less4.last", "home.birth.last", "nofp.mod.ever", "u5mort.yn", "waste.cat2.yn") ~ 1)) %>%
-    dplyr::select(category, outcome_variable, short_name, description, univariate_include, eda_include, ranking_include, profile_include, notes) %>%
-    arrange(category, outcome_variable)
+    dplyr::select(outcome_theme, outcome_variable, short_name, detailed_description, univariate_include, eda_include, ranking_include, profile_include, notes) %>%
+    arrange(outcome_theme, outcome_variable)
 
   # CREATE VULNERABILITY SHEET
   df_vulnerability <- data.frame(
@@ -199,9 +194,8 @@ if (create_new_pathways_workbook==TRUE){
     typing_tool_include = NA,
     notes = NA
   ) %>%
-    base::merge(dd_vulnerabilities, by=c("vulnerability_variable"), all.x=TRUE) %>%
-    dplyr::select(vulnerability_variable, short_name, description, univariate_include, eda_include, pca_strata, pca_include, lca_strata, lca_include, profile_strata, profile_include, typing_tool_strata, typing_tool_include, notes,
-                  Woman.and.her.past.experiences, Health.and.mental.models, Natural.and.human.systems, Household.relationships, Household.economics.and.living.conditions, Social.support) %>%
+    base::merge(dd_vulnerabilities, by=c("vulnerability_variable"), by.y=c("metric_id"), all.x=TRUE) %>%
+    dplyr::select(vulnerability_variable, short_name, detailed_description, domain, univariate_include, eda_include, pca_strata, pca_include, lca_strata, lca_include, profile_strata, profile_include, typing_tool_strata, typing_tool_include, notes) %>%
     arrange(vulnerability_variable)
 
 

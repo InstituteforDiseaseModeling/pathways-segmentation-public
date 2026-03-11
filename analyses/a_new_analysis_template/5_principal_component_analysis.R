@@ -34,9 +34,9 @@ vulnerability_vars <- readRDS(vulnerability_excel_file)
 
 vulnerability_vars_pca <- vulnerability_vars %>%
   dplyr::filter(pca_include == 1) %>%
-  dplyr::select(vulnerability_variable, short_name, pca_strata, domain_set$domains) %>%
-  reshape2::melt(id.vars=c("vulnerability_variable", "short_name", "pca_strata"), variable.name="domain", value.name="domain_include") %>%
-  dplyr::filter(domain_include == 1)
+  dplyr::select(vulnerability_variable, short_name, pca_strata, domain) #%>%
+  # reshape2::melt(id.vars=c("vulnerability_variable", "short_name", "pca_strata"), variable.name="domain", value.name="domain_include") %>%
+  # dplyr::filter(domain_include == 1)
 
 
 ###################################

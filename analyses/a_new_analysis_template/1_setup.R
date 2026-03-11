@@ -193,7 +193,7 @@ if (file.exists(paste0(pathways_workbook_path, ".xlsx")) == TRUE | file.exists(p
       # OUTCOMES
       outcomes_sheet <- read_excel(paste0(pathways_workbook_path, ".xlsx"), sheet="outcomes")
       outcomes_sheet <- outcomes_sheet %>%
-        mutate(short_name = ifelse(is.na(short_name), outcome_variable, short_name))
+        dplyr::mutate(short_name = ifelse(is.na(short_name), outcome_variable, short_name))
 
       saveRDS(outcomes_sheet, file = outcomes_excel_file)
 
@@ -226,7 +226,7 @@ if (file.exists(paste0(pathways_workbook_path, ".xlsx")) == TRUE | file.exists(p
       # OUTCOMES
       outcomes_sheet <- fread(paste0(pathways_workbook_path, " - outcomes.csv"))
       outcomes_sheet <- outcomes_sheet %>%
-        mutate(short_name = ifelse(is.na(short_name), outcome_variable, short_name))
+        mutate(short_description = ifelse(is.na(short_description), outcome_variable, short_description))
 
       saveRDS(outcomes_sheet, file = outcomes_excel_file)
 
@@ -234,7 +234,7 @@ if (file.exists(paste0(pathways_workbook_path, ".xlsx")) == TRUE | file.exists(p
       # VULNERABILITY
       vulnerability_sheet <- fread(paste0(pathways_workbook_path, " - vulnerabilities.csv"))
       vulnerability_sheet <- vulnerability_sheet %>%
-        mutate(short_name = ifelse(is.na(short_name), vulnerability_variable, short_name))
+        mutate(short_description = ifelse(is.na(short_description), vulnerability_variable, short_description))
 
       saveRDS(vulnerability_sheet, file = vulnerability_excel_file)
 

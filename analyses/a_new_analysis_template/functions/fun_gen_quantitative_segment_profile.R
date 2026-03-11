@@ -33,8 +33,8 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
 
   outcome_vars_profile <- outcome_vars %>%
     dplyr::filter(profile_include == 1) %>%
-    dplyr::select(outcome_variable, short_name, category) %>%
-    setNames(c("variable", "short_name", "category")) %>%
+    dplyr::select(outcome_variable, short_name, outcome_theme) %>%
+    setNames(c("variable", "short_name", "outcome_theme")) %>%
     distinct()
 
   if (nrow(outcome_vars_profile) == 0){
@@ -48,9 +48,9 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
   vulnerability_vars_profile <- vulnerability_vars %>%
     dplyr::filter(profile_include == 1) %>%
     dplyr::filter(profile_strata %in% c("both", "all", stratum)) %>%
-    dplyr::select(vulnerability_variable, short_name, profile_strata, domain_set$domains) %>%
-    reshape2::melt(id.vars=c("vulnerability_variable", "short_name", "profile_strata"), variable.name="domain", value.name="domain_include") %>%
-    dplyr::filter(domain_include == 1) %>%
+    dplyr::select(vulnerability_variable, short_name, profile_strata, domain) %>%
+    # reshape2::melt(id.vars=c("vulnerability_variable", "short_name", "profile_strata"), variable.name="domain", value.name="domain_include") %>%
+    # dplyr::filter(domain_include == 1) %>%
     dplyr::select(vulnerability_variable, short_name, domain) %>%
     setNames(c("variable", "short_name", "domain")) %>%
     distinct()
@@ -106,16 +106,16 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
 
   # MEAN RANK OF STD MEANS
   outcomes_melt1 <- outcomes_melt %>%
-    dplyr::select(strata, model_cat, variable, short_name, category, segment, var_class_std_mean) %>%
+    dplyr::select(strata, model_cat, variable, short_name, outcome_theme, segment, var_class_std_mean) %>%
     distinct() %>%
     group_by(variable) %>%
     dplyr::mutate(class_rank = rank(var_class_std_mean)) %>%
-    group_by(category, segment) %>%
+    group_by(outcome_theme, segment) %>%
     dplyr::mutate(mean_rank = mean(class_rank)) %>%
-    group_by(category) %>%
+    group_by(outcome_theme) %>%
     dplyr::mutate(var_count = n_distinct(variable),
-                  category_var_count = paste0(category, " (", var_count, ")")) %>%
-    dplyr::select(strata, model_cat, segment, category_var_count, category, mean_rank) %>%
+                  outcome_theme_var_count = paste0(outcome_theme, " (", var_count, ")")) %>%
+    dplyr::select(strata, model_cat, segment, outcome_theme_var_count, outcome_theme, mean_rank) %>%
     distinct()
 
 
@@ -367,10 +367,10 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
 
   # LINE PLOT - DOTTED
   plot <- outcomes_melt %>%
-    dplyr::select(strata, model_cat, variable, short_name, category, segment, var_class_std_mean) %>%
+    dplyr::select(strata, model_cat, variable, short_name, outcome_theme, segment, var_class_std_mean) %>%
     distinct() %>%
-    # filter(category == "ANC/PNC")
-    ggplot(aes(x=reorder(short_name, -desc(category)), y=var_class_std_mean, group=segment)) +
+    # filter(outcome_theme == "ANC/PNC")
+    ggplot(aes(x=reorder(short_name, -desc(outcome_theme)), y=var_class_std_mean, group=segment)) +
     geom_point(aes(color=factor(segment)), size=4) +
     geom_line(aes(color=factor(segment)), lwd=0.5, linetype="dashed") +
     geom_hline(yintercept = 0) +
@@ -387,10 +387,10 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
 
   # LINE PLOT - SOLID
   plot <- outcomes_melt %>%
-    dplyr::select(strata, model_cat, variable, short_name, category, segment, var_class_std_mean) %>%
+    dplyr::select(strata, model_cat, variable, short_name, outcome_theme, segment, var_class_std_mean) %>%
     distinct() %>%
-    # filter(category == "ANC/PNC")
-    ggplot(aes(x=reorder(short_name, -desc(category)), y=var_class_std_mean, group=segment)) +
+    # filter(outcome_theme == "ANC/PNC")
+    ggplot(aes(x=reorder(short_name, -desc(outcome_theme)), y=var_class_std_mean, group=segment)) +
     geom_point(aes(color=factor(segment)), size=4) +
     geom_line(aes(color=factor(segment)), lwd=1, linetype="solid") +
     geom_hline(yintercept = 0) +
@@ -407,9 +407,9 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
 
   # LINE PLOT WITH ERROR BARS
   plot <- outcomes_melt %>%
-    dplyr::select(strata, model_cat, variable, short_name, category, segment, var_class_std_mean, lower_bound, upper_bound) %>%
+    dplyr::select(strata, model_cat, variable, short_name, outcome_theme, segment, var_class_std_mean, lower_bound, upper_bound) %>%
     distinct() %>%
-    ggplot(aes(x=reorder(short_name, -desc(category)), y=var_class_std_mean, ymin=lower_bound, ymax=upper_bound, group=segment)) +
+    ggplot(aes(x=reorder(short_name, -desc(outcome_theme)), y=var_class_std_mean, ymin=lower_bound, ymax=upper_bound, group=segment)) +
     geom_point(aes(color=factor(segment)), size=4, position=position_dodge(width=0.8)) +
     geom_errorbar(aes(color=factor(segment)), width = 0.5, position=position_dodge(width=0.8)) +
     geom_line(aes(color=factor(segment)), lwd=0.5, alpha=0.4, linetype="dashed", position=position_dodge(width=0.8)) +
@@ -430,33 +430,33 @@ fun_gen_quantitative_segment_profile <- function(df=NULL, stratum=NULL, n_class=
   segment_count_mid = round(segment_count/2)
 
   data <- outcomes_melt1 %>%
-    dplyr::select(segment, category_var_count, mean_rank) %>%
-    reshape2::dcast(segment ~ category_var_count, value.var = "mean_rank")
+    dplyr::select(segment, outcome_theme_var_count, mean_rank) %>%
+    reshape2::dcast(segment ~ outcome_theme_var_count, value.var = "mean_rank")
 
   plot1 <- ggradar(plot.data = data, values.radar = c(segment_count,segment_count_mid,1), grid.min = 1, grid.mid = segment_count_mid, grid.max = segment_count) +
     theme(legend.position="bottom") +
     scale_color_brewer(palette="Dark2") +
-    ggtitle(paste0("Mean ranking by outcome category (1 = less desirbable)"))
+    ggtitle(paste0("Mean ranking by outcome theme (1 = less desirbable)"))
   print(plot1)
 
 
   data <- outcomes_melt %>%
-    dplyr::select(strata, model_cat, variable, short_name, category, segment, var_class_std_mean) %>%
+    dplyr::select(strata, model_cat, variable, short_name, outcome_theme, segment, var_class_std_mean) %>%
     distinct() %>%
-    group_by(category) %>%
+    group_by(outcome_theme) %>%
     dplyr::mutate(var_count = n_distinct(variable),
-                  category_var_count = paste0(category, " (", var_count, ")")) %>%
-    group_by(strata, model_cat, category, category_var_count, segment) %>%
+                  outcome_theme_var_count = paste0(outcome_theme, " (", var_count, ")")) %>%
+    group_by(strata, model_cat, outcome_theme, outcome_theme_var_count, segment) %>%
     dplyr::summarize(mean_class_std_mean = mean(var_class_std_mean)) %>%
     ungroup() %>%
-    dplyr::select(segment, category_var_count, mean_class_std_mean) %>%
+    dplyr::select(segment, outcome_theme_var_count, mean_class_std_mean) %>%
     distinct() %>%
-    reshape2::dcast(segment ~ category_var_count, value.var = "mean_class_std_mean")
+    reshape2::dcast(segment ~ outcome_theme_var_count, value.var = "mean_class_std_mean")
 
   plot2 <- ggradar(plot.data = data, values.radar = c(-1,0,1), grid.min = -1, grid.mid = 0, grid.max = 1) +
     theme(legend.position="bottom") +
     scale_color_brewer(palette="Dark2") +
-    ggtitle(paste0("Mean of standardized means by outcome category (1 = less desirable)"))
+    ggtitle(paste0("Mean of standardized means by outcome theme (1 = less desirable)"))
   print(plot2)
 
   # grid.arrange(plot1, plot2,

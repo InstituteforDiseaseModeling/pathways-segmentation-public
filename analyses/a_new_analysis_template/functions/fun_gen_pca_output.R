@@ -10,7 +10,7 @@
 # df <- vulnerability_input
 # pca_varlist <- pca_strata_input
 # stratum = "urban"
-# dom = "Health.and.mental.models"
+# dom = "Woman and her past experiences"
 
 
 ###################################

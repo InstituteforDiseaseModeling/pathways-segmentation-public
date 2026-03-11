@@ -9,7 +9,7 @@
 # RUN SETUP
 source("1_setup.R")
 
-nreps = 50
+nreps = 20
 
 
 ###################################
