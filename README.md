@@ -2,7 +2,7 @@
 
 The pathways-segmentation repo contains the workflow for conducting a Pathways Segmentation analysis in R. The Pathways Segmentation methodology is a population grouping analysis framework used for understanding social, cultural, economic, and environmental vulnerability to improve women's health and well-being.
 
-This analysis is intended for researche scientists familiar with R and requires custom variable coding for each analysis.
+This analytical framework is intended for research scientists familiar with R and requires custom variable coding for each analysis.
 
 The workflow is designed to use STATA (.DTA) survey datasets from the Demographic and Health Surveys (DHS) program, however any survey dataset will work with adjustments to the 2_data_cleaning.R module.
 
@@ -86,7 +86,7 @@ An intermediate level of coding in R and using RStudio Desktop is expected in or
 #### Software requirements
 
 * [R (recommended >= 4.4.2, current renv implementation assumes 4.4.2) & RStudio Desktop](https://posit.co/download/rstudio-desktop/)
-* Microsoft Excel (recommended)
+* Microsoft Excel (recommended but not)
 * [GitHub Desktop](https://desktop.github.com/download/) (suggested for managing code from GitHub repository)
 
 Software will run on Windows or MAC operating system (although on a MAC OS the RENV framework may require involve additional technical hurdles.)
@@ -120,10 +120,10 @@ Once generated, the Pathways Workbook should be reviewed to ensure all metadata 
     * **strata:** Segmentation strata of the survey
     * **final_model:** the final Segmentation solution
 * **outcomes:** Health Outcomes used in the analysis; inclusion/exclusion decisions for each phase are driven from this tab.
-    * **category:** the grouping of the Health Outcome variable
+    * **outcome_theme:** the grouping of the Health Outcome variable
     * **outcome_variable:** the name of the outcome variable as defined in the coding scripts and datasets
     * **short_name:** the friendly label of the outcome variable that is used in plotting
-    * **description:** variable definition
+    * **detailed_description:** variable definition
     * **univariate_include:** include in the univariate analysis PDF plots
     * **eda_include:** include in the exploratory analysis PDF plots
     * **ranking_include:** include in the in-country ranking analysis
@@ -132,8 +132,9 @@ Once generated, the Pathways Workbook should be reviewed to ensure all metadata 
 * **vulnerabilities:** Vulnerability variables used in the analysis; inclusion/exclusion decisions for each phase are drien from this tab.
     * **vulnerability_variable:** the name of the vulnerability_factor as defined in the coding scripts and datasets
     * **short_name:** the friendly label of the vulnerability variable that is used in plotting
-    * **description:** variable definition
+    * **detailed_description:** variable definition
     * **univariate_include:** include in the univariate analysis phase
+    * **domain:** the Pathways Domain that the vulnerability variable is associated with
     * **eda_include:** include in the exploratory analysis phase
     * **pca_strata:** strata to include this variable in for PCA  (both/all/urban/rural)
     * **pca_include:** include in the next run of PCA phase
@@ -144,7 +145,6 @@ Once generated, the Pathways Workbook should be reviewed to ensure all metadata 
     * **typing_tool_strata:** which strata to include this variable in for developing the segmentation typing tool (both/all/urban/rural)
     * **typing_tool_include:** include in the typing tool phase
     * **notes:** space to capture information about decisions made, observations, etc
-    * **domain specific columns O-T:** include this variable in this domain (relevant for PCA phase and quantitative profiling phase)
 
 ## Repo structure
 
@@ -152,16 +152,19 @@ At the top level of the repository exists a folder with previous training worksh
 
 Within the "analyses" folder exists the following:
 
-* a_new_analysis_template: templated set of files needed for a new analysis
-* project_files: includes coding from additional analyses for reference
-* projects: contains a tutorial project and is a recommended location for future projects
-* samples: contains sample plots generated throughout the analysis framework
+* analyses
+    * a_new_analysis_template: templated set of files needed for a new analysis
+    * project_scripts: includes coding from additional analyses for reference
+    * projects: contains a tutorial project and is a recommended location for future projects
+    * samples: contains sample plots generated throughout the analysis framework
+* training_materials: resources from previous Pathways Segmentation training workshops
+* Prompt for Creating Segment Narratives.md: An example prompt for using ChatGPT to assist in creating quantitative segment profiles
 
 ### New project template
 
 The workflow is modularized according to the different phases of a segmentation analysis.  Each module has a parent script which calls a function to generate the corresponding outputs (e.g., data.frame, PDF visualization file).
 
-* config - template.yml: define file paths and some commonly used variables throughout the analysis
+* config - template.yml: define file paths and commonly used variables throughout the analysis
 * 1_setup.R: create the folder structure for the project and import basic project files
 * 1_libraries.R: install/load all libraries required for the project
 * 1_import_data.R: load the survey data and save as .rds files for faster read
@@ -172,8 +175,9 @@ The workflow is modularized according to the different phases of a segmentation 
 * 6_latent_class_anlaysis.R: generate a population segmentation output using a set of Vulnerability variables
 * 7_country_vulnerability_ranking.R: generate the in-country segment vulnerability rankings
 * 8_quantitative_segment_profile.R: generate the quantitative profile segmentation plots for a segmentation solution
+* 8_quantitative_segment_profiling_comparison_output.R: generates output CSVs that can be used with the ChatGPT prompt to generate starting profiles
 * 9_typing_tool.R: generate the outputs to help define which variables should be used in developing a Pathways typing tool.
-* 11_analysis_helper_script.R: a script to run some ad-hoc analyses throughout the workflow
+* adhoc_scripts: scripts with relevant sample code
 * functions/*: functions called throughout each module of the workflow.
 * 'pathways data dictionary.xlxs': data dictionary for variables used in the pathways segmentation analysis
 
@@ -193,8 +197,8 @@ The workflow is modularized according to the different phases of a segmentation 
 
 * **create_new_pathways_workbook:** TRUE/FALSE, determines whether to import an existing Pathways Workbook or create a new one as part of the data cleaning and variable generation phase
 * **pathways_workbook_is_excel:** TRUE/FALSE, use the Pathways Workbook in Excel or CSV format
-* **pathways_workbook_path:** name of existing Pathways Workbook to import from
-* **new_pathways_workbook_path:** name of Pathways Workbook to generate
+* **pathways_workbook_name:** name of existing Pathways Workbook to import from
+* **new_pathways_workbook_name:** name of Pathways Workbook to generate
 
 * **shp_file:** name of shp file to use when generating maps in quantitative profiling phase
 * **data_state_var:** variable to define geographic state, also used for generating maps
@@ -389,7 +393,7 @@ This tutorial assumes the Pathways Workbook is generated as xlsx file but if gen
 ### Analysis setup
 
 1. verify the 'analyses\projects\eth-2016-tutorial' folder exists.  This folder contains the data and config file needed for this tutorial.
-3. copy all the files from the analyses\a-new-analysis-template folder into the 'analyses\projects\eth-2016-tutorial\' folder
+3. copy all the files from the analyses\a-new-analysis-template folder into the 'analyses\projects\eth-2016-tutorial\' folder.
 5. inside this folder open the pathways-segmentation.Rpoj file to automatically set the working directory
 6. If using renv run renv::restore() in the console to install libraries into the project specific library folder (you may need to install the renv library).  Once complete, run renv::status() to confirm project is up to date.
 7. from within RStudio, open and confirm the config.yml parameters are set for this tutorial:
@@ -405,8 +409,8 @@ This tutorial assumes the Pathways Workbook is generated as xlsx file but if gen
     - survey_file: ""
     - create_new_pathways_workbook: TRUE
     - pathways_workbook_is_excel: TRUE for xlsx, FALSE for csv
-    - pathways_workbook_path: "pathways workbook - ethiopia dhs 2016 tutorial"
-    - new_pathways_workbook_path: "pathways workbook - ethiopia dhs 2016 tutorial (new)"
+    - pathways_workbook_name: "pathways workbook - ethiopia dhs 2016 tutorial"
+    - new_pathways_workbook_name: "pathways workbook - ethiopia dhs 2016 tutorial (new)"
     - shp_file: "gadm41_ETH_shp/gadm41_ETH_1.shp"
     - data_state_var: "v024"
     - use_svy_design: TRUE
