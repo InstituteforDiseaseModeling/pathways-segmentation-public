@@ -24,8 +24,12 @@
 
 gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
+  message("[1/14] Starting outcome variable generation...")
+  t_start <- proc.time()
+
   ######################################################################
   # 1 | GENERAL ----
+  message("[2/14] General setup (calendar string, child ages)...")
 
   ## CALENDAR STRING PARSING ----
   # Calendar string for stillbirth detection
@@ -49,6 +53,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 2 | ANC/PNC ----
+  message("[3/14] ANC/PNC variables...")
 
   ## ANC.TOTAL ----
   # Number of antenatal visits during last pregnancy
@@ -117,6 +122,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 3 | BMI ----
+  message("[4/14] BMI variables...")
 
   ## BMI ----
   # Body mass index
@@ -133,6 +139,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 4 | BREASTFEEDING ----
+  message("[5/14] Breastfeeding variables...")
 
   ## NO.BREASTFEED.LAST ----
   # Latest child breastfed
@@ -155,6 +162,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 5 | CHILD MORTALITY ----
+  message("[6/14] Child mortality variables...")
 
   ## U1MORT ----
   # Child under 1 died
@@ -227,6 +235,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 6 | FAMILY PLANNING ----
+  message("[7/14] Family planning variables...")
 
   ## NOFP.MOD.NOW ----
   # Not currently using modern family planning method
@@ -249,6 +258,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 7 | HOME BIRTHS ----
+  message("[8/14] Home birth variables...")
 
   ## HOME.BIRTH.LAST ----
   # Latest birth was home birth
@@ -294,6 +304,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 8 | IMMUNIZATION ----
+  message("[9/14] Immunization variables...")
 
   ## VAC.DOC.YN ----
   # Most recent child has a health card and/or other vaccination document
@@ -511,6 +522,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 9 | MALNOURISHMENT ----
+  message("[10/14] Malnourishment variables...")
 
   ## CHILD MINIMUM DIETARY DIVERSITY ----
   KR <- KR %>%
@@ -686,6 +698,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 10 | MENSTRUAL HEALTH ----
+  message("[11/14] Menstrual health variables...")
 
   ## MENS.NOPRIV ----
   # Able to change in privacy during last menstrual cycle
@@ -707,6 +720,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 11 | CHILD HEALTH ----
+  message("[12/14] Child health variables...")
 
   ## NO.EBF.N ----
   # No exclusive breastfeeding
@@ -924,6 +938,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 12 | MATERNAL HEALTH ----
+  message("[13/14] Maternal health variables...")
 
   ## OVERWEIGHT.OBESE ----
   # Woman is overweight or obese
@@ -1031,6 +1046,7 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
 
   ######################################################################
   # 13 | SUMMARIZE ----
+  message("[14/14] Summarizing and merging outputs...")
 
   ## INDIVIDUAL (IR) ----
   ir.out <- IR
@@ -1170,6 +1186,16 @@ gen_outcome_variables_dhs <- function(IR=NULL, KR=NULL, BR=NULL, dhs = 8) {
   ## DROP INTERMEDIARY VARIABLES ----
   drop_vars <- c("anc.1st.mean", "anc.mean") # here you can drop any intermediate variables you don't wish to keep.
   outcomes <- outcomes %>% dplyr::select(-all_of(drop_vars))
+
+  # Free memory from large input files now that outputs are built
+  rm(IR, KR, BR)
+  gc()
+
+  t_end <- proc.time()
+  message("Outcome variable generation complete in ",
+          round((t_end - t_start)[["elapsed"]] / 60, 1), " minutes.")
+
+  return(outcomes)
 
   return(outcomes)
 
