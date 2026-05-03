@@ -59,6 +59,13 @@ default:
   outcomes_script: ""
 
 
+  # LCA PARAMETERS
+  # Number of random starting values for the LCA algorithm.
+  # This value must be consistent across all phases that reference LCA outputs
+  # (6_latent_class_analysis.R, 7_country_vulnerability_ranking.R,
+  #  8_quantitative_segment_profile.R, 9_segmentation_typing_tool.R).
+  lca_nreps: 20
+
 
 
 
