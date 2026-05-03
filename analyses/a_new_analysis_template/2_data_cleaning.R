@@ -77,19 +77,9 @@ vulnerability_vars <- setdiff(
 vulnerability <- subset(vulnerability, select=unique(c("caseid", "survey", all_of(svy_id_var), all_of(svy_strata_var), all_of(data_state_var), vulnerability_vars)))
 
 
-# CODE TO CONVERT BINARY VARIABLES TO YES/NO (BEST PRACTICE IS TO CODE THEM INITIALLY AS YES/NO)
-for (col in names(vulnerability)){
-
-  if ((all(c(0, 1) %in% na.omit(vulnerability[[col]])) == TRUE) & (all(na.omit(vulnerability[[col]]) %in% c(0, 1)) == TRUE) |
-      (all(c("Yes", "No") %in% str_to_title(na.omit(vulnerability[[col]]))) == TRUE) & (all(str_to_title(na.omit(vulnerability[[col]])) %in% c("Yes", "No")) == TRUE)){
-
-    print(col)
-    vulnerability[[col]] <- ifelse(vulnerability[[col]] == 1, "Yes", vulnerability[[col]])
-    vulnerability[[col]] <- ifelse(vulnerability[[col]] == 0, "No", vulnerability[[col]])
-    vulnerability[[col]] <- ifelse(vulnerability[[col]] == "yes", "Yes", vulnerability[[col]])
-    vulnerability[[col]] <- ifelse(vulnerability[[col]] == "no", "No", vulnerability[[col]])
-  }
-}
+# CONVERT BINARY VARIABLES TO YES/NO USING SHARED HELPER
+message("Recoding binary vulnerability variables to Yes/No...")
+vulnerability <- recode_binary_yn(vulnerability)
 
 
 # SAVE VULNERABILITY DATASET
@@ -122,7 +112,8 @@ outcomes_vars <- setdiff(
   ))
 )
 
-outcomes <- subset(outcomes, select=unique(c("caseid", "v001", "v002", "v003", "survey", outcomes_vars)))
+outcomes_id_vars <- config::get("outcomes_id_vars")
+outcomes <- subset(outcomes, select=unique(c("caseid", outcomes_id_vars, "survey", outcomes_vars)))
 
 
 # ADD IN strata VARIABLE TO OUTCOMES
@@ -134,7 +125,6 @@ dir.create(dirname(outcomes_file), showWarnings = F, recursive = T)
 saveRDS(outcomes, file = paste0(outcomes_file, ".rds"))
 write.csv(outcomes, file = paste0(outcomes_file, ".csv"), row.names = FALSE)
 
-outcomes <- readRDS(file = paste0(outcomes_file, ".rds"))
 
 # MERGE TOGETHER AND SAVE
 outcomes_vulnerability <- base::merge(outcomes, vulnerability, by=c("caseid", "wt", "survey"))

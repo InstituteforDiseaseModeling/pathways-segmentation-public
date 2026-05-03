@@ -57,6 +57,7 @@ default:
 
   vulnerability_script: ""
   outcomes_script: ""
+  outcomes_id_vars: ["v001", "v002", "v003"]
 
 
   # LCA PARAMETERS
