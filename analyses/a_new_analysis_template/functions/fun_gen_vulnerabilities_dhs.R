@@ -17,6 +17,9 @@
 
 gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, KR=NULL, MR = NULL, PR = NULL, dhs=8){
 
+  message("[1/6] Starting vulnerability factor generation...")
+  t_start <- proc.time()
+
 
   ######################################################################
   # FILTER TO BIRTHS WITHIN THE LAST 10 YEARS
@@ -41,6 +44,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, KR=NULL, MR
   ######################################################################
   ######################################################################
   # 1 | HH FILE ----
+  message("[2/6] Processing HH file...")
 
   # In this survey no questions were asked on hh.internet or hh.stove
 
@@ -342,8 +346,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, KR=NULL, MR
 
   # #### Number of biological children in the household (Crossout for duplication)
   IR <- IR %>%
-    rowwise() %>%
-    mutate(num.kids.house = sum(v202, v203, na.rm=TRUE))
+    mutate(num.kids.house = rowSums(pick(v202, v203), na.rm = TRUE))
   # table(IR$num.kids.house, useNA = "always")
 
   IR <- IR %>% mutate(num.kids.house.cat = case_when(
@@ -592,6 +595,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, KR=NULL, MR
   ######################################################################
   ######################################################################
   # 2 | IR FILE ----
+  message("[3/6] Processing IR file...")
 
 
   # DEMOGRAPHICS
@@ -922,8 +926,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, KR=NULL, MR
 
   ## NUMBER OF BIOLOGICAL CHILDREN IN THE HOUSEHOLD ----
   IR <- IR %>%
-    rowwise() %>%
-    dplyr::mutate(num.biochild.house = sum(v202, v203, na.rm=TRUE))
+    dplyr::mutate(num.biochild.house = rowSums(dplyr::pick(v202, v203), na.rm = TRUE))
   #num.kids.house
 
   # CATEGORICAL FACTOR FOR NUMBER OF BIOLOGICAL CHILDREN IN HOUSEHOLD
@@ -2100,6 +2103,7 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, KR=NULL, MR
   # table(IR$intent.fp, useNA = "ifany")
 
   # 3 | BR FILES ----
+  message("[4/6] Processing BR file...")
 
   # CHILD UNDER 15 LIVING ELSEWHERE (NOT IN HOUSEHOLD)
   BR$lives.away <- ifelse((BR$b9 %in% c("lives elsewhere", "someone else", "other relative", "father") & (BR$b8 %in% 1:14)), 1, 0)
@@ -2112,10 +2116,13 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, KR=NULL, MR
 
 
   # 4 | MR FILE ----
+  message("[5/6] Processing MR file (if provided)...")
 
 
 
   # 5 | CLEAN-UP ----
+  message("[6/6] Merging files and cleaning up...")
+
 
   # RENAME JOINING VARIABLES FROM HOUSEHOLD FILE
   HH$v001 <- HH$hv001
@@ -2157,6 +2164,16 @@ gen_vulnerability_factors_dhs <- function(IR=NULL, BR=NULL, HH=NULL, KR=NULL, MR
   # CREATE SEGMENTATION STRATA
   vulnerability <- vulnerability %>%
     dplyr::mutate(strata = hv025)
+
+
+  # Free memory from large intermediate objects no longer needed
+  rm(IR, HH, BR)
+  if (!is.null(MR)) rm(MR)
+  gc()
+
+  t_end <- proc.time()
+  message("Vulnerability factor generation complete in ",
+          round((t_end - t_start)[["elapsed"]] / 60, 1), " minutes.")
 
 
   return(vulnerability)
