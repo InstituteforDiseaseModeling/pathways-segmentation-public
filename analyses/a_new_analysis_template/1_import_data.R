@@ -20,7 +20,8 @@ dhs_file_map <- list(
   BR = config::get("dhs_br_file"),
   KR = config::get("dhs_kr_file"),
   HH = config::get("dhs_hh_file"),
-  MR = config::get("dhs_mr_file")
+  MR = config::get("dhs_mr_file"),
+  PR = config::get("dhs_pr_file")
 )
 
 # Keep only files that are actually configured
@@ -42,11 +43,13 @@ if (length(dhs_file_map) > 0) {
   cl <- parallel::makeCluster(n_cores)
 
   # Export the data path to each worker
-  parallel::clusterExport(cl, varlist = c("data_path", "survey_name"), envir = environment())
+  parallel::clusterExport(cl, varlist = c("data_path", "survey_name", "dhs_file_map"), envir = environment())
 
   results <- parallel::parLapply(cl, names(dhs_file_map), function(nm) {
 
-    file_name <- dhs_file_map[[nm]]
+    library(haven)
+
+    file_name <- dhs_file_map[[nm]]  # now available via clusterExport
     full_path <- paste0(data_path, file_name)
 
     if (!file.exists(full_path)) {

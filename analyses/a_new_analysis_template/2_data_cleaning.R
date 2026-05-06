@@ -17,9 +17,31 @@ create_new_pathways_workbook <- config::get("create_new_pathways_workbook")
 # READ IN SURVEY | DHS
 # RUN 1_import_data.R TO IMPORT AND SAVE RAW SURVEY DATA
 
-if (length(list.files(path = data_path, pattern = "\\.rds$", full.names = TRUE)) == 0) {
-  message("No .rds files found in data path — running 1_import_data.R to import survey data.")
+# BUILD LIST OF EXPECTED RDS FILES FROM CONFIG
+# Only checks files that are actually configured (non-empty string in config)
+configured_files <- list(
+  IR = config::get("dhs_ir_file"),
+  BR = config::get("dhs_br_file"),
+  KR = config::get("dhs_kr_file"),
+  HH = config::get("dhs_hh_file"),
+  MR = config::get("dhs_mr_file"),
+  PR = config::get("dhs_pr_file")
+)
+
+# FILTER TO ONLY CONFIGURED FILES
+configured_files <- Filter(function(f) !is.null(f) && nchar(trimws(f)) > 0, configured_files)
+
+# CHECK WHICH CONFIGURED FILES ARE MISSING AS RDS
+missing_rds <- names(configured_files)[
+  !file.exists(paste0(data_path, names(configured_files), ".rds"))
+]
+
+if (length(missing_rds) > 0) {
+  message("Missing .rds files for: ", paste(missing_rds, collapse = ", "),
+          " — running 1_import_data.R to import survey data.")
   source("1_import_data.R")
+} else {
+  message("All configured .rds files found — skipping import.")
 }
 
 # LOAD AVAILABLE DHS FILES
@@ -28,6 +50,7 @@ if (file.exists(paste0(data_path, "BR.rds"))) { BR <- readRDS(paste0(data_path, 
 if (file.exists(paste0(data_path, "KR.rds"))) { KR <- readRDS(paste0(data_path, "KR.rds")); message("KR imported.") }
 if (file.exists(paste0(data_path, "HH.rds"))) { HH <- readRDS(paste0(data_path, "HH.rds")); message("HH imported.") }
 if (file.exists(paste0(data_path, "MR.rds"))) { MR <- readRDS(paste0(data_path, "MR.rds")); message("MR imported.") }
+if (file.exists(paste0(data_path, "PR.rds"))) { PR <- readRDS(paste0(data_path, "PR.rds")); message("PR imported.") }
 
 
 ######################################################################
@@ -49,23 +72,26 @@ if (run_parallel) {
 }
 
 
-# DEFINE GENERATION TASKS AS A NAMED LIST OF FUNCTIONS
-# Adjust the function names below to match your project-specific scripts
-# (e.g. gen_vulnerability_factors_dhs_bfa) as needed.
+# DEFINE GENERATION TASKS AS A NAMED LIST
+# Each element is a list with a function and its arguments explicitly bound.
+# This ensures the dataframes are available inside the forked worker processes
+# rather than relying on environment capture which is unreliable with mclapply.
 
 gen_tasks <- list(
 
-  vulnerability = function() {
-    # SWAP IN YOUR PROJECT-SPECIFIC FUNCTION IF NEEDED:
-    # gen_vulnerability_factors_dhs_bfa(IR=IR, BR=BR, HH=HH, MR=MR, DHS=8)
-    gen_vulnerability_factors_dhs(IR=IR, BR=BR, HH=HH, MR=MR, dhs=8)
-  },
+  vulnerability = list(
+    fn   = gen_vulnerability_factors_dhs,
+    # SWAP FUNCTION NAME FOR PROJECT-SPECIFIC VERSION IF NEEDED:
+    # fn = gen_vulnerability_factors_dhs_bfa,
+    args = list(IR=IR, BR=BR, HH=HH, MR=MR, PR=PR, dhs=8)
+  ),
 
-  outcomes = function() {
-    # SWAP IN YOUR PROJECT-SPECIFIC FUNCTION IF NEEDED:
-    # gen_outcome_variables_dhs_bfa(IR=IR, KR=KR, BR=BR, DHS=8)
-    gen_outcome_variables_dhs(IR=IR, KR=KR, BR=BR, dhs=8)
-  }
+  outcomes = list(
+    fn   = gen_outcome_variables_dhs,
+    # SWAP FUNCTION NAME FOR PROJECT-SPECIFIC VERSION IF NEEDED:
+    # fn = gen_outcome_variables_dhs_bfa,
+    args = list(IR=IR, KR=KR, BR=BR, dhs=8)
+  )
 
 )
 
@@ -75,14 +101,14 @@ if (run_parallel) {
 
   results <- parallel::mclapply(
     gen_tasks,
-    function(task) task(),
+    function(task) do.call(task$fn, task$args),
     mc.cores = 2,
     mc.set.seed = FALSE
   )
 
 } else {
 
-  results <- lapply(gen_tasks, function(task) task())
+  results <- lapply(gen_tasks, function(task) do.call(task$fn, task$args))
 
 }
 
@@ -101,7 +127,8 @@ vulnerability_vars <- setdiff(
     if (exists("IR")) names(IR) else character(),
     if (exists("BR")) names(BR) else character(),
     if (exists("HH")) names(HH) else character(),
-    if (exists("MR")) names(MR) else character()
+    if (exists("MR")) names(MR) else character(),
+    if (exists("PR")) names(PR) else character()
   ))
 )
 
@@ -163,6 +190,7 @@ message("Freeing input file memory...")
 rm(IR, BR, HH)
 if (exists("KR")) rm(KR)
 if (exists("MR")) rm(MR)
+if (exists("PR")) rm(PR)
 gc()
 
 
@@ -224,7 +252,7 @@ if (create_new_pathways_workbook == TRUE) {
     typing_tool_include    = NA,
     notes                  = NA
   ) %>%
-    base::merge(dd_vulnerabilities, by = "vulnerability_variable", all.x = TRUE) %>%
+    base::merge(dd_vulnerabilities, by.x = c("vulnerability_variable"), by.y = c("metric_id"), all.x = TRUE) %>%
     dplyr::select(vulnerability_variable, short_name, detailed_description, domain,
                   univariate_include, eda_include, pca_strata, pca_include,
                   lca_strata, lca_include, profile_strata, profile_include,

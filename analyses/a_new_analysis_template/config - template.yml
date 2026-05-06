@@ -17,6 +17,7 @@ default:
   dhs_br_file: "ETBR71FL.DTA"
   dhs_kr_file: "ETKR71FL.DTA"
   dhs_mr_file: "ETMR71FL.DTA"
+  dhs_pr_file: ""
   survey_file: ""
 
 
